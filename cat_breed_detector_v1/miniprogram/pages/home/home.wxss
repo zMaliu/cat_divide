@@ -1,0 +1,58 @@
+/* pages/home/home.wxss */
+.home-container { background: #f5f5f5; min-height: 100vh; color: #111; }
+.navbar { display: flex; align-items: center; padding: 20rpx; color: #111; border-bottom: 1rpx solid #eee; }
+.tab { margin-right: 40rpx; font-size: 32rpx; }
+.selected { color: #111; font-weight: bold; border-bottom: 4rpx solid #111; }
+.search-icon { margin-left: auto; }
+.waterfall { display: flex; flex-wrap: wrap; }
+
+.post-card {
+    width: 48vw; /* 占屏幕左半边 */
+    margin-left: 0;
+    margin-right: auto;
+    margin-top: 24rpx;
+    background: #fafafa;
+    border-radius: 16rpx;
+    padding: 20rpx;
+    color: #111;
+    box-shadow: 0 2rpx 8rpx #eee;
+    min-height: 420rpx; /* 纵向拉高 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+.post-img { width: 100%; height: 200rpx; display: block; margin: 0 auto; }
+.post-title { font-weight: bold; margin-top: 8rpx; }
+.post-desc { color: #555; font-size: 24rpx; }
+.post-footer {
+    display: flex;
+    align-items: center;
+    margin-top: 18rpx;
+    width: 45vw;
+  }
+  .footer-avatar {
+    width: 40rpx;
+    height: 40rpx;
+    border-radius: 50%;
+    margin-right: 12rpx;
+  }
+  .footer-nickname {
+    font-size: 24rpx;
+    color: #333;
+    margin-right: 16rpx;
+  }
+  .footer-like {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+  .like-icon {
+    color: #888;
+    font-size: 28rpx;
+    margin-right: 4rpx;
+  }
+  .like-count {
+    font-size: 24rpx;
+    color: #888;
+  }

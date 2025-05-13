@@ -1,0 +1,17 @@
+/* pages/mine/mine.wxss */
+.mine-container { background: #fff; min-height: 100vh; color: #111; }
+.profile-header { display: flex; align-items: center; padding: 32rpx; }
+.profile-avatar { width: 120rpx; height: 120rpx; border-radius: 50%; }
+.profile-info { margin-left: 24rpx; flex: 1; }
+.profile-name { font-size: 36rpx; font-weight: bold; color: #111; }
+.profile-id { color: #888; font-size: 24rpx; }
+.edit-btn { background: #111; color: #fff; border-radius: 16rpx; }
+.profile-stats { display: flex; justify-content: space-around; padding: 24rpx 0; }
+.stat-item { text-align: center; color: #111; }
+.profile-menu { display: flex; justify-content: space-around; background: #fafafa; border-radius: 16rpx; margin: 24rpx; padding: 16rpx 0; }
+.menu-item { color: #111; }
+.profile-tabs { display: flex; border-bottom: 1rpx solid #eee; }
+.tab { flex: 1; text-align: center; padding: 20rpx 0; color: #111; }
+.selected { color: #111; font-weight: bold; border-bottom: 4rpx solid #111; }
+.empty-content { text-align: center; margin-top: 80rpx; }
+.publish-btn { background: #111; color: #fff; border-radius: 16rpx; margin-top: 24rpx; }

@@ -1,0 +1,32 @@
+<!--pages/home/home.wxml-->
+
+<view class="home-container">
+  <view class="navbar">
+    <text class="tab">关注</text>
+    <text class="tab selected">发现</text>
+    <text class="tab">广州</text>
+    <view class="search-icon">🔍</view>
+  </view>
+  <scroll-view scroll-y="true" class="waterfall">
+    <block wx:for="{{posts}}" wx:key="id">
+      <view class="post-card" bindtap="goDetail" data-post="{{item}}">
+        <image src="{{item.img}}" class="post-img"/>
+        <view class="post-title">{{item.title}}</view>
+        <view class="post-desc">{{item.desc}}</view>
+        <view class="post-footer">
+          <image src="{{item.avatar}}" class="footer-avatar"/>
+          <text class="footer-nickname">{{item.nickname}}</text>
+          <view class="footer-like">
+            <text class="like-icon">❤️</text>
+            <text class="like-count">{{item.likeCount}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+</view>
+
+
+
+<!-- <text>pages/home/home.wxml</text> -->
+

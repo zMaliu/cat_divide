@@ -1,36 +1,46 @@
 <!--pages/mine/mine.wxml-->
 
 <view class="mine-container">
+
+  <!-- 首行盒子信息 -->
   <view class="profile-header">
     <image src="/assets/avatar1.jpg" class="profile-avatar"/>
     <view class="profile-info">
       <view class="profile-name">**</view>
       <view class="profile-id">账号：*********</view>
     </view>
-    <button class="edit-btn">编辑资料</button>
+    <view>
+    <button class="edit-btn">编辑资料</button></view>
+    <!-- 设置图标 -->
+    <view class="setting-container">
+      <image class="setting-icon" src="/assets/setting.png" mode="aspectFit" bindtap="goToSettings"></image>
+    </view>
   </view>
+
+  <!-- 第二行盒子信息 -->
   <view class="profile-stats">
-    <view class="stat-item">12<br/>关注</view>
-    <view class="stat-item">60<br/>粉丝</view>
-    <view class="stat-item">55<br/>获赞与收藏</view>
+    <view class="stat-item">12<br/> 关注</view>
+    <view class="stat-item">60<br/> 粉丝</view>
+    <view class="stat-item">55<br/> 获赞与收藏</view>
   </view>
-  <view class="profile-menu">
+
+  <!-- 第三行盒子信息，感觉没必要，目前注释掉 -->
+  <!-- <view class="profile-menu">
     <view class="menu-item">购物</view>
     <view class="menu-item">订单</view>
     <view class="menu-item">购物车</view>
-  </view>
+  </view> -->
+
+  <!-- 第四行盒子信息 -->
   <view class="profile-tabs">
     <view class="tab selected">笔记</view>
     <view class="tab">收藏</view>
     <view class="tab">赞过</view>
   </view>
+
+  <!-- 第五行盒子信息 -->
   <view class="empty-content">
     <!-- <text>看看你收藏的搞笑表情包</text> -->
     <button class="publish-btn">去发布</button>
   </view>
 </view>
-
-
-
-
-<!-- <text>pages/mine/mine.wxml</text> -->

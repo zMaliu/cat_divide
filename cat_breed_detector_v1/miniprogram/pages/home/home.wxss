@@ -1,9 +1,9 @@
 /* pages/home/home.wxss */
 .home-container { background: #f5f5f5; min-height: 100vh; color: #111; }
-.navbar { display: flex; align-items: center; padding: 20rpx; color: #111; border-bottom: 1rpx solid #eee; }
+.navbar { display: flex; align-items: center; padding: 20rpx; color: #111; border-bottom: 2rpx solid rgb(214, 214, 214); }
 .tab { margin-right: 40rpx; font-size: 32rpx; }
 .selected { color: #111; font-weight: bold; border-bottom: 4rpx solid #111; }
-.search-icon { margin-left: auto; }
+
 .waterfall { display: flex; flex-wrap: wrap; }
 
 .post-card {
@@ -56,3 +56,29 @@
     font-size: 24rpx;
     color: #888;
   }
+
+/* 搜索框样式 */
+.search-container {
+  border: 1rpx solid rgb(116, 116, 116);
+  border-radius: 10rpx;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border-radius: 20rpx;
+  padding: 0 20rpx;
+  height: 60rpx;
+}
+
+.search-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: 15rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}

@@ -1,8 +1,13 @@
 // pages/mine/mine.js
 
 Page({
-    data: {}
-  })
+    //页面跳转：跳转到设置页面
+    goToSettings() {
+      wx.navigateTo({
+        url: '/pages/setting/setting' 
+      });
+    }
+  });
 
 
 

@@ -3,9 +3,16 @@
 <view class="home-container">
   <view class="navbar">
     <text class="tab">关注</text>
-    <text class="tab selected">发现</text>
-    <text class="tab">广州</text>
-    <view class="search-icon">🔍</view>
+    <text class="tab selected">热点</text>
+    <text class="tab">附近</text>
+    <!-- 搜索框布局start-->
+    <view class="search-container">
+      <view class="search-bar">
+        <input class="search-input" type="text" placeholder="请输入关键词" placeholder-style="color:#999"/>
+        <image class="search-icon" src="/assets/sreach.png" mode="aspectFit" />
+      </view>
+    </view>
+    <!-- 搜索框布局end -->
   </view>
   <scroll-view scroll-y="true" class="waterfall">
     <block wx:for="{{posts}}" wx:key="id">

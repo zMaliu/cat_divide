@@ -1,6 +1,6 @@
 /* pages/mine/mine.wxss */
 .mine-container { background: #fff; min-height: 100vh; color: #111; }
-.profile-header { display: flex; align-items: center; padding: 32rpx; }
+.profile-header { display: flex; align-items: center; padding: 20rpx; }
 .profile-avatar { width: 120rpx; height: 120rpx; border-radius: 50%; }
 .profile-info { margin-left: 24rpx; flex: 1; }
 .profile-name { font-size: 36rpx; font-weight: bold; color: #111; }
@@ -15,3 +15,14 @@
 .selected { color: #111; font-weight: bold; border-bottom: 4rpx solid #111; }
 .empty-content { text-align: center; margin-top: 80rpx; }
 .publish-btn { background: #111; color: #fff; border-radius: 16rpx; margin-top: 24rpx; }
+
+/* 设置图标样式 */
+.setting-container {
+  margin-left: 15rpx;
+}
+
+.setting-icon {
+  width: 60rpx;
+  height: 60rpx;
+  align-items: center;
+}

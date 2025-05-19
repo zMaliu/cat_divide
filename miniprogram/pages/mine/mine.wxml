@@ -1,0 +1,85 @@
+<!--pages/mine/mine.wxml-->
+
+<view class="mine-container">
+
+  <!-- 首行盒子信息 -->
+  <view class="profile-header">
+    <image src="/assets/avatar1.jpg" class="profile-avatar"/>
+    <view class="profile-info">
+      <view class="profile-name">**</view>
+      <view class="profile-id">账号：*********</view>
+    </view>
+    <view>
+    <button class="edit-btn">编辑资料</button></view>
+    <!-- 设置图标 -->
+    <view class="setting-container">
+      <image class="setting-icon" src="/assets/setting.png" mode="aspectFit" bindtap="goToSettings"></image>
+    </view>
+  </view>
+
+  <!-- 第二行盒子信息 -->
+  <view class="profile-stats">
+    <view class="stat-item">12<br/> 关注</view>
+    <view class="stat-item">60<br/> 粉丝</view>
+    <view class="stat-item">55<br/> 获赞与收藏</view>
+  </view>
+
+  <!-- 第三行盒子信息，感觉没必要，目前注释掉 -->
+  <!-- <view class="profile-menu">
+    <view class="menu-item">购物</view>
+    <view class="menu-item">订单</view>
+    <view class="menu-item">购物车</view>
+  </view> -->
+
+  <!-- 第四行盒子信息 -->
+  <view class="mine-tabs">
+    <text class="mine-tab {{currentMineTab === 'note' ? 'selected' : ''}}" data-tab="note" bindtap="switchMineTab">笔记</text>
+    <text class="mine-tab {{currentMineTab === 'collect' ? 'selected' : ''}}" data-tab="collect" bindtap="switchMineTab">收藏</text>
+    <text class="mine-tab {{currentMineTab === 'like' ? 'selected' : ''}}" data-tab="like" bindtap="switchMineTab">赞过</text>
+  </view>
+
+  <!-- 笔记tab内容 -->
+  <view class="mine-tab-content" hidden="{{currentMineTab !== 'note'}}">
+    <view class="masonry">
+      <block wx:for="{{noteList}}" wx:key="id">
+        <view class="post-card">
+          <image src="{{item.img}}" class="post-img" mode="widthFix"/>
+          <view class="post-title">{{item.title}}</view>
+          <view class="post-desc">{{item.desc}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 收藏tab内容 -->
+  <view class="mine-tab-content" hidden="{{currentMineTab !== 'collect'}}">
+    <view class="masonry">
+      <block wx:for="{{collectList}}" wx:key="id">
+        <view class="post-card">
+          <image src="{{item.img}}" class="post-img" mode="widthFix"/>
+          <view class="post-title">{{item.title}}</view>
+          <view class="post-desc">{{item.desc}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 赞过tab内容 -->
+  <view class="mine-tab-content" hidden="{{currentMineTab !== 'like'}}">
+    <view class="masonry">
+      <block wx:for="{{likeList}}" wx:key="id">
+        <view class="post-card">
+          <image src="{{item.img}}" class="post-img" mode="widthFix"/>
+          <view class="post-title">{{item.title}}</view>
+          <view class="post-desc">{{item.desc}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 第五行盒子信息 -->
+  <view class="empty-content">
+    <!-- <text>看看你收藏的搞笑表情包</text> -->
+    <!-- <button class="publish-btn">去发布</button> -->
+  </view>
+</view>

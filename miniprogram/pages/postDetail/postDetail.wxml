@@ -1,0 +1,69 @@
+<!--pages/postDetail/postDetail.wxml-->
+
+<view class="detail-container">
+  <view class="detail-header">
+    <image src="{{post.avatar}}" class="avatar"/>
+    <view class="nickname">{{post.nickname}}</view>
+    <view class="header-actions">
+      <view class="follow-btn" bindtap="onFollow">{{isFollowed ? '已关注' : '关注'}}</view>
+      <view class="share-btn" bindtap="onShare">分享</view>
+    </view>
+  </view>
+  <view class="detail-title">{{post.title}}</view>
+  <image src="{{post.img}}" class="detail-img"/>
+  <view class="detail-content">{{post.content}}</view>
+  <view class="detail-tags">
+    <block wx:for="{{post.tags}}" wx:key="*this">
+      <text class="tag">#{{item}}</text>
+    </block>
+  </view>
+  <!-- 评论区展示 -->
+  <view class="comment-section">
+    <view class="comment-title">评论</view>
+    <block wx:if="{{comments.length > 0}}">
+      <block wx:for="{{comments}}" wx:key="id">
+        <view class="comment-item">
+          <image src="{{item.avatar}}" class="comment-avatar"/>
+          <view class="comment-content">
+            <view class="comment-nickname">{{item.nickname}}</view>
+            <view class="comment-text">{{item.text}}</view>
+          </view>
+        </view>
+      </block>
+    </block>
+    <block wx:else>
+      <view class="no-comment">还没有评论，快来抢沙发吧！</view>
+    </block>
+  </view>
+  <!-- 评论输入框和发送按钮 -->
+  <view class="detail-bottom">
+    <input
+      class="comment-input"
+      placeholder="说点什么..."
+      value="{{inputValue}}"
+      bindinput="onInput"
+      confirm-type="send"
+      bindconfirm="onSendComment"
+    />
+    <view class="bottom-btns">
+      <view class="icon-btn" bindtap="onLike">
+        <text style="color:{{isLiked ? '#FF2D55' : '#111'}}">❤️</text>
+        <text>{{likeCount}}</text>
+      </view>
+      <view class="icon-btn" bindtap="onStar">
+        <text style="color:{{isStarred ? '#FF2D55' : '#111'}}">⭐</text>
+        <text>{{starCount}}</text>
+      </view>
+      <view class="icon-btn">
+        <text>💬</text>
+        <text>{{commentCount}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+
+
+
+
+<!-- <text>pages/postDetail/postDetail.wxml</text> -->

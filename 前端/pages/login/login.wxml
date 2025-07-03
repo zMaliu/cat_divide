@@ -1,0 +1,8 @@
+<view class="input-group">
+        <input class="input" type="text" placeholder="请输入用户名" value="{{registerForm.user_name}}" bindinput="onRegister_username_Input"  />
+      </view>
+      <view class="input-group">
+        <input class="input" type="password" placeholder="请设置密码" value="{{registerForm.password}}" bindinput="onRegisterPasswordInput" />
+      </view>
+     
+      <button class="submit-btn" bindtap="handleRegister">注册</button>

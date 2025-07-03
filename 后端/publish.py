@@ -12,7 +12,7 @@ def get_db():
     )
 
 @app.route("api/publish",method=["POST"])
-def publish()
+def publish():
     data=request.get_json()
     title=data.get("title")
     content=data.get("content")

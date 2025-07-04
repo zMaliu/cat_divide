@@ -1,8 +1,10 @@
 
-<view class="input-group">
+<!-- <view class="input-group">
     <button class="upload-btn" bindtap="onChoosePhoto">上传照片</button>
     <image wx:if="{{postingForm.photo}}" class="preview-img" src="{{postingForm.photo}}" mode="aspectFill"></image>
-</view>
+</view> -->
+
+<image src="../../assets/Abyssinian_11.jpg" />
 
 <view class="input-group">
     <input class="input" type="text" placeholder="添加标题" value="{{postingForm.title}}" bindinput="onPostingTitleInput" />

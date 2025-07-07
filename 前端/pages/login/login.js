@@ -61,7 +61,7 @@ Page({
         console.log("user_name",user_name);
         console.log("password",password);
         wx.request({
-            url: 'http://localhost:5002/api/register',
+            url: 'http://127.0.0.1:5000/api/register',
             method: 'POST',
             header: {
             'Content-Type': 'application/json'
@@ -110,7 +110,7 @@ Page({
     handleLogin: function () {
         const { user_name, password } = this.data.loginForm;
         wx.request({
-            url: 'http://localhost:5002/api/login',
+            url: 'http://127.0.0.1:5000/api/login',
             method: 'POST',
             header: {
             'Content-Type': 'application/json'

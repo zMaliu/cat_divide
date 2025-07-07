@@ -1,52 +1,35 @@
-/*
- Navicat Premium Data Transfer
+create table comments
+(
+    comments_id  int auto_increment
+        primary key,
+    article_id   int                                not null,
+    user_id      int                                not null,
+    article_content      text                               not null,
+    comment_time datetime default CURRENT_TIMESTAMP null
+);
 
- Source Server         : cat
- Source Server Type    : MySQL
- Source Server Version : 80042 (8.0.42)
- Source Host           : localhost:3306
- Source Schema         : cat
+create table register
+(
+    user_id          int auto_increment
+        primary key,
+    user_name        varchar(255) not null,
+    password         varchar(255) not null,
+    user_create_time datetime     not null on update CURRENT_TIMESTAMP
+)
+    row_format = DYNAMIC;
 
- Target Server Type    : MySQL
- Target Server Version : 80042 (8.0.42)
- File Encoding         : 65001
+create table publish
+(
+    article_id   int auto_increment
+        primary key,
+    title        varchar(255) not null,
+    content      text         not null,
+    publish_time datetime     not null on update CURRENT_TIMESTAMP,
+    user_id      int          not null,
+    constraint fk_pubilsh_user
+        foreign key (user_id) references register (user_id)
+            on delete cascade
+)
+    row_format = DYNAMIC;
 
 
-*/
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for publish
--- ----------------------------
-DROP TABLE IF EXISTS `publish`;
-CREATE TABLE `publish`  (
-                            `article_id` int NOT NULL AUTO_INCREMENT,
-                            `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-                            `content` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-                            `publish_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-                            PRIMARY KEY (`article_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of publish
--- ----------------------------
-
--- ----------------------------
--- Table structure for register
--- ----------------------------
-DROP TABLE IF EXISTS `register`;
-CREATE TABLE `register`  (
-                             `user_id` int NOT NULL AUTO_INCREMENT,
-                             `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-                             `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-                             `user_create_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-                             PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of register
--- ----------------------------
-
-SET FOREIGN_KEY_CHECKS = 1;

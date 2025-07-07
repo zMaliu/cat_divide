@@ -40,7 +40,7 @@ Page({
         console.log("title",title);
         console.log("content",content);
         wx.request({
-            url: 'http://localhost:5001/api/register',
+            url: 'http://localhost:5001/api/posting',
             method: 'POST',
             // filePath: photo,      photo变量本身就是一个路径，这个写法可以，下面这个也可以
             // filePath: this.data.postingForm.photo,

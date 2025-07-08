@@ -3,10 +3,16 @@ import pymysql
 import re
 from flask_cors import CORS
 import hashlib
+import uuid
+
 
 app=Flask(__name__)#创建Flask应用实例
-CORS(app)
+CORS(app, supports_credentials=True)
 app.secret_key="cat123456"
+
+# 假设用全局变量存token，实际建议用redis或数据库
+token_map = {}
+
 def get_db():
     return pymysql.connect(
         host="localhost",
@@ -66,9 +72,10 @@ def login():
         # 验证用户
         cursor.execute("SELECT user_id FROM register WHERE user_name = %s", (user_name,))
         user = cursor.fetchone()
-
+        
         if not user:
             return jsonify({"code": 404, "msg": "用户不存在"})
+        user_id = user[0]
 
         # 验证密码
         hashed_pwd = hashlib.md5(password.encode()).hexdigest()
@@ -79,22 +86,28 @@ def login():
             return jsonify({"code": 401, "msg": "密码错误"})
 
         # 登录成功，存储用户ID到session
-        session['user_id'] = user[0]
-        return jsonify({"code": 200, "msg": "登录成功", "user_id": user[0]})
+        # session['user_id'] = user_id
+        token = str(uuid.uuid4())
+        token_map[token] = user_id
+        return jsonify({"code": 200, "msg": "登录成功", "user_id": user_id, "token": token})
 
     except Exception as e:
         return jsonify({"code": 500, "msg": "服务器错误: " + str(e)})
     finally:
         cursor.close()
         db.close()
+
 @app.route("/api/posting",methods=["POST"])#定义访问路径，只接受POST请求
 def posting():
-    if "user_id" not in session:
-        return jsonify({"code":401,"msg":"用户未登录"})
-
+    auth = request.headers.get('Authorization')
+    if not auth or not auth.startswith('Bearer '):
+        return jsonify({"code": 401, "msg": "未携带token"})
+    token = auth.split(' ')[1]
+    user_id = token_map.get(token)
+    if not user_id:
+        return jsonify({"code": 401, "msg": "token无效或已过期"})
 
     data=request.get_json()
-    user_id=session["user_id"]
     title=data.get("title")
     content=data.get("content")
 
@@ -205,4 +218,4 @@ def db_check():
 
 if __name__ == '__main__':
     db_check()
-    app.run(host="0.0.0.0",port=5000)
+    app.run(host="0.0.0.0",port=5002)

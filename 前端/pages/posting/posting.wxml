@@ -14,4 +14,4 @@
     <input class="input" type="text" placeholder="添加正文" value="{{postingForm.content}}" bindinput="onPostingContentInput" />
 </view>
 
-<button class="submit-btn" bindtap="handleRegister">发布笔记</button>
+<button class="submit-btn" bindtap="handlePosting">发布笔记</button>

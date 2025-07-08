@@ -27,6 +27,7 @@ Page({
     },
 
     // 事件函数
+    // 下面这两个函数第一次忘记写了，这个是能传数据的关键函数，一个input就要有一个函数来接受数据 
     // 这个是针对blindinput函数而言的，不是所有的input都要有一个函数，  这个叫做input的事件函数
     // 事件函数可以实时获取用户输入，比如保存到 data 里、做表单校验等，就要写事件函数。
     // 但只要你在 input 上写了 bindinput="xxx"（这个是在wxml里面写的），就必须在 JS 里有一个名为 xxx 的函数，否则小程序会报错。
@@ -61,7 +62,7 @@ Page({
         console.log("user_name",user_name);
         console.log("password",password);
         wx.request({
-            url: 'http://127.0.0.1:5000/api/register',
+            url: 'http://localhost:5002/api/register',
             method: 'POST',
             header: {
             'Content-Type': 'application/json'
@@ -77,27 +78,19 @@ Page({
                     title: '注册成功',
                     icon: 'success'
                 });
-                // 跳转到发作品
                 console.log('准备跳转')
+                // 注册成功后切换到登录
                 setTimeout(() => {
-                    wx.redirectTo({
-                      url: '/pages/posting/posting'
-                    });
-                  }, 1500);
-                  console.log('跳转完成')
-                }
-            //     // 注册成功后切换到登录
-            //     setTimeout(() => {
-            //         this.setData({
-            //         currentTab: 'login',
-            //         loginForm: {
-            //             user_name:user_name,
-            //             password: password
-            //         }
-            //     });
-            //   }, 1500);
-            //     } 
-                else {
+                    this.setData({
+                    currentTab: 'login',
+                    loginForm: {
+                        user_name:user_name,
+                        password: password
+                    }
+                });
+              }, 1500);
+                console.log('跳转完成')
+                }else {
                     wx.showToast({
                     title: res.data.msg || '注册失败',
                     icon: 'none'
@@ -110,7 +103,7 @@ Page({
     handleLogin: function () {
         const { user_name, password } = this.data.loginForm;
         wx.request({
-            url: 'http://127.0.0.1:5000/api/login',
+            url: 'http://localhost:5002/api/login',
             method: 'POST',
             header: {
             'Content-Type': 'application/json'
@@ -119,12 +112,16 @@ Page({
             user_name: user_name,
             password: password
             },
+            //withCredentials: true, // 关键
     
             success: (res) => {
+                wx.setStorageSync('token', res.data.token)
                 wx.hideLoading();
                 if (res.data.code == 200) {
                   // 保存用户信息到本地存储
-                  wx.setStorageSync('userInfo', res.data.data);
+                  //wx.setStorageSync('userInfo', res.data.data);
+                  // 登录成功后
+                //wx.setStorageSync('user_id', res.data.user_id); // 假设后端返回了 user_id
                   
                   wx.showToast({
                     title: '登录成功',
@@ -134,7 +131,7 @@ Page({
                 // 跳转到发作品
                 setTimeout(() => {
                   wx.redirectTo({
-                    url: '/pages/posting/posting.js'
+                    url: '/pages/posting/posting'
                   });
                 }, 1500);
               } else {

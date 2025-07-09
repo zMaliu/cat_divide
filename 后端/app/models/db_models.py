@@ -1,3 +1,9 @@
+class UserToken:
+    def __init__(self,token,user_id,expire_time):
+        self.token=token
+        self.user_id=user_id
+        self.expire_time=expire_time
+
 class User:
     def __init__(self,user_id,user_name,password,user_create_time):
         self.user_id=user_id

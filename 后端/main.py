@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from app.routers import auth, post, comment
+from src.app.schemas.response import BaseResponse
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -25,4 +26,8 @@ def db_check():
 
 if __name__ == '__main__':
     db_check()
-    app.run(host="0.0.0.0", port=5002)
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        return BaseResponse.error(500,f"服务器错误：{str(e)}").dict(),500
+    app.run(host="0.0.0.0", port=5001)

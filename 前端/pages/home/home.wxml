@@ -1,0 +1,11 @@
+<view wx:for="{{posts}}" wx:key="article_id">
+  <view class="post-item">
+    <text class="post-title">{{item.title}}</text>
+    <text class="post-author">作者：{{item.user_name}}</text>
+    <text class="post-time">{{item.publish_time}}</text>
+    <text class="post-content">{{item.content}}</text>
+  </view>
+</view>
+
+
+

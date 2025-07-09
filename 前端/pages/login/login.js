@@ -62,7 +62,7 @@ Page({
         console.log("user_name",user_name);
         console.log("password",password);
         wx.request({
-            url: 'http://localhost:5002/api/register',
+            url: 'http://localhost:5001/api/register',
             method: 'POST',
             header: {
             'Content-Type': 'application/json'
@@ -103,7 +103,7 @@ Page({
     handleLogin: function () {
         const { user_name, password } = this.data.loginForm;
         wx.request({
-            url: 'http://localhost:5002/api/login',
+            url: 'http://localhost:5001/api/login',
             method: 'POST',
             header: {
             'Content-Type': 'application/json'
@@ -112,7 +112,6 @@ Page({
             user_name: user_name,
             password: password
             },
-            //withCredentials: true, // 关键
     
             success: (res) => {
                 wx.setStorageSync('token', res.data.token)
@@ -120,18 +119,15 @@ Page({
                 if (res.data.code == 200) {
                   // 保存用户信息到本地存储
                   //wx.setStorageSync('userInfo', res.data.data);
-                  // 登录成功后
-                //wx.setStorageSync('user_id', res.data.user_id); // 假设后端返回了 user_id
-                  
                   wx.showToast({
                     title: '登录成功',
                     icon: 'success'
                   });
     
-                // 跳转到发作品
+                
                 setTimeout(() => {
-                  wx.redirectTo({
-                    url: '/pages/posting/posting'
+                  wx.switchTab({
+                    url: '/pages/home/home'
                   });
                 }, 1500);
               } else {

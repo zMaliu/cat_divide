@@ -9,15 +9,17 @@ class PostService:
         db=get_db()
         cursor=db.cursor()
         try:
+            default_img="/default.jpg"
             cursor.execute("""
-                INSERT INTO publish(title,content,publish_time,user_id)
-                VALUES (%s,%s,NOW(),%s)
-            """,(title,content,user_id))
+                INSERT INTO publish(title,content,img,publish_time,user_id)
+                VALUES (%s,%s,%s,NOW(),%s)
+            """,(title,content,default_img,user_id))
             db.commit()
-            return BaseResponse.success()
+            return BaseResponse.success(data={"success":True})
         except Exception as e:
             db.rollback()
-            return BaseResponse.error(500,f"创建失败：{str(e)}")
+            print(f"数据库错误：{str(e)}")
+            return BaseResponse.error(500,f"创建失败：{str(e)}",data={"success":False})
         finally:
             cursor.close()
             db.close()
@@ -27,6 +29,7 @@ class PostService:
         db=get_db()
         cursor=db.cursor(pymysql.cursors.DictCursor)
         try:
+            offset=(page-1)*per_page
             cursor.execute("""
             SELECT 
                 p.article_id, 

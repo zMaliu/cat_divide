@@ -64,4 +64,6 @@ class AuthService:
 
     @staticmethod
     def verify_token(token):
+        if token.startswith("Bearer "):
+            token=token[7:]
         return token_map.get(token)

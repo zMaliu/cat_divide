@@ -124,7 +124,9 @@ Page({
                     icon: 'success'
                   });
     
-                
+                // 跳转到主页面
+                // 如果是下面有选择的这种页面，跳转页面的时候用的是wx.switchTab函数;
+                // 如果是完全独立的页面就是用的wx.redirectTo
                 setTimeout(() => {
                   wx.switchTab({
                     url: '/pages/home/home'

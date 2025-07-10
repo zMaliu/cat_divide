@@ -2,9 +2,6 @@
     "pages": [
         "pages/login/login",
         "pages/home/home",
-        "pages/shop/shop",
-        "pages/identify/identify",
-        "pages/message/message",
         "pages/mine/mine",
         "pages/posting/posting"
     ],
@@ -24,24 +21,6 @@
                 "iconPath": "assets/tab_home.png",
                 "selectedIconPath": "assets/tab_home_selected.png",
                 "text": "首页"
-            },
-            {
-                "pagePath": "pages/message/message",
-                "iconPath": "assets/tab_message.png",
-                "selectedIconPath": "assets/tab_message_selected.png",
-                "text": "消息"
-            },
-            {
-                "pagePath": "pages/identify/identify",
-                "iconPath": "assets/tab_identify.png",
-                "selectedIconPath": "assets/tab_identify_selected.png",
-                "text": "识别"
-            },
-            {
-                "pagePath": "pages/shop/shop",
-                "iconPath": "assets/tab_shop.png",
-                "selectedIconPath": "assets/tab_shop_selected.png",
-                "text": "商城"
             },
             {
                 "pagePath": "pages/mine/mine",

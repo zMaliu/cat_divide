@@ -8,6 +8,9 @@ post_bp = Blueprint("post", __name__)
 
 @post_bp.before_request
 def auth_middleware():
+    if request.endpoint=="post.list_posts":
+        return
+
     token = request.headers.get('Authorization')
     if not token:
         return BaseResponse.error(401, "未提供认证令牌").dict(), 401

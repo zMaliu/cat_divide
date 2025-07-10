@@ -1,6 +1,7 @@
 from app.database import get_db
 from app.schemas.response import BaseResponse
 from app.models.db_models import Post
+import pymysql
 
 class PostService:
     @staticmethod
@@ -9,7 +10,7 @@ class PostService:
         cursor=db.cursor()
         try:
             cursor.execute("""
-                INSERT INTO pulish(title,content,pulish_time,user_id)
+                INSERT INTO publish(title,content,publish_time,user_id)
                 VALUES (%s,%s,NOW(),%s)
             """,(title,content,user_id))
             db.commit()
@@ -26,14 +27,18 @@ class PostService:
         db=get_db()
         cursor=db.cursor(pymysql.cursors.DictCursor)
         try:
-            offset=(page-1)*per_page
             cursor.execute("""
-                SELECT p.*,user_name
-                FROM publish p 
-                JOIN register u ON p.user_id=u.user_id
-                ORDER BY publish_time DESC
-                LIMIT %s OFFSET %s
-            """,(per_page,offset))
+            SELECT 
+                p.article_id, 
+                p.title, 
+                p.content, 
+                p.publish_time,
+                u.user_name  # 明确指定字段来源
+            FROM publish p 
+            JOIN register u ON p.user_id = u.user_id
+            ORDER BY p.publish_time DESC
+            LIMIT %s OFFSET %s
+        """, (per_page, offset))
             posts=cursor.fetchall()
             return BaseResponse.success({"posts": posts})
         except Exception as e:

@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 from app.routers import auth, post, comment
-from src.app.schemas.response import BaseResponse
+from app.schemas.response import BaseResponse
+from app.database import get_db
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)

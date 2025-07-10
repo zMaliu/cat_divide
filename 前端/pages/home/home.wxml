@@ -1,11 +1,17 @@
-<view wx:for="{{posts}}" wx:key="article_id">
-  <view class="post-item">
-    <text class="post-title">{{item.title}}</text>
-    <text class="post-author">作者：{{item.user_name}}</text>
-    <text class="post-time">{{item.publish_time}}</text>
-    <text class="post-content">{{item.content}}</text>
-  </view>
-</view>
-
-
+<view class="page-content" hidden="{{currentTab !== 'hot'}}">
+    <scroll-view scroll-y="true" class="waterfall">
+        <view class="masonry">
+            <block wx:for="{{posts}}" wx:key="article_id">
+            <view class="post-card" bindtap="goPostDetail" data-post="{{item}}">
+                <image src="{{item.img}}" class="post-img" mode="widthFix"/>
+                <view class="post-title">{{item.title}}</view>
+                <view class="post-content">{{item.content}}</view>
+                <view class="post-footer">
+                    <text class="footer-post_user_name">{{item.post_user_name}}</text>
+                </view>
+            </view>
+            </block>
+        </view>
+    </scroll-view>
+</view> 
 

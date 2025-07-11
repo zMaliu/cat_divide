@@ -114,11 +114,12 @@ Page({
             },
     
             success: (res) => {
-                wx.setStorageSync('token', res.data.token)
+                // wx.setStorageSync('token', res.data.data.token)
                 wx.hideLoading();
                 if (res.data.code == 200) {
                   // 保存用户信息到本地存储
                   //wx.setStorageSync('userInfo', res.data.data);
+                  wx.setStorageSync('token', res.data.data.token);
                   wx.showToast({
                     title: '登录成功',
                     icon: 'success'

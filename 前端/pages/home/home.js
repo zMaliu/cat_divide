@@ -6,12 +6,12 @@ Page({
 
     onLoad: function() {
         wx.request({
-          url: 'http://localhost:5001/api/posts',
+          url: 'http://localhost:5001/api/list',
           method: 'GET',
           success: (res) => {
             if (res.data.code === 200) {
               this.setData({
-                posts: res.data.data
+                posts: res.data.data.posts
               });
             } else {
               wx.showToast({

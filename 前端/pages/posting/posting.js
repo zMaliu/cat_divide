@@ -40,8 +40,9 @@ Page({
         // console.log("photo",photo);
         console.log("title",title);
         console.log("content",content);
+        console.log("Token:",token)
         wx.request({
-            url: 'http://localhost:5001/api/posting',
+            url: 'http://localhost:5001/api/create',
             method: 'POST',
             // filePath: photo,      photo变量本身就是一个路径，这个写法可以，下面这个也可以
             // filePath: this.data.postingForm.photo,
@@ -50,8 +51,8 @@ Page({
             // 就可以通过this.data.xxx 访问。直接写变量名（如 imagePath）只有在你本函数里定义了才行，否则会报错。
             
             header: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
             data: {
                 // photo: photo,
@@ -61,11 +62,16 @@ Page({
             withCredentials: true, // 关键
             success: (res) => {
                 wx.hideLoading();
-                if (res.data.success) {
+                if (res.data.code===200) {
                 wx.showToast({
                     title: '发布成功',
                     icon: 'success'
                 });
+                setTimeout(() => {
+                    wx.switchTab({
+                        url: '/pages/mine/mine'
+                    });
+                }, 1500);
                 }
                 else {
                     wx.showToast({

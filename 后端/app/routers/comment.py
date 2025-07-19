@@ -20,7 +20,7 @@ def create_comment():
     data = request.get_json()
     req = CommentRequest(**data)
     # 暂时使用固定的user_id，实际项目中应该从认证中获取
-    user_id = 2  # 使用testuser的ID
+    user_id = 1  # 使用xmtx的ID
     return CommentService.create_comment(
         req.article_id,
         req.article_content,

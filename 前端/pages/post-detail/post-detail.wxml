@@ -1,0 +1,61 @@
+<view class="post-detail-page">
+    <!-- 帖子内容区域 -->
+    <view class="post-content">
+        <!-- 帖子图片 -->
+        <image class="post-image" src="{{post.img}}" mode="widthFix"/>
+        
+        <!-- 帖子信息 -->
+        <view class="post-info">
+            <view class="post-title">{{post.title}}</view>
+            <view class="post-text">{{post.content}}</view>
+            <view class="post-meta">
+                <text class="post-author">{{post.post_user_name}}</text>
+                <text class="post-time">{{post.create_time || '刚刚'}}</text>
+            </view>
+        </view>
+    </view>
+
+    <!-- 评论区域 -->
+    <view class="comments-section">
+        <view class="comments-header">
+            <text class="comments-title">评论 ({{comments.length}})</text>
+        </view>
+        
+        <!-- 评论列表 -->
+        <view class="comments-list">
+            <block wx:if="{{!loading}}">
+                <view wx:for="{{comments}}" wx:key="comments_id" class="comment-item">
+                    <image class="comment-avatar" src="/assets/avatar1.jpg" mode="aspectFill"/>
+                    <view class="comment-content">
+                        <view class="comment-user">{{item.user_name}}</view>
+                        <view class="comment-text">{{item.article_content}}</view>
+                        <view class="comment-time">{{item.comment_time || '刚刚'}}</view>
+                    </view>
+                </view>
+                
+                <view wx:if="{{comments.length === 0}}" class="no-comments">
+                    <text>暂无评论，快来抢沙发吧~</text>
+                </view>
+            </block>
+            
+            <view wx:if="{{loading}}" class="loading">
+                <text>加载中...</text>
+            </view>
+        </view>
+    </view>
+
+    <!-- 评论输入区域 -->
+    <view class="comment-input-section">
+        <view class="comment-input-container">
+            <input 
+                class="comment-input" 
+                placeholder="说点什么..." 
+                value="{{commentText}}"
+                bindinput="onCommentInput"
+                confirm-type="send"
+                bindconfirm="submitComment"
+            />
+            <button class="send-btn" bindtap="submitComment">发送</button>
+        </view>
+    </view>
+</view> 

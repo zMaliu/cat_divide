@@ -1,0 +1,159 @@
+.post-detail-page {
+    background-color: #fff;
+    min-height: 100vh;
+    padding-bottom: 120rpx;
+}
+
+.post-content {
+    background-color: #fff;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 600rpx;
+}
+
+.post-info {
+    padding: 30rpx;
+}
+
+.post-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20rpx;
+    line-height: 1.4;
+}
+
+.post-text {
+    font-size: 28rpx;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20rpx;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 24rpx;
+    color: #999;
+}
+
+.post-author {
+    font-weight: 500;
+}
+
+.comments-section {
+    margin-top: 20rpx;
+    background-color: #fff;
+    border-top: 1rpx solid #f0f0f0;
+}
+
+.comments-header {
+    padding: 30rpx 30rpx 20rpx;
+    border-bottom: 1rpx solid #f0f0f0;
+}
+
+.comments-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #333;
+}
+
+.comments-list {
+    padding: 0 30rpx;
+}
+
+.comment-item {
+    display: flex;
+    padding: 30rpx 0;
+    border-bottom: 1rpx solid #f8f8f8;
+}
+
+.comment-avatar {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    margin-right: 20rpx;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+.comment-user {
+    font-size: 28rpx;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10rpx;
+}
+
+.comment-text {
+    font-size: 28rpx;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 10rpx;
+}
+
+.comment-time {
+    font-size: 24rpx;
+    color: #999;
+}
+
+.no-comments {
+    padding: 60rpx 0;
+    text-align: center;
+    color: #999;
+    font-size: 28rpx;
+}
+
+.loading {
+    padding: 40rpx 0;
+    text-align: center;
+    color: #999;
+    font-size: 28rpx;
+}
+
+.comment-input-section {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border-top: 1rpx solid #f0f0f0;
+    padding: 20rpx 30rpx;
+    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+}
+
+.comment-input-container {
+    display: flex;
+    align-items: center;
+    background-color: #f8f8f8;
+    border-radius: 20rpx;
+    padding: 0 20rpx;
+}
+
+.comment-input {
+    flex: 1;
+    height: 80rpx;
+    font-size: 28rpx;
+    color: #333;
+}
+
+.send-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 20rpx;
+    padding: 0;
+    height: auto;
+    width: 60%;
+    line-height: 60rpx;
+    font-size: 28rpx;
+    margin-left: 20rpx;
+}
+
+.send-btn:active {
+    background-color: #167a16;
+} 

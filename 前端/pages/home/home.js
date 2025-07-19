@@ -21,6 +21,13 @@ Page({
             }
           }
         });
-      }
+    },
 
+    goPostDetail: function(e) {
+        const post = e.currentTarget.dataset.post;
+        const postData = encodeURIComponent(JSON.stringify(post));
+        wx.navigateTo({
+            url: `/pages/post-detail/post-detail?post=${postData}`
+        });
+    }
 })

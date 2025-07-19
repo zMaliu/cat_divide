@@ -1,0 +1,25 @@
+<view class="message-page">
+    <view class="message-header">
+        <text class="header-title">消息</text>
+    </view>
+    
+    <view class="message-list">
+        <block wx:for="{{messages}}" wx:key="id">
+            <view class="message-item" bindtap="onMessageTap" data-id="{{item.id}}">
+                <image class="avatar" src="{{item.avatar}}" mode="aspectFill"/>
+                <view class="message-content">
+                    <view class="message-top">
+                        <text class="user-name">{{item.user_name}}</text>
+                        <text class="message-time">{{item.time}}</text>
+                    </view>
+                    <view class="message-bottom">
+                        <text class="last-message">{{item.last_message}}</text>
+                        <view wx:if="{{item.unread > 0}}" class="unread-badge">
+                            <text class="unread-count">{{item.unread}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </block>
+    </view>
+</view> 

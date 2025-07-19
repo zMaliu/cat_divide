@@ -1,0 +1,26 @@
+<view class="chat-page">
+    <view class="chat-messages">
+        <block wx:for="{{messages}}" wx:key="id">
+            <view class="message-item {{item.type}}">
+                <view class="message-content">
+                    <text class="message-text">{{item.content}}</text>
+                    <text class="message-time">{{item.time}}</text>
+                </view>
+            </view>
+        </block>
+    </view>
+    
+    <view class="chat-input-section">
+        <view class="input-container">
+            <input 
+                class="message-input" 
+                placeholder="输入消息..." 
+                value="{{inputText}}"
+                bindinput="onInputChange"
+                confirm-type="send"
+                bindconfirm="sendMessage"
+            />
+            <button class="send-btn" bindtap="sendMessage">发送</button>
+        </view>
+    </view>
+</view> 

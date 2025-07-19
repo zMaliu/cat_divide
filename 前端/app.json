@@ -3,7 +3,10 @@
         "pages/login/login",
         "pages/home/home",
         "pages/mine/mine",
-        "pages/posting/posting"
+        "pages/posting/posting",
+        "pages/message/message",
+        "pages/post-detail/post-detail",
+        "pages/chat/chat"
     ],
     "window": {
         "navigationBarTextStyle": "black",
@@ -21,6 +24,12 @@
                 "iconPath": "assets/tab_home.png",
                 "selectedIconPath": "assets/tab_home_selected.png",
                 "text": "首页"
+            },
+            {
+                "pagePath": "pages/message/message",
+                "iconPath": "assets/tab_message.png",
+                "selectedIconPath": "assets/tab_message_selected.png",
+                "text": "消息"
             },
             {
                 "pagePath": "pages/mine/mine",

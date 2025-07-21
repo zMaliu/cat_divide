@@ -2,7 +2,7 @@
     <scroll-view scroll-y="true" class="waterfall">
         <view class="masonry">
             <block wx:for="{{posts}}" wx:key="article_id">
-            <view class="post-card" bindtap="goPostDetail" data-post="{{item}}">
+            <view class="post-card" bindtap="goToDetail" data-post="{{item}}">
                 <image src="{{item.img}}" class="post-img" mode="widthFix"/>
                 <view class="post-title">{{item.title}}</view>
                 <view class="post-content">{{item.content}}</view>

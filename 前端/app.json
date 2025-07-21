@@ -3,7 +3,8 @@
         "pages/login/login",
         "pages/home/home",
         "pages/mine/mine",
-        "pages/posting/posting"
+        "pages/posting/posting",
+        "pages/postDetail/postDetail"
     ],
     "window": {
         "navigationBarTextStyle": "black",

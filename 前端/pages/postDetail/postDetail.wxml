@@ -1,0 +1,22 @@
+<view class="post-detail">
+  <text class="post-title">{{post.title}}</text>
+  <text class="post-author">作者：{{post.user_name}}</text>
+  <text class="post-time">{{post.publish_time}}</text>
+  <text class="post-content">{{post.content}}</text>
+  <image wx:if="{{post.img}}" src="{{post.img}}" mode="widthFix"></image>
+</view>
+
+<!-- 评论输入框 -->
+<view class="comment-box">
+  <input placeholder="写下你的评论..." value="{{commentContent}}" bindinput="onCommentInput" />
+  <button bindtap="handleComment">发表评论</button>
+</view>
+
+<!-- 评论列表 -->
+<view class="comment-list">
+  <view wx:for="{{comments}}" wx:key="comment_id" class="comment-item">
+    <text class="comment-author">{{item.user_name}}</text>
+    <text class="comment-content">{{item.comment_content}}</text>
+    <text class="comment-time">{{item.comment_time}}</text>
+  </view>
+</view>

@@ -1,8 +1,5 @@
 
-<!-- <view class="input-group">
-    <button class="upload-btn" bindtap="onChoosePhoto">上传照片</button>
-    <image wx:if="{{postingForm.photo}}" class="preview-img" src="{{postingForm.photo}}" mode="aspectFill"></image>
-</view> -->
+
 
 <image src="../../assets/Abyssinian_11.jpg" />
 

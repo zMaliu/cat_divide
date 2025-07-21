@@ -18,7 +18,7 @@ def auth_middleware():
 
     g.user_id = user_id
 
-@comment_bp.route("/_create", methods=["POST"])
+@comment_bp.route("/create", methods=["POST"])
 def create_comment():
     data = request.get_json()
     req = CommentRequest(**data)

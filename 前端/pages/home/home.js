@@ -6,7 +6,7 @@ Page({
 
     onLoad: function() {
         wx.request({
-          url: 'http://localhost:5001/api/post/list',
+          url: 'http://localhost:5001/api/post/list?per_page=100', 
           method: 'GET',
           success: (res) => {
             if (res.data.code === 200) {
@@ -22,6 +22,9 @@ Page({
           }
         });
     },
+
+
+    // 点击某个作品，跳转到详情页
     goToDetail: function(e) {
         const post = e.currentTarget.dataset.post;
         wx.navigateTo({

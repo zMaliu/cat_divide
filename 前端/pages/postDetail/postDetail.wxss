@@ -111,15 +111,15 @@
     border-radius: 50%;
     margin-right: 12rpx;
   }
-  .comment-content {
+  .comment-contentTable {
     flex: 1;
   }
-  .comment-nickname {
+  .comment-author {
     font-size: 24rpx;
     color: #333;
     font-weight: bold;
   }
-  .comment-text {
+  .comment-time {
     font-size: 24rpx;
     color: #555;
     margin-top: 2rpx;

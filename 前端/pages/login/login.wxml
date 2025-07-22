@@ -1,65 +1,8 @@
-<view class="login-page">
-  <!-- 背景图层 -->
-  <view class="background">
-    <view class="circle circle1"></view>
-    <view class="circle circle2"></view>
-  </view>
-  
-  <!-- Logo区域 -->
-  <view class="header">
-    <image class="logo" src="../../assets/avatar1.jpg" mode="aspectFill"></image>
-    <view class="title-container">
-      <text class="title">芝士猫窝</text>
-      <text class="subtitle">流浪猫的数字家园</text>
-    </view>
-  </view>
-  
-  <!-- 表单区域 -->
-  <view class="form-container">
-    <view class="tabs">
-      <view class="tab {{currentTab === 'login' ? 'active' : ''}}" bindtap="switchToLogin">登录</view>
-      <view class="tab {{currentTab === 'register' ? 'active' : ''}}" bindtap="switchToRegister">注册</view>
-    </view>
-    
-    <!-- 登录表单 -->
-    <view class="form {{currentTab === 'login' ? 'show' : 'hide'}}">
-      <view class="input-row">
-        <image class="input-icon" src="../../assets/tab_mine.png" mode="aspectFit"></image>
-        <input class="input" type="text" placeholder="用户名" value="{{loginForm.user_name}}" bindinput="onLogin_username_Input" />
+<view class="input-group">
+        <input class="input" type="text" placeholder="请输入用户名" value="{{registerForm.user_name}}" bindinput="onRegister_username_Input"  />
       </view>
-      <view class="input-row">
-        <image class="input-icon" src="../../assets/tab_home.png" mode="aspectFit"></image>
-        <input class="input" type="password" placeholder="密码" value="{{loginForm.password}}" bindinput="onLoginPasswordInput" />
+      <view class="input-group">
+        <input class="input" type="password" placeholder="请设置密码" value="{{registerForm.password}}" bindinput="onRegisterPasswordInput" />
       </view>
-      <button class="action-button" bindtap="handleLogin">
-        <text>登录</text>
-      </button>
-    </view>
-    
-    <!-- 注册表单 -->
-    <view class="form {{currentTab === 'register' ? 'show' : 'hide'}}">
-      <view class="input-row">
-        <image class="input-icon" src="../../assets/tab_mine.png" mode="aspectFit"></image>
-        <input class="input" type="text" placeholder="用户名" value="{{registerForm.user_name}}" bindinput="onRegister_username_Input" />
-      </view>
-      <view class="input-row">
-        <image class="input-icon" src="../../assets/tab_home.png" mode="aspectFit"></image>
-        <input class="input" type="password" placeholder="密码（至少6位）" value="{{registerForm.password}}" bindinput="onRegisterPasswordInput" />
-      </view>
-      <button class="action-button" bindtap="handleRegister">
-        <text>注册</text>
-      </button>
-    </view>
-  </view>
-  
-  <view class="footer">
-    <text>登录或注册代表您同意</text>
-    <text class="highlight" bindtap="goToAgreement">用户协议</text>
-    <text>和</text>
-    <text class="highlight" bindtap="goToPrivacy">隐私政策</text>
-  </view>
-</view>
-
-
-
-
+     
+      <button class="submit-btn" bindtap="handleRegister">注册</button>

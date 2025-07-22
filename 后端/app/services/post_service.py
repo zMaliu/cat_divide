@@ -37,6 +37,7 @@ class PostService:
                 p.content, 
                 p.publish_time,
                 u.user_name  # 明确指定字段来源
+                (SELECT COUNT(*) FROM likes WHERE article_id = p.article_id) AS like_count
             FROM publish p 
             JOIN register u ON p.user_id = u.user_id
             ORDER BY p.publish_time DESC
@@ -57,10 +58,12 @@ class PostService:
         try:
             cursor.execute("""
                 SELECT p.*, u.user_name 
+                    (SELECT COUNT(*) FROM likes WHERE article_id = p.article_id) AS like_count,
+                    EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked
                 FROM publish p
                 JOIN register u ON p.user_id = u.user_id
                 WHERE p.article_id = %s
-            """, (article_id,))
+            """, (article_id,article_id))
             post = cursor.fetchone()
             if not post:
                 return BaseResponse.error(404, "文章不存在")

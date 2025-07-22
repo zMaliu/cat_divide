@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from app.routers import auth, post, comment
+from app.routers import auth, post, comment,like,follow
 from app.schemas.response import BaseResponse
 from app.database import get_db
 
@@ -12,7 +12,8 @@ app.secret_key = "cat123456"
 app.register_blueprint(auth.auth_bp, url_prefix='/api/auth')
 app.register_blueprint(post.post_bp, url_prefix='/api/post')
 app.register_blueprint(comment.comment_bp, url_prefix='/api/comment')
-
+app.register_blueprint(like.like_bp,url_prefix="/api/like")
+app.register_blueprint(follow.follow_bp, url_prefix="/api/follow")
 def db_check():
     try:
         db = get_db()

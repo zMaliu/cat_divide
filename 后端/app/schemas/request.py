@@ -15,3 +15,10 @@ class PostRequest(BaseModel):
 class CommentRequest(BaseModel):
     article_id:int
     article_content:str
+
+class LikeRequest(BaseModel):
+    article_id:int
+
+class FollowRequest(BaseModel):
+    followed_id: int
+

@@ -1,90 +1,17 @@
-<view class="home-container">
-  <!-- 搜索框 -->
-  <view class="search-container">
-    <view class="search-bar">
-      <view class="search-icon-box">
-        <view class="search-icon">🔍</view>
-      </view>
-      <input class="search-input" type="text" placeholder="搜索猫咪内容..." confirm-type="search" 
-        value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="doSearch" />
-      <view class="search-btn-box" wx:if="{{searchKeyword}}">
-        <view class="search-clear-btn" bindtap="clearSearch">✕</view>
-      </view>
-      <view class="search-action-btn" bindtap="doSearch">搜索</view>
-    </view>
-  </view>
-
-  <!-- 主内容区 -->
-  <view class="page-content" hidden="{{currentTab !== 'hot'}}">
-    <!-- 搜索模式提示 -->
-    <view class="search-mode-hint" wx:if="{{isSearchMode}}">
-      <text>搜索: "{{searchKeyword}}"</text>
-      <text class="clear-search-text" bindtap="clearSearch">清除搜索</text>
-    </view>
-    
-    <!-- 下拉刷新区域 -->
-    <view class="refresh-container" wx:if="{{isRefreshing}}">
-      <view class="cat-refresh">
-        <view class="cat-face"></view>
-        <view class="refresh-ear left"></view>
-        <view class="refresh-ear right"></view>
-        <view class="refresh-text">喵喵加载中...</view>
-      </view>
-    </view>
-
-    <scroll-view scroll-y="true" class="waterfall" bindscrolltolower="loadMore" refresher-enabled="{{true}}" refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onRefresh">
-      <view class="masonry">
-        <block wx:if="{{posts.length > 0}}">
-          <block wx:for="{{posts}}" wx:key="article_id">
-            <view class="post-card" bindtap="goPostDetail" data-post="{{item}}">
-              <!-- 图片占位符和加载效果 -->
-              <view class="image-placeholder" wx:if="{{!item.imageLoaded}}">
-                <view class="loading-spinner"></view>
-              </view>
-              <image src="{{item.img}}" class="post-img" mode="widthFix" lazy-load="true" bindload="onImageLoad" data-index="{{index}}"/>
-              
-              <view class="post-content-container">
+<view class="page-content" hidden="{{currentTab !== 'hot'}}">
+    <scroll-view scroll-y="true" class="waterfall">
+        <view class="masonry">
+            <block wx:for="{{posts}}" wx:key="article_id">
+            <view class="post-card" bindtap="goToDetail" data-post="{{item}}">
+                <image src="{{item.img}}" class="post-img" mode="widthFix"/>
                 <view class="post-title">{{item.title}}</view>
                 <view class="post-content">{{item.content}}</view>
                 <view class="post-footer">
-                  <view class="user-info">
-                    <view class="user-avatar"></view>
                     <text class="footer-post_user_name">{{item.post_user_name}}</text>
-                  </view>
-                  <view class="post-stats">
-                    <view class="stat-item">
-                      <view class="stat-icon like-icon"></view>
-                      <text class="stat-count">0</text>
-                    </view>
-                    <view class="stat-item">
-                      <view class="stat-icon comment-icon"></view>
-                      <text class="stat-count">0</text>
-                    </view>
-                  </view>
                 </view>
-              </view>
             </view>
-          </block>
-        </block>
-        
-        <!-- 空状态 -->
-        <view class="empty-state" wx:if="{{posts.length === 0 && !isLoading}}">
-          <image class="empty-state-icon" src="../../assets/avatar1.jpg" mode="aspectFill"></image>
-          <view class="empty-state-text">还没有猫咪内容</view>
-          <view class="empty-state-subtext">快来发布第一篇猫咪动态吧!</view>
-          <button class="empty-state-btn" bindtap="goToPosting">立即发布</button>
+            </block>
         </view>
-      </view>
-      
-      <!-- 加载更多状态 -->
-      <view class="loading-container" wx:if="{{isLoadingMore}}">
-        <view class="paw-loading">
-          <view class="paw-dot"></view>
-          <view class="paw-dot"></view>
-          <view class="paw-dot"></view>
-        </view>
-      </view>
     </scroll-view>
-  </view>
 </view> 
 

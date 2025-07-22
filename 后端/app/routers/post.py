@@ -8,7 +8,7 @@ post_bp = Blueprint("post", __name__)
 
 @post_bp.before_request
 def auth_middleware():
-    if request.endpoint in ["post.list_posts", "post.search_posts"]:
+    if request.endpoint=="post.list_posts":
         return
 
     token = request.headers.get('Authorization')
@@ -36,13 +36,6 @@ def list_posts():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     return PostService.get_posts(page, per_page).dict()
-
-@post_bp.route("/search", methods=["GET"])
-def search_posts():
-    keyword = request.args.get('keyword', '')
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
-    return PostService.search_posts(keyword, page, per_page).dict()
 
 @post_bp.route("/detail/<int:article_id>", methods=["GET"])
 def post_detail(article_id):

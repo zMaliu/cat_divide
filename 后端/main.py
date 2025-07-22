@@ -9,9 +9,9 @@ CORS(app, supports_credentials=True)
 app.secret_key = "cat123456"
 
 # 注册蓝图
-app.register_blueprint(auth.auth_bp, url_prefix='/api/auth')
-app.register_blueprint(post.post_bp, url_prefix='/api/post')
-app.register_blueprint(comment.comment_bp, url_prefix='/api/comment')
+app.register_blueprint(auth.auth_bp, url_prefix='/api')
+app.register_blueprint(post.post_bp, url_prefix='/api')
+app.register_blueprint(comment.comment_bp, url_prefix='/api')
 
 def db_check():
     try:

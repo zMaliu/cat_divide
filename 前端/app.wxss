@@ -1,10 +1,114 @@
 /**app.wxss**/
+/* 全局颜色变量 */
+page {
+  /* 猫咪主题配色 */
+  --primary-color: #E67E22; /* 温暖的橙色作为主色调 */
+  --secondary-color: #F4D03F; /* 温暖的黄色作为辅助色 */
+  --accent-color: #8E44AD; /* 紫色作为强调色 */
+  --background-color: #fffde7; /* 修改为淡黄色背景 */
+  --card-background: #FFFFFF; /* 卡片背景色 */
+  --text-primary: #333333; /* 主要文字颜色 */
+  --text-secondary: #666666; /* 次要文字颜色 */
+  --text-hint: #999999; /* 提示性文字颜色 */
+  --border-color: #EEEEEE; /* 边框颜色 */
+  --success-color: #2ECC71; /* 成功状态颜色 */
+  --error-color: #E74C3C; /* 错误状态颜色 */
+  
+  /* 全局字体设置 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--text-primary);
+  background-color: var(--background-color);
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+/* 容器样式 */
 .container {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 200rpx 0;
+  padding: 40rpx 0;
   box-sizing: border-box;
+}
+
+/* 全局按钮样式 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 20rpx 40rpx;
+  border-radius: 50rpx;
+  font-weight: 500;
+  box-shadow: 0 4rpx 10rpx rgba(230, 126, 34, 0.3);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+/* 全局卡片样式 */
+.card {
+  background-color: var(--card-background);
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+/* 全局输入框样式 */
+.input-box {
+  background-color: var(--card-background);
+  border-radius: 40rpx;
+  padding: 20rpx 30rpx;
+  margin-bottom: 30rpx;
+  border: 2rpx solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.input-box:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2rpx rgba(230, 126, 34, 0.2);
+}
+
+/* 页面通用标题样式 */
+.page-title {
+  font-size: 42rpx;
+  font-weight: 600;
+  margin-bottom: 30rpx;
+  color: var(--text-primary);
+}
+
+/* 加载动画样式 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30rpx 0;
+}
+
+.cat-paw {
+  width: 50rpx;
+  height: 50rpx;
+  margin: 0 10rpx;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: pawAnimation 1.5s infinite ease-in-out;
+}
+
+.cat-paw:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.cat-paw:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pawAnimation {
+  0%, 100% { transform: scale(0.6); opacity: 0.6; }
+  50% { transform: scale(1); opacity: 1; }
 } 

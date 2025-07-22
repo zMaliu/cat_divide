@@ -7,7 +7,7 @@ pool=PooledDB(
     host="localhost",
     port=3306,
     user="root",
-    password="cat123456",
+    password="123456",
     database="cat"
 )
 def get_db():

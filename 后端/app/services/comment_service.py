@@ -1,6 +1,5 @@
 from app.database import get_db
 from app.schemas.response import BaseResponse
-import pymysql
 
 class CommentService:
     @staticmethod

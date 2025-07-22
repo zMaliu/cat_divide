@@ -4,17 +4,18 @@
         "pages/home/home",
         "pages/mine/mine",
         "pages/posting/posting",
-        "pages/postDetail/postDetail"
+        "pages/agreement/agreement",
+        "pages/privacy/privacy"
     ],
     "window": {
         "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "Weixin",
+        "navigationBarTitleText": "芝士猫窝",
         "navigationBarBackgroundColor": "#ffffff"
     },
     "tabBar": {
-        "color": "#999",
-        "selectedColor": "#1E941D",
-        "backgroundColor": "#fff",
+        "color": "#999999",
+        "selectedColor": "#E67E22",
+        "backgroundColor": "#ffffff",
         "borderStyle": "black",
         "list": [
             {
@@ -22,6 +23,12 @@
                 "iconPath": "assets/tab_home.png",
                 "selectedIconPath": "assets/tab_home_selected.png",
                 "text": "首页"
+            },
+            {
+                "pagePath": "pages/posting/posting",
+                "iconPath": "assets/tab_posting.png",
+                "selectedIconPath": "assets/tab_posting_selected.png",
+                "text": "发布"
             },
             {
                 "pagePath": "pages/mine/mine",

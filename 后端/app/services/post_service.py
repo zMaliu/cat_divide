@@ -51,6 +51,35 @@ class PostService:
             db.close()
 
     @staticmethod
+    def search_posts(keyword, page=1, per_page=10):
+        db = get_db()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
+        try:
+            offset = (page - 1) * per_page
+            search_term = f"%{keyword}%"
+            cursor.execute("""
+                SELECT 
+                    p.article_id, 
+                    p.title, 
+                    p.content, 
+                    p.img,
+                    p.publish_time,
+                    u.user_name as post_user_name
+                FROM publish p 
+                JOIN register u ON p.user_id = u.user_id
+                WHERE p.title LIKE %s OR p.content LIKE %s
+                ORDER BY p.publish_time DESC
+                LIMIT %s OFFSET %s
+            """, (search_term, search_term, per_page, offset))
+            posts = cursor.fetchall()
+            return BaseResponse.success({"posts": posts})
+        except Exception as e:
+            return BaseResponse.error(500, f"搜索失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()
+
+    @staticmethod
     def get_post_detail(article_id):
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)

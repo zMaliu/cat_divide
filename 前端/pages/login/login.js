@@ -1,16 +1,51 @@
 Page({
     data: {
       currentTab: 'login', // 当前选中的标签：login 或 register
-    //   loginForm: {
-    //     user_name: '',
-    //     password: ''
-    //   },
+      loginForm: {
+        user_name: '',
+        password: ''
+      },
       registerForm: {
         user_name: '',
         password: ''
       },
       
     },
+
+    // 切换到登录标签
+    switchToLogin: function () {
+        this.setData({
+        currentTab: 'login'
+        });
+    },
+
+    // 切换到注册标签
+    switchToRegister: function () {
+        this.setData({
+        currentTab: 'register'
+        });
+    },
+
+    // 跳转到用户协议页面
+    goToAgreement: function() {
+        wx.navigateTo({
+            url: '/pages/agreement/agreement'
+        });
+    },
+    
+    // 跳转到隐私政策页面
+    goToPrivacy: function() {
+        wx.navigateTo({
+            url: '/pages/privacy/privacy'
+        });
+    },
+
+    // 事件函数
+    // 下面这两个函数第一次忘记写了，这个是能传数据的关键函数，一个input就要有一个函数来接受数据 
+    // 这个是针对blindinput函数而言的，不是所有的input都要有一个函数，  这个叫做input的事件函数
+    // 事件函数可以实时获取用户输入，比如保存到 data 里、做表单校验等，就要写事件函数。
+    // 但只要你在 input 上写了 bindinput="xxx"（这个是在wxml里面写的），就必须在 JS 里有一个名为 xxx 的函数，否则小程序会报错。
+    // onInputChange: function(e) {这里可以用 e.detail.value 拿到输入的内容}
     onRegister_username_Input: function (e) {
         this.setData({
           'registerForm.user_name': e.detail.value
@@ -22,31 +57,54 @@ Page({
           'registerForm.password': e.detail.value
         });
       },
+
+      onLogin_username_Input: function (e) {
+        this.setData({
+          'loginForm.user_name': e.detail.value
+        });
+      },
+
+    onLoginPasswordInput: function (e) {
+        this.setData({
+          'loginForm.password': e.detail.value
+        });
+      },
+
     handleRegister: function () {
-        const { user_name, password } = this.data.
-        registerForm;
+        const { user_name, password } = this.data.registerForm;
+        //console.log函数可以获取日志  帮助检查错误
         console.log("user_name",user_name);
         console.log("password",password);
         wx.request({
-            url: 'http://10.45.103.50:5000/api/register',
+            url: 'http://localhost:5001/api/register',
             method: 'POST',
             header: {
             'Content-Type': 'application/json'
             },
             data: {
-            user_name:user_name,
-            password:password
+            user_name: user_name,
+            password: password
             },
             success: (res) => {
                 wx.hideLoading();
-                if (res.data.success) {
+                if (res.data.code == 200) {
                 wx.showToast({
                     title: '注册成功',
                     icon: 'success'
                 });
-                
-                }
-                else {
+                console.log('准备跳转')
+                // 注册成功后切换到登录
+                setTimeout(() => {
+                    this.setData({
+                    currentTab: 'login',
+                    loginForm: {
+                        user_name:user_name,
+                        password: password
+                    }
+                });
+              }, 1500);
+                console.log('跳转完成')
+                }else {
                     wx.showToast({
                     title: res.data.msg || '注册失败',
                     icon: 'none'
@@ -54,5 +112,55 @@ Page({
                 }
                 }
             })
+    },
+
+    handleLogin: function () {
+        const { user_name, password } = this.data.loginForm;
+        wx.request({
+            url: 'http://localhost:5001/api/login',
+            method: 'POST',
+            header: {
+            'Content-Type': 'application/json'
+            },
+            data: {
+            user_name: user_name,
+            password: password
+            },
+    
+            success: (res) => {
+                // wx.setStorageSync('token', res.data.data.token)
+                wx.hideLoading();
+                if (res.data.code == 200) {
+                  // 保存用户信息到本地存储
+                  //wx.setStorageSync('userInfo', res.data.data);
+                  wx.setStorageSync('token', res.data.data.token);
+                  wx.showToast({
+                    title: '登录成功',
+                    icon: 'success'
+                  });
+    
+                // 跳转到主页面
+                // 如果是下面有选择的这种页面，跳转页面的时候用的是wx.switchTab函数;
+                // 如果是完全独立的页面就是用的wx.redirectTo
+                setTimeout(() => {
+                  wx.switchTab({
+                    url: '/pages/home/home'
+                  });
+                }, 1500);
+              } else {
+                wx.showToast({
+                  title: res.data.error || '登录失败',
+                  icon: 'none'
+                });
+                }
+            },
+            fail: () => {
+                wx.hideLoading();
+                wx.showToast({
+                  title: '网络错误，请稍后重试',
+                  icon: 'none'
+                });
+            }
+        });
     }
 });

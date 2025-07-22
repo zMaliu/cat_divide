@@ -1,12 +1,43 @@
 {
-  "pages": [
-    "pages/login/login"
-  ],
-  "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
-  },
+    "pages": [
+        "pages/login/login",
+        "pages/home/home",
+        "pages/mine/mine",
+        "pages/posting/posting",
+        "pages/agreement/agreement",
+        "pages/privacy/privacy"
+    ],
+    "window": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "芝士猫窝",
+        "navigationBarBackgroundColor": "#ffffff"
+    },
+    "tabBar": {
+        "color": "#999999",
+        "selectedColor": "#E67E22",
+        "backgroundColor": "#ffffff",
+        "borderStyle": "black",
+        "list": [
+            {
+                "pagePath": "pages/home/home",
+                "iconPath": "assets/tab_home.png",
+                "selectedIconPath": "assets/tab_home_selected.png",
+                "text": "首页"
+            },
+            {
+                "pagePath": "pages/posting/posting",
+                "iconPath": "assets/tab_posting.png",
+                "selectedIconPath": "assets/tab_posting_selected.png",
+                "text": "发布"
+            },
+            {
+                "pagePath": "pages/mine/mine",
+                "iconPath": "assets/tab_mine.png",
+                "selectedIconPath": "assets/tab_mine_selected.png",
+                "text": "我的"
+            }
+        ]
+    },
   "style": "v2",
   "componentFramework": "glass-easel",
   "sitemapLocation": "sitemap.json",

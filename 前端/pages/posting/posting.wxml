@@ -1,0 +1,14 @@
+
+
+
+<image src="../../assets/Abyssinian_11.jpg" />
+
+<view class="input-group">
+    <input class="input" type="text" placeholder="添加标题" value="{{postingForm.title}}" bindinput="onPostingTitleInput" />
+</view>
+
+<view class="input-group">
+    <input class="input" type="text" placeholder="添加正文" value="{{postingForm.content}}" bindinput="onPostingContentInput" />
+</view>
+
+<button class="submit-btn" bindtap="handlePosting">发布笔记</button>

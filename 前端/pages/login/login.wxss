@@ -37,7 +37,7 @@
   
   .form-section {
     width: 100%;
-    max-width: 600rpx;
+    max-width: 680rpx;
     background: #fff;
     border-radius: 24rpx;
     padding: 40rpx;

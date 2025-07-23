@@ -30,22 +30,74 @@ class PostService:
         cursor=db.cursor(pymysql.cursors.DictCursor)
         try:
             offset=(page-1)*per_page
+            # 简化查询，修复语法错误
             cursor.execute("""
             SELECT 
                 p.article_id, 
                 p.title, 
-                p.content, 
+                p.content,
+                p.img,
                 p.publish_time,
-                u.user_name  # 明确指定字段来源
-                (SELECT COUNT(*) FROM likes WHERE article_id = p.article_id) AS like_count
+
+                p.user_id,
+                u.user_name as post_user_name,
+                0 AS like_count,
+                0 AS comment_count
+
             FROM publish p 
             JOIN register u ON p.user_id = u.user_id
             ORDER BY p.publish_time DESC
             LIMIT %s OFFSET %s
-        """, (per_page, offset))
+            """, (per_page, offset))
             posts=cursor.fetchall()
+            
+            # 检查表是否存在并获取点赞和评论数量
+            try:
+                # 先检查likes表是否存在
+                cursor.execute("SHOW TABLES LIKE 'likes'")
+                likes_exists = cursor.fetchone() is not None
+                print(f"likes表是否存在: {likes_exists}")
+                
+                # 先检查comments表是否存在
+                cursor.execute("SHOW TABLES LIKE 'comments'")
+                comments_exists = cursor.fetchone() is not None
+                print(f"comments表是否存在: {comments_exists}")
+                
+                for post in posts:
+                    # 获取点赞数
+                    if likes_exists:
+                        try:
+                            like_cursor = db.cursor()
+                            like_cursor.execute("SELECT COUNT(*) AS count FROM likes WHERE article_id = %s", (post['article_id'],))
+                            result = like_cursor.fetchone()
+                            post['like_count'] = result['count'] if isinstance(result, dict) else result[0]
+                            like_cursor.close()
+                        except Exception as e:
+                            print(f"获取点赞数失败: {str(e)}")
+                            post['like_count'] = 0
+                    else:
+                        post['like_count'] = 0
+                    
+                    # 获取评论数
+                    if comments_exists:
+                        try:
+                            comment_cursor = db.cursor()
+                            comment_cursor.execute("SELECT COUNT(*) AS count FROM comments WHERE article_id = %s", (post['article_id'],))
+                            result = comment_cursor.fetchone()
+                            post['comment_count'] = result['count'] if isinstance(result, dict) else result[0]
+                            comment_cursor.close()
+                        except Exception as e:
+                            print(f"获取评论数失败: {str(e)}")
+                            post['comment_count'] = 0
+                    else:
+                        post['comment_count'] = 0
+            except Exception as e:
+                print(f"检查表结构失败: {str(e)}")
+                # 如果出错，只使用默认值
+                
             return BaseResponse.success({"posts": posts})
         except Exception as e:
+            print(f"查询失败: {str(e)}")
             return BaseResponse.error(500, f"查询失败: {str(e)}")
         finally:
             cursor.close()
@@ -56,10 +108,12 @@ class PostService:
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
+            # 简化查询，避免子查询
             cursor.execute("""
-                SELECT p.*, u.user_name 
-                    (SELECT COUNT(*) FROM likes WHERE article_id = p.article_id) AS like_count,
-                    EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked
+                SELECT 
+                    p.*, 
+                    u.user_name
+
                 FROM publish p
                 JOIN register u ON p.user_id = u.user_id
                 WHERE p.article_id = %s
@@ -67,8 +121,28 @@ class PostService:
             post = cursor.fetchone()
             if not post:
                 return BaseResponse.error(404, "文章不存在")
+                
+            # 检查likes表是否存在并获取点赞数
+            try:
+                cursor.execute("SHOW TABLES LIKE 'likes'")
+                likes_exists = cursor.fetchone() is not None
+                
+                if likes_exists:
+                    # 单独查询点赞数
+                    like_cursor = db.cursor()
+                    like_cursor.execute("SELECT COUNT(*) AS count FROM likes WHERE article_id = %s", (article_id,))
+                    result = like_cursor.fetchone()
+                    post['like_count'] = result['count'] if isinstance(result, dict) else result[0]
+                    like_cursor.close()
+                else:
+                    post['like_count'] = 0
+            except Exception as e:
+                print(f"获取点赞数失败: {str(e)}")
+                post['like_count'] = 0
+            
             return BaseResponse.success({"post": post})
         except Exception as e:
+            print(f"查询失败: {str(e)}")
             return BaseResponse.error(500, f"查询失败: {str(e)}")
         finally:
             cursor.close()

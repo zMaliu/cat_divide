@@ -1,10 +1,136 @@
 /**app.wxss**/
-.container {
-  height: 100%;
+page {
+  /* 统一配色方案 - 蓝紫色主题 */
+  --primary-color: #5B5FEF; /* 主色调：蓝紫色 */
+  --primary-light: #8286FF; /* 浅色调 */
+  --primary-dark: #3F42C8; /* 深色调 */
+  --accent-color: #FF6B8B; /* 强调色 */
+  --text-primary: #333333; /* 主要文字 */
+  --text-secondary: #666666; /* 次要文字 */
+  --text-hint: #999999; /* 提示性文字 */
+  --bg-color: #F7F8FC; /* 背景色 */
+  --card-color: #FFFFFF; /* 卡片背景 */
+  --border-color: #EAEAEA; /* 边框颜色 */
+  --success-color: #42C88F; /* 成功色 */
+  --error-color: #FF5757; /* 错误色 */
+  
+  /* 字体和布局 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+}
+
+/* 统一按钮样式 */
+.btn {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  padding: 200rpx 0;
-  box-sizing: border-box;
+  padding: 20rpx 40rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2rpx solid var(--primary-color);
+}
+
+/* 统一卡片样式 */
+.card {
+  background-color: var(--card-color);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 统一输入框样式 */
+.input-common {
+  background-color: var(--bg-color);
+  border-radius: 40rpx;
+  padding: 20rpx 30rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.input-common:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 2rpx rgba(91, 95, 239, 0.1);
+}
+
+/* 统一头像样式 */
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: var(--bg-color);
+}
+
+/* 无内容提示样式 */
+.empty-tip {
+  text-align: center;
+  padding: 60rpx 0;
+  color: var(--text-hint);
+  font-size: 28rpx;
+}
+
+/* 加载动画 */
+.loading {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid rgba(91, 95, 239, 0.2);
+  border-top: 6rpx solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 统一分割线 */
+.divider {
+  height: 2rpx;
+  background-color: var(--border-color);
+  margin: 20rpx 0;
+}
+
+/* 图标通用样式 */
+.icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+/* 交互图标样式 */
+.action-icon {
+  width: 36rpx;
+  height: 36rpx;
+  padding: 8rpx;
+}
+
+/* 标签样式 */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  font-size: 24rpx;
+  border-radius: 30rpx;
+  background-color: rgba(91, 95, 239, 0.1);
+  color: var(--primary-color);
+  margin-right: 10rpx;
 } 

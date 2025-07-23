@@ -1,6 +1,7 @@
 {
-    "navigationBarTitleText": "登录",
-    "navigationBarBackgroundColor": "#667eea",
-    "navigationBarTextStyle": "white",
-    "backgroundColor": "#667eea"
-  }
+  "navigationBarTitleText": "发布内容",
+  "navigationBarBackgroundColor": "#5B5FEF",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F7F8FC",
+  "usingComponents": {}
+}

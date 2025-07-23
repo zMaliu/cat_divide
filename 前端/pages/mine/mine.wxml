@@ -1,1 +1,108 @@
-<button class="submit-btn" bindtap="onPosting">发表作品</button>
+<view class="profile-container">
+  <!-- 加载中提示 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <block wx:if="{{!isLoading}}">
+    <!-- 用户信息卡片 -->
+    <view class="user-info">
+      <view class="user-header">
+        <image src="../../assets/avatar1.jpg" class="avatar"></image>
+        <view class="user-details">
+          <view class="user-name">{{userInfo.user_name}}</view>
+          <view class="user-id">ID: {{userInfo.user_id}}</view>
+        </view>
+        <view class="edit-profile" bindtap="editProfile">
+          <text class="edit-text">编辑资料</text>
+        </view>
+      </view>
+      
+      <view class="user-stats">
+        <view class="stat-item" bindtap="goToMyPosts">
+          <text class="stat-value">{{userInfo.post_count || 0}}</text>
+          <text class="stat-label">作品</text>
+        </view>
+        <view class="stat-item" bindtap="goToFollowers">
+          <text class="stat-value">{{userInfo.follower_count || 0}}</text>
+          <text class="stat-label">粉丝</text>
+        </view>
+        <view class="stat-item" bindtap="goToFollowing">
+          <text class="stat-value">{{userInfo.following_count || 0}}</text>
+          <text class="stat-label">关注</text>
+        </view>
+        <view class="stat-item" bindtap="goToLikedPosts">
+          <text class="stat-value">{{userInfo.like_count || 0}}</text>
+          <text class="stat-label">获赞</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 功能菜单 -->
+    <view class="menu-section">
+      <view class="section-title">内容管理</view>
+      <view class="menu-list">
+        <view class="menu-item" bindtap="onPosting">
+          <view class="menu-icon icon-post">
+            <image src="../../assets/icon-post.png" mode="aspectFit"></image>
+          </view>
+          <view class="menu-text">发布作品</view>
+          <view class="menu-arrow">
+            <text class="arrow-icon">〉</text>
+          </view>
+        </view>
+        
+        <view class="menu-item" bindtap="goToMyPosts">
+          <view class="menu-icon icon-works">
+            <image src="../../assets/icon-works.png" mode="aspectFit"></image>
+          </view>
+          <view class="menu-text">我的作品</view>
+          <view class="menu-arrow">
+            <text class="arrow-icon">〉</text>
+          </view>
+        </view>
+        
+        <view class="menu-item" bindtap="goToLikedPosts">
+          <view class="menu-icon icon-likes">
+            <image src="../../assets/icon-likes.png" mode="aspectFit"></image>
+          </view>
+          <view class="menu-text">我的点赞</view>
+          <view class="menu-arrow">
+            <text class="arrow-icon">〉</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="menu-section">
+      <view class="section-title">账号设置</view>
+      <view class="menu-list">
+        <view class="menu-item" bindtap="goToSettings">
+          <view class="menu-icon icon-settings">
+            <image src="../../assets/icon-settings.png" mode="aspectFit"></image>
+          </view>
+          <view class="menu-text">账号设置</view>
+          <view class="menu-arrow">
+            <text class="arrow-icon">〉</text>
+          </view>
+        </view>
+        
+        <view class="menu-item" bindtap="goToHelp">
+          <view class="menu-icon icon-help">
+            <image src="../../assets/icon-help.png" mode="aspectFit"></image>
+          </view>
+          <view class="menu-text">帮助与反馈</view>
+          <view class="menu-arrow">
+            <text class="arrow-icon">〉</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 退出登录 -->
+    <button class="logout-btn" bindtap="handleLogout">退出登录</button>
+    
+    <view class="app-version">芝士猫窝 v1.0.0</view>
+  </block>
+</view>

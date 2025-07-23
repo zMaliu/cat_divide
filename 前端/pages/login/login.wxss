@@ -1,187 +1,171 @@
-.login-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 40rpx;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .logo-section {
-    text-align: center;
-    margin-bottom: 80rpx;
-    margin-top: 60rpx;
-  }
-  
-  .logo {
-    width: 120rpx;
-    height: 120rpx;
-    border-radius: 60rpx;
-    margin-bottom: 30rpx;
-    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
-  }
-  
-  .app-title {
-    display: block;
-    font-size: 48rpx;
-    font-weight: bold;
-    color: #fff;
-    margin-bottom: 16rpx;
-  }
-  
-  .app-subtitle {
-    display: block;
-    font-size: 28rpx;
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .form-section {
-    width: 100%;
-    max-width: 680rpx;
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 40rpx;
-    box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.1);
-  }
-  
-  .tab-container {
-    display: flex;
-    margin-bottom: 40rpx;
-    border-bottom: 2rpx solid #f0f0f0;
-  }
-  
-  .tab {
-    flex: 1;
-    text-align: center;
-    padding: 24rpx 0;
-    font-size: 32rpx;
-    color: #999;
-    position: relative;
-    transition: all 0.3s ease;
-  }
-  
-  .tab.active {
-    color: #667eea;
-    font-weight: bold;
-  }
-  
-  .tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2rpx;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60rpx;
-    height: 4rpx;
-    background: #667eea;
-    border-radius: 2rpx;
-  }
-  
-  .form-content {
-    animation: fadeIn 0.3s ease;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20rpx);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .input-group {
-    position: relative;
-    margin-bottom: 32rpx;
-  }
-  
-  .input {
-    width: 100%;
-    height: 88rpx;
-    padding: 0 24rpx;
-    border: 2rpx solid #e8e8e8;
-    border-radius: 12rpx;
-    font-size: 28rpx;
-    background: #fafafa;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-  }
-  
-  .input:focus {
-    border-color: #667eea;
-    background: #fff;
-    box-shadow: 0 0 0 6rpx rgba(102, 126, 234, 0.1);
-  }
-  
-  .input-group:has(.code-btn) {
-    display: flex;
-    gap: 16rpx;
-  }
-  
-  .input-group:has(.code-btn) .input {
-    flex: 1;
-  }
-  
-  .code-btn {
-    width: 200rpx;
-    height: 88rpx;
-    background: #667eea;
-    color: #fff;
-    border: none;
-    border-radius: 12rpx;
-    font-size: 26rpx;
-    transition: all 0.3s ease;
-  }
-  
-  .code-btn:disabled {
-    background: #ccc;
-    color: #999;
-  }
-  
-  .submit-btn {
-    width: 100%;
-    height: 88rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    border: none;
-    border-radius: 12rpx;
-    font-size: 32rpx;
-    font-weight: bold;
-    margin-top: 16rpx;
-    transition: all 0.3s ease;
-  }
-  
-  .submit-btn:active {
-    transform: scale(0.98);
-    box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
-  }
-  
-  .other-options {
-    text-align: center;
-    margin-top: 32rpx;
-  }
-  
-  .forgot-password {
-    color: #667eea;
-    font-size: 26rpx;
-    text-decoration: underline;
-  }
-  
-  .footer {
-    margin-top: 60rpx;
-    text-align: center;
-    font-size: 24rpx;
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .agreement {
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .link {
-    color: #fff;
-    text-decoration: underline;
-    margin: 0 8rpx;
-  }
+page {
+  background-color: #F7F8FC;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.container {
+  padding: 0 40rpx;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+.header {
+  margin-top: 80rpx;
+  margin-bottom: 50rpx;
+  text-align: center;
+}
+
+.logo {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 20rpx;
+}
+
+.app-title {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #5B5FEF;
+  margin-bottom: 10rpx;
+}
+
+.app-slogan {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.form-section {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(91, 95, 239, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tab-container {
+  display: flex;
+  border-bottom: 2rpx solid #EAEAEA;
+  margin-bottom: 30rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  font-size: 32rpx;
+  color: #666666;
+  padding: 20rpx 0;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #5B5FEF;
+  font-weight: 600;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background-color: #5B5FEF;
+  border-radius: 2rpx;
+}
+
+.form-content {
+  padding: 10rpx 0;
+}
+
+.input-group {
+  margin-bottom: 25rpx;
+}
+
+.input {
+  width: 100%;
+  height: 90rpx;
+  border: 2rpx solid #EAEAEA;
+  border-radius: 45rpx;
+  padding: 0 30rpx;
+  font-size: 28rpx;
+  color: #333333;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
+
+.input:focus {
+  border-color: #8286FF;
+  box-shadow: 0 0 0 2rpx rgba(91, 95, 239, 0.1);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 45rpx;
+  background: #5B5FEF;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 30rpx;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+button.submit-btn {
+  line-height: normal;
+}
+
+.submit-btn:active {
+  background: #3F42C8;
+  transform: translateY(2rpx);
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.submit-btn:active::after {
+  transform: translate(-50%, -50%) scale(2);
+  opacity: 1;
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.link {
+  color: #5B5FEF;
+}
+
+/* 添加渐变效果 */
+.gradient-bg {
+  background: linear-gradient(135deg, #8286FF, #5B5FEF);
+  line-height: normal !important;
+}

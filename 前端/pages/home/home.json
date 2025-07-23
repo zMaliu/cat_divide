@@ -1,4 +1,8 @@
 {
-    "usingComponents": {}
-    
+  "navigationBarTitleText": "芝士猫窝",
+  "navigationBarBackgroundColor": "#5B5FEF",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F7F8FC",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
 }

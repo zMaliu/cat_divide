@@ -1,0 +1,82 @@
+<view class="detail-container">
+  <!-- 帖子详情卡片 -->
+  <view class="post-detail">
+    <!-- 作者信息 -->
+    <view class="author-section">
+      <view class="author-info">
+        <image class="author-avatar" src="../../assets/avatar1.jpg" mode="aspectFill"></image>
+        <view class="author-meta">
+          <text class="author-name">{{post.user_name}}</text>
+          <text class="post-time">{{post.publish_time}}</text>
+        </view>
+      </view>
+      <button class="follow-btn {{isFollowing ? 'following' : ''}}" bindtap="handleFollow">
+        {{isFollowing ? '已关注' : '+ 关注'}}
+      </button>
+    </view>
+
+    <!-- 帖子内容 -->
+    <view class="post-content-wrapper">
+      <view class="post-title">{{post.title}}</view>
+      <view class="post-content">{{post.content}}</view>
+      <image wx:if="{{post.img}}" src="{{post.img}}" mode="widthFix" class="post-image" bindtap="previewImage"></image>
+    </view>
+
+    <!-- 交互栏 -->
+    <view class="interaction-bar">
+      <view class="like-section {{isLiked ? 'liked' : ''}}" bindtap="handleLike">
+        <image src="{{isLiked ? '../../assets/liked.png' : '../../assets/like.png'}}" class="action-icon"></image>
+        <text class="action-text">{{likeCount > 0 ? likeCount : '点赞'}}</text>
+      </view>
+      <view class="comment-section" bindtap="focusCommentInput">
+        <image src="../../assets/comment.png" class="action-icon"></image>
+        <text class="action-text">{{comments.length > 0 ? comments.length : '评论'}}</text>
+      </view>
+      <view class="share-section" bindtap="sharePost">
+        <image src="../../assets/icon-share.png" class="action-icon"></image>
+        <text class="action-text">分享</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评论区 -->
+  <view class="comment-section-wrapper">
+    <view class="section-header">
+      <text class="section-title">评论 {{comments.length > 0 ? '(' + comments.length + ')' : ''}}</text>
+      <text class="sort-text" bindtap="toggleCommentSort">{{commentSortType === 'time' ? '按时间排序' : '按热度排序'}}</text>
+    </view>
+
+    <!-- 无评论提示 -->
+    <view wx:if="{{comments.length === 0}}" class="no-comments">
+      <image src="../../assets/icon-no-comment.png" class="no-comment-icon"></image>
+      <text class="no-comment-text">暂无评论，快来抢沙发吧~</text>
+    </view>
+
+    <!-- 评论列表 -->
+    <view wx:for="{{comments}}" wx:key="comments_id" class="comment-item">
+      <view class="comment-user">
+        <image class="comment-avatar" src="../../assets/avatar1.jpg" mode="aspectFill"></image>
+        <view class="comment-user-info">
+          <text class="comment-author">{{item.user_name}}</text>
+          <text class="comment-time">{{item.comment_time}}</text>
+        </view>
+      </view>
+      <view class="comment-content">{{item.article_content}}</view>
+      <view class="comment-actions">
+        <view class="comment-like" bindtap="likeComment" data-id="{{item.comments_id}}">
+          <image src="../../assets/like.png" class="comment-like-icon"></image>
+          <text class="comment-like-count">{{item.like_count || '点赞'}}</text>
+        </view>
+        <view class="comment-reply" bindtap="replyComment" data-id="{{item.comments_id}}" data-name="{{item.user_name}}">
+          <text class="reply-text">回复</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部评论框 -->
+  <view class="comment-box">
+    <input placeholder="写下你的评论..." value="{{commentContent}}" bindinput="onCommentInput" class="comment-input" focus="{{commentFocus}}" id="commentInput" adjust-position="{{true}}" />
+    <button bindtap="handleComment" class="comment-btn">发表</button>
+  </view>
+</view>

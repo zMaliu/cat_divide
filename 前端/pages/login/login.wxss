@@ -1,0 +1,171 @@
+page {
+  background-color: #F7F8FC;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.container {
+  padding: 0 40rpx;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+.header {
+  margin-top: 80rpx;
+  margin-bottom: 50rpx;
+  text-align: center;
+}
+
+.logo {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 20rpx;
+}
+
+.app-title {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #5B5FEF;
+  margin-bottom: 10rpx;
+}
+
+.app-slogan {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.form-section {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(91, 95, 239, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tab-container {
+  display: flex;
+  border-bottom: 2rpx solid #EAEAEA;
+  margin-bottom: 30rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  font-size: 32rpx;
+  color: #666666;
+  padding: 20rpx 0;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #5B5FEF;
+  font-weight: 600;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background-color: #5B5FEF;
+  border-radius: 2rpx;
+}
+
+.form-content {
+  padding: 10rpx 0;
+}
+
+.input-group {
+  margin-bottom: 25rpx;
+}
+
+.input {
+  width: 100%;
+  height: 90rpx;
+  border: 2rpx solid #EAEAEA;
+  border-radius: 45rpx;
+  padding: 0 30rpx;
+  font-size: 28rpx;
+  color: #333333;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
+
+.input:focus {
+  border-color: #8286FF;
+  box-shadow: 0 0 0 2rpx rgba(91, 95, 239, 0.1);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 45rpx;
+  background: #5B5FEF;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 30rpx;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+button.submit-btn {
+  line-height: normal;
+}
+
+.submit-btn:active {
+  background: #3F42C8;
+  transform: translateY(2rpx);
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.submit-btn:active::after {
+  transform: translate(-50%, -50%) scale(2);
+  opacity: 1;
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.link {
+  color: #5B5FEF;
+}
+
+/* 添加渐变效果 */
+.gradient-bg {
+  background: linear-gradient(135deg, #8286FF, #5B5FEF);
+  line-height: normal !important;
+}

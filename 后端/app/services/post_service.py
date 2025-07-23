@@ -38,10 +38,12 @@ class PostService:
                 p.content,
                 p.img,
                 p.publish_time,
+
                 p.user_id,
                 u.user_name as post_user_name,
                 0 AS like_count,
                 0 AS comment_count
+
             FROM publish p 
             JOIN register u ON p.user_id = u.user_id
             ORDER BY p.publish_time DESC
@@ -111,10 +113,11 @@ class PostService:
                 SELECT 
                     p.*, 
                     u.user_name
+
                 FROM publish p
                 JOIN register u ON p.user_id = u.user_id
                 WHERE p.article_id = %s
-            """, (article_id,))
+            """, (article_id,article_id))
             post = cursor.fetchone()
             if not post:
                 return BaseResponse.error(404, "文章不存在")

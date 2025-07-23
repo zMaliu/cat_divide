@@ -2,6 +2,7 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 import os
 from app.routers import auth, post, comment, like, follow
+
 from app.schemas.response import BaseResponse
 from app.database import get_db
 
@@ -47,7 +48,7 @@ def serve_default_image():
     except Exception as e:
         print(f"提供默认图片失败: {str(e)}")
         return "", 404
-
+      
 def db_check():
     try:
         db = get_db()

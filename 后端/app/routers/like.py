@@ -19,3 +19,7 @@ def auth_middleware():
 @like_bp.route("/<int:article_id>", methods=["POST"])
 def like_article(article_id):
     return LikeService.like_article(article_id, g.user_id).dict()
+
+@like_bp.route("/<int:article_id>", methods=["DELETE"])
+def unlike_article(article_id):
+    return LikeService.unlike_article(article_id, g.user_id).dict()

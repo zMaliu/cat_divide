@@ -1,14 +1,34 @@
+<view class="container">
+  <view class="form-section">
+    <view class="section-title">发布新内容</view>
+    
+    <view class="input-group">
+      <input class="input-title" type="text" placeholder="添加标题..." value="{{postingForm.title}}" bindinput="onPostingTitleInput" />
+    </view>
+    
+    <view class="input-group">
+      <textarea class="input-content" placeholder="分享你的猫咪故事..." value="{{postingForm.content}}" bindinput="onPostingContentInput" maxlength="500"></textarea>
+      <view class="word-count">{{postingForm.content.length || 0}}/500</view>
+    </view>
+  </view>
 
+  <view class="form-section upload-section">
+    <view class="section-title">添加图片</view>
+    <view class="image-list">
+      <block wx:for="{{uploadedImages}}" wx:key="index">
+        <view class="image-item">
+          <image class="post-image" src="{{item}}" mode="aspectFill"></image>
+          <view class="remove-icon" bindtap="removeImage" data-index="{{index}}">×</view>
+        </view>
+      </block>
+      <view class="upload-btn" bindtap="chooseImage" wx:if="{{uploadedImages.length < 9}}">
+        <view class="upload-icon">+</view>
+        <view>添加图片</view>
+      </view>
+    </view>
+  </view>
 
-
-<image src="../../assets/Abyssinian_11.jpg" />
-
-<view class="input-group">
-    <input class="input" type="text" placeholder="添加标题" value="{{postingForm.title}}" bindinput="onPostingTitleInput" />
+  <view class="submit-section">
+    <button class="submit-btn" bindtap="handlePosting">发布</button>
+  </view>
 </view>
-
-<view class="input-group">
-    <input class="input" type="text" placeholder="添加正文" value="{{postingForm.content}}" bindinput="onPostingContentInput" />
-</view>
-
-<button class="submit-btn" bindtap="handlePosting">发布笔记</button>

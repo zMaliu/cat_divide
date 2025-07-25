@@ -2,37 +2,40 @@
     "pages": [
         "pages/login/login",
         "pages/home/home",
-        "pages/mine/mine",
         "pages/posting/posting",
+        "pages/mine/mine",
         "pages/postDetail/postDetail"
     ],
     "window": {
-        "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "Weixin",
-        "navigationBarBackgroundColor": "#ffffff"
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#5B5FEF",
+        "navigationBarTitleText": "芝士猫窝",
+        "navigationBarTextStyle": "white"
     },
     "tabBar": {
-        "color": "#999",
-        "selectedColor": "#1E941D",
-        "backgroundColor": "#fff",
-        "borderStyle": "black",
-        "list": [
-            {
-                "pagePath": "pages/home/home",
-                "iconPath": "assets/tab_home.png",
-                "selectedIconPath": "assets/tab_home_selected.png",
-                "text": "首页"
-            },
-            {
-                "pagePath": "pages/mine/mine",
-                "iconPath": "assets/tab_mine.png",
-                "selectedIconPath": "assets/tab_mine_selected.png",
-                "text": "我的"
-            }
-        ]
+        "color": "#999999",
+        "selectedColor": "#5B5FEF",
+        "backgroundColor": "#FFFFFF",
+        "borderStyle": "white",
+        "list": [{
+            "pagePath": "pages/home/home",
+            "text": "首页",
+            "iconPath": "assets/tab_home.png",
+            "selectedIconPath": "assets/tab_home_selected.png"
+        },
+        {
+            "pagePath": "pages/posting/posting",
+            "text": "发布",
+            "iconPath": "assets/tab_identify.png",
+            "selectedIconPath": "assets/tab_identify_selected.png"
+        },
+        {
+            "pagePath": "pages/mine/mine",
+            "text": "我的",
+            "iconPath": "assets/tab_mine.png",
+            "selectedIconPath": "assets/tab_mine_selected.png"
+        }]
     },
   "style": "v2",
-  "componentFramework": "glass-easel",
-  "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "sitemapLocation": "sitemap.json"
 }

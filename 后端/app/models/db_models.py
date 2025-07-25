@@ -15,12 +15,13 @@ class User:
         self.following_count = following_count
 
 class Post:
-    def __init__(self,article_id,title,content,publish_time,user_id):
+    def __init__(self,article_id,title,content,publish_time,user_id,like_count=0):
         self.article_id=article_id
         self.title=title
         self.content=content
         self.publish_time=publish_time
         self.user_id=user_id
+        self.like_count=like_count
 
 class Comment:
     def __init__(self, comments_id, article_id, user_id, article_content, comment_time):

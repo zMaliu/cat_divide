@@ -43,6 +43,7 @@ create table publish
     img          varchar(255) default '/default.jpg' not null,
     publish_time datetime                            not null on update CURRENT_TIMESTAMP,
     user_id      int                                 not null,
+    like_count   int          default 0              null comment '获赞总数',
     constraint fk_pubilsh_user
         foreign key (user_id) references register (user_id)
             on delete cascade

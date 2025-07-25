@@ -2,6 +2,7 @@ from flask import Blueprint, request, g
 from app.services.like_service import LikeService
 from app.schemas.request import LikeRequest
 from app.schemas.response import BaseResponse
+from app.services.auth_service import AuthService
 
 like_bp = Blueprint("like", __name__)
 

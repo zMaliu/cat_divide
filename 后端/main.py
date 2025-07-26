@@ -1,8 +1,7 @@
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 import os
-from app.routers import auth, post, comment, like, follow
-
+from app.routers import auth, post, comment, like, follow,chat
 from app.schemas.response import BaseResponse
 from app.database import get_db
 
@@ -24,6 +23,7 @@ app.register_blueprint(post.post_bp, url_prefix='/api/post')
 app.register_blueprint(comment.comment_bp, url_prefix='/api/comment')
 app.register_blueprint(like.like_bp, url_prefix="/api/like")
 app.register_blueprint(follow.follow_bp, url_prefix="/api/follow")
+app.register_blueprint(chat.chat_bp, url_prefix="/api/chat")
 
 # 静态文件服务
 @app.route('/uploads/<path:filename>')
@@ -54,11 +54,11 @@ def db_check():
         db = get_db()
         cursor = db.cursor()
         cursor.execute("SELECT 1")
-        print("✅ 数据库连接成功")
+        print("数据库连接成功")
         cursor.close()
         db.close()
     except Exception as e:
-        print(f"❌ 数据库连接失败: {str(e)}")
+        print(f"数据库连接失败: {str(e)}")
         exit(1)
 
 if __name__ == '__main__':

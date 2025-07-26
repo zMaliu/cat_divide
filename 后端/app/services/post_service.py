@@ -37,7 +37,7 @@ class PostService:
                 p.content, 
                 p.publish_time,
                 u.user_name,
-                p.like_count,
+                p.like_count
             FROM publish p 
             JOIN register u ON p.user_id = u.user_id
             ORDER BY p.publish_time DESC

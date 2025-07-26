@@ -22,3 +22,9 @@ class LikeRequest(BaseModel):
 class FollowRequest(BaseModel):
     followed_id: int
 
+class MessageRequest(BaseModel):
+    touser_id: int
+    content: str
+
+class SessionRequest(BaseModel):
+    touser_id: int

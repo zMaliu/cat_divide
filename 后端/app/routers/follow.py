@@ -2,7 +2,7 @@ from flask import Blueprint, request, g
 from app.services.follow_service import FollowService
 from app.schemas.request import FollowRequest
 from app.schemas.response import BaseResponse
-
+from app.services.auth_service import AuthService
 follow_bp = Blueprint("follow", __name__)
 
 @follow_bp.before_request

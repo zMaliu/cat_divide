@@ -44,3 +44,21 @@ class Follow:
         self.follower_id = follower_id
         self.followed_id = followed_id
         self.follow_time = follow_time
+
+class ChatSession:
+    def __init__(self, session_id, fromuser_id, touser_id, created_time, updated_time):
+        self.session_id = session_id
+        self.fromuser_id = fromuser_id
+        self.touser_id = touser_id
+        self.created_time = created_time
+        self.updated_time = updated_time
+
+class Message:
+    def __init__(self, message_id, session_id, fromuser_id, touser_id, content, is_read, created_time):
+        self.message_id = message_id
+        self.session_id = session_id
+        self.fromuser_id = fromuser_id
+        self.touser_id = touser_id
+        self.content = content
+        self.is_read = is_read
+        self.created_time = created_time

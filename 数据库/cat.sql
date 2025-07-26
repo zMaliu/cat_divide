@@ -21,6 +21,26 @@ create table register
 )
     row_format = DYNAMIC;
 
+create table chat_sessions
+(
+    session_id   int auto_increment
+        primary key,
+    fromuser_id  int                                not null,
+    touser_id    int                                not null,
+    created_time datetime default CURRENT_TIMESTAMP null,
+    updated_time datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
+    constraint chat_sessions_ibfk_1
+        foreign key (fromuser_id) references register (user_id),
+    constraint chat_sessions_ibfk_2
+        foreign key (touser_id) references register (user_id)
+);
+
+create index fromuser_id
+    on chat_sessions (fromuser_id);
+
+create index touser_id
+    on chat_sessions (touser_id);
+
 create table follows
 (
     follow_id   int auto_increment
@@ -33,6 +53,33 @@ create table follows
     constraint follower_id
         foreign key (follower_id) references register (user_id)
 );
+
+create table messages
+(
+    message_id   int auto_increment
+        primary key,
+    session_id   int                                  not null,
+    fromuser_id  int                                  not null,
+    touser_id    int                                  not null,
+    content      text                                 not null,
+    is_read      tinyint(1) default 0                 null,
+    created_time datetime   default CURRENT_TIMESTAMP null,
+    constraint messages_ibfk_1
+        foreign key (session_id) references chat_sessions (session_id),
+    constraint messages_ibfk_2
+        foreign key (fromuser_id) references register (user_id),
+    constraint messages_ibfk_3
+        foreign key (touser_id) references register (user_id)
+);
+
+create index fromuser_id
+    on messages (fromuser_id);
+
+create index session_id
+    on messages (session_id);
+
+create index touser_id
+    on messages (touser_id);
 
 create table publish
 (

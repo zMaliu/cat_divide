@@ -1,0 +1,17 @@
+<view class="chat-container">
+  <scroll-view scroll-y="true" class="message-list" scroll-with-animation="true" scroll-into-view="{{scrollToView}}">
+    <block wx:for="{{messageList}}" wx:key="message_id">
+      <view class="message-item {{item.fromuser_id == myUserId ? 'my-message' : 'other-message'}}">
+        <image class="avatar" src="{{item.fromuser_id == myUserId ? myAvatar : targetUserAvatar}}"></image>
+        <view class="bubble {{item.fromuser_id == myUserId ? 'my-bubble' : 'other-bubble'}}">
+          <text>{{item.content}}</text>
+        </view>
+      </view>
+    </block>
+    <view id="msg-bottom"></view>
+  </scroll-view>
+  <view class="input-bar">
+    <input class="input" value="{{inputMessage}}" bindinput="onInputChange" placeholder="请输入消息..." />
+    <button class="send-btn" bindtap="sendMessage">发送</button>
+  </view>
+</view>

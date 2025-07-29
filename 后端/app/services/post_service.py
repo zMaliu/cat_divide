@@ -33,6 +33,7 @@ class PostService:
             cursor.execute("""
             SELECT 
                 p.article_id, 
+                p.user_id,
                 p.title, 
                 p.content, 
                 p.publish_time,

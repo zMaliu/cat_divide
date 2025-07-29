@@ -28,3 +28,6 @@ class MessageRequest(BaseModel):
 
 class SessionRequest(BaseModel):
     touser_id: int
+
+class UnfollowRequest(BaseModel):
+    followed_id: int

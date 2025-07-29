@@ -18,3 +18,7 @@ def auth_middleware():
 @follow_bp.route("/<int:user_id>", methods=["POST"])
 def follow_user(user_id):
     return FollowService.follow_user(g.user_id, user_id).dict()
+
+@follow_bp.route("/<int:user_id>", methods=["DELETE"])
+def unfollow_user(user_id):
+    return FollowService.unfollow_user(g.user_id, user_id).dict()

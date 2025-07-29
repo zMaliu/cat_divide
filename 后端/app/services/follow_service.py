@@ -43,3 +43,44 @@ class FollowService:
         finally:
             cursor.close()
             db.close()
+
+    @staticmethod
+    def unfollow_user(follower_id, followed_id):
+        if follower_id == followed_id:
+            return BaseResponse.error(400, "不能关注自己")
+
+        db = get_db()
+        cursor = db.cursor()
+        try:
+            # 检查是否已关注
+            cursor.execute("SELECT 1 FROM follows WHERE follower_id=%s AND followed_id=%s",
+                           (follower_id, followed_id))
+            if not cursor.fetchone():
+                return BaseResponse.error(400, "尚未关注该用户")
+
+            # 删除关注关系
+            cursor.execute("""
+                DELETE FROM follows WHERE follower_id=%s AND followed_id=%s
+            """, (follower_id, followed_id))
+
+            # 更新用户统计
+            cursor.execute("""
+                UPDATE register 
+                SET follower_count = follower_count - 1 
+                WHERE user_id = %s AND follower_count > 0
+            """, (followed_id,))
+
+            cursor.execute("""
+                UPDATE register 
+                SET following_count = following_count - 1 
+                WHERE user_id = %s AND following_count > 0
+            """, (follower_id,))
+
+            db.commit()
+            return BaseResponse.success()
+        except Exception as e:
+            db.rollback()
+            return BaseResponse.error(500, f"取消关注失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()

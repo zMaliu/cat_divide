@@ -1,0 +1,11 @@
+# 忽略所有 .pyc 文件
+*.pyc
+
+# 忽略 node_modules 文件夹
+node_modules/
+
+# 忽略 .env 文件
+.env
+
+# 忽略 log 文件夹下的所有文件
+log/

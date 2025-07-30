@@ -31,3 +31,17 @@ class SessionRequest(BaseModel):
 
 class UnfollowRequest(BaseModel):
     followed_id: int
+
+class CatCreateRequest(BaseModel):
+    name: str
+    breed: str = None
+    age: int = None
+    gender: str = "unknown"
+    description: str = None
+
+class CatUpdateRequest(BaseModel):
+    name: str = None
+    breed: str = None
+    age: int = None
+    gender: str = None
+    description: str = None

@@ -62,3 +62,17 @@ class Message:
         self.content = content
         self.is_read = is_read
         self.created_time = created_time
+
+class Cat:
+    def __init__(self, cat_id, name, breed, age, gender, description, image_url, owner_id, create_time, update_time):
+        self.cat_id = cat_id
+        self.name = name
+        self.breed = breed
+        self.age = age
+        self.gender = gender
+        self.description = description
+        self.image_url = image_url
+        self.owner_id = owner_id
+        self.create_time = create_time
+        self.update_time = update_time
+

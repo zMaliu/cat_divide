@@ -38,6 +38,7 @@ class CatCreateRequest(BaseModel):
     age: int = None
     gender: str = "unknown"
     description: str = None
+    image_url: str = None  # 添加image_url字段
 
 class CatUpdateRequest(BaseModel):
     name: str = None
@@ -45,3 +46,4 @@ class CatUpdateRequest(BaseModel):
     age: int = None
     gender: str = None
     description: str = None
+    image_url: str = None  # 添加image_url字段

@@ -21,6 +21,28 @@ create table register
 )
     row_format = DYNAMIC;
 
+create table cats
+(
+    cat_id      int auto_increment
+        primary key,
+    name        varchar(255)                                                  not null comment '猫咪名字',
+    breed       varchar(255)                                                  null comment '品种',
+    age         int                                                           null comment '年龄',
+    gender      enum ('male', 'female', 'unknown') default 'unknown'          null comment '性别',
+    description text                                                          null comment '描述',
+    image_url   varchar(255)                       default '/default_cat.jpg' null comment '图片路径',
+    owner_id    int                                                           not null comment '主人ID',
+    create_time datetime                           default CURRENT_TIMESTAMP  null,
+    update_time datetime                           default CURRENT_TIMESTAMP  null on update CURRENT_TIMESTAMP,
+    constraint cats_ibfk_1
+        foreign key (owner_id) references register (user_id)
+            on delete cascade
+)
+    row_format = DYNAMIC;
+
+create index owner_id
+    on cats (owner_id);
+
 create table chat_sessions
 (
     session_id   int auto_increment

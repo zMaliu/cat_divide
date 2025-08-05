@@ -8,6 +8,19 @@ Page({
       },
     },
 
+    // onChoosePhoto: function(e) {
+    //     wx.chooseImage({
+    //         count:1,
+    //         sizeType: ['original', 'compressed'],
+    //         sourceType: ['album', 'camera'], 
+    //         success: (res) => {
+    //             this.setData({
+    //               'postingForm.photo': res.tempFilePaths[0]
+    //             }); 
+    //         }  
+    //     })
+    // },
+
     onPostingTitleInput: function (e) {
         this.setData({
           'postingForm.title': e.detail.value
@@ -22,14 +35,13 @@ Page({
 
     handlePosting: function () {
         const token = wx.getStorageSync('token');
-        const { title,content } = this.data.postingForm; 
+        const { title,content } = this.data.postingForm;  
         console.log("token", token);
         console.log("title",title);
         console.log("content",content);
         wx.request({
             url: 'http://localhost:5001/api/post/create',
             method: 'POST',
-            
             header: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token

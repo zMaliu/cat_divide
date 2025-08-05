@@ -73,7 +73,7 @@ Page({
                 });
                 console.log("res.data", res.data);   
                 console.log('准备跳转')
-                // 注册成功后切换到登录
+           
                 setTimeout(() => {
                     this.setData({
                     currentTab: 'login',

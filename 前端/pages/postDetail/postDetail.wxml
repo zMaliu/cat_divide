@@ -28,8 +28,8 @@
 
     <!-- 交互栏 -->
     <view class="interaction-bar">
-      <view class="like-section {{isLiked ? 'liked' : ''}}" bindtap="handleLike">
-        <image src="{{isLiked ? '../../assets/liked.png' : '../../assets/like.png'}}" class="action-icon"></image>
+      <view class="like-section {{post.is_liked ? 'liked' : ''}}" bindtap="handleLike">
+        <image src="{{post.is_liked ? '../../assets/liked.png' : '../../assets/like.png'}}" class="action-icon"></image>
         <text class="action-text">{{post.like_count > 0 ? post.like_count : '点赞'}}</text>
       </view>
       <view class="comment-section" bindtap="focusCommentInput">

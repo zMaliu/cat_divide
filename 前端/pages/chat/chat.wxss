@@ -1,73 +1,200 @@
-.chat-container {
+
+  .container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background: #f5f5f5;
+    background-color: #f5f5f5;
   }
+  
+  /* 顶部导航 */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5rpx 30rpx;
+    background-color: #fff;
+    border-bottom: 1rpx solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .chat-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+  }
+  
+  /* 消息列表 */
   .message-list {
     flex: 1;
     padding: 20rpx;
-    overflow: auto;
+    background-color: #f5f5f5;
+    height: 0;
   }
+  
+  .load-more {
+    text-align: center;
+    padding: 20rpx;
+  }
+  
+  .load-text {
+    font-size: 24rpx;
+    color: #999;
+  }
+  
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .loading-text {
+    font-size: 24rpx;
+    color: #999;
+  }
+  
+  .message-container {
+    padding-bottom: 20rpx;
+  }
+  
   .message-item {
     display: flex;
-    align-items: flex-end;
     margin-bottom: 20rpx;
+    align-items: flex-end;
   }
-  .my-message {
+  
+  .message-mine {
     flex-direction: row-reverse;
   }
-  .other-message {
+  
+  .message-other {
     flex-direction: row;
   }
+  
+  /* 头像 */
+  .avatar-container {
+    margin: 0 15rpx;
+  }
+  
   .avatar {
-    width: 60rpx;
-    height: 60rpx;
+    width: 80rpx;
+    height: 80rpx;
     border-radius: 50%;
-    margin: 0 16rpx;
+    background-color: #f0f0f0;
   }
-  .bubble {
-    max-width: 60vw;
-    padding: 18rpx 24rpx;
-    border-radius: 24rpx;
-    font-size: 28rpx;
-    word-break: break-all;
+  
+  /* 消息气泡 */
+  .message-bubble {
+    max-width: 60%;
   }
-  .my-bubble {
-    background: #5B5FEF;
+  
+  .message-content {
+    padding: 20rpx 24rpx;
+    border-radius: 20rpx;
+    position: relative;
+    word-wrap: break-word;
+  }
+  
+  .message-mine .message-content {
+    background-color: #007AFF;
     color: #fff;
     border-bottom-right-radius: 8rpx;
   }
-  .other-bubble {
-    background: #fff;
+  
+  .message-other .message-content {
+    background-color: #fff;
     color: #333;
     border-bottom-left-radius: 8rpx;
-    border: 1rpx solid #e5e5e5;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
   }
-  .input-bar {
+  
+  .message-text {
+    font-size: 28rpx;
+    line-height: 1.4;
+  }
+  
+  /* 时间分隔符 */
+  .time-divider {
+    text-align: center;
+    margin: 20rpx 0;
+  }
+  
+  .time-divider .time-text {
+    font-size: 22rpx;
+    color: #999;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 8rpx 16rpx;
+    border-radius: 12rpx;
+  }
+  
+  /* 输入区域 */
+  .input-area {
+    background-color: #fff;
+    border-top: 1rpx solid #eee;
+    padding: 5rpx 0;
+    padding-bottom: calc(5rpx + env(safe-area-inset-bottom));
     display: flex;
     align-items: center;
-    padding: 16rpx;
-    background: #fff;
-    border-top: 1rpx solid #eee;
+    width: 100%;
   }
-  .input {
+  
+  .message-input {
     flex: 1;
-    height: 60rpx;
-    border-radius: 30rpx;
-    background: #f0f0f0;
-    padding: 0 20rpx;
+    height: 80rpx;
     font-size: 28rpx;
-    margin-right: 16rpx;
-    border: none;
+    color: #333;
+    background-color: #f8f8f8;
+    border-radius: 40rpx;
+    padding: 0 30rpx;
+    margin: 0 20rpx;
   }
+  
   .send-btn {
-    background: #5B5FEF;
-    color: #fff;
+    margin-right: 20rpx;
+    padding: 16rpx 24rpx;
     border-radius: 30rpx;
-    padding: 0 32rpx;
-    height: 60rpx;
-    line-height: 60rpx;
-    font-size: 28rpx;
-    border: none;
+    background-color: #e0e0e0;
+    transition: all 0.3s;
   }
+  
+  .send-btn-active {
+    background-color: #007AFF;
+  }
+  
+  .send-text {
+    font-size: 26rpx;
+    color: #999;
+  }
+  
+  .send-btn-active .send-text {
+    color: #fff;
+  }
+  
+  /* 空状态 */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 200rpx 0;
+  }
+  
+  .empty-icon {
+    width: 200rpx;
+    height: 200rpx;
+    margin-bottom: 30rpx;
+    opacity: 0.5;
+  }
+  
+  .empty-text {
+    font-size: 32rpx;
+    color: #999;
+    margin-bottom: 10rpx;
+  }
+  
+  .empty-desc {
+    font-size: 26rpx;
+    color: #ccc;
+  } 

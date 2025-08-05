@@ -65,8 +65,8 @@
                     <text class="author-name">{{item.post_user_name}}</text>
                   </view>
                   <view class="post-stats">
-                    <view class="like-info {{item.is_liked ? 'liked' : ''}}">
-                      <image src="{{item.is_liked ? '../../assets/liked.png' : '../../assets/like.png'}}" class="like-icon" catchtap="toggleLike" data-post-id="{{item.article_id}}" data-index="{{index}}"/>
+                    <view class="like-info {{item.is_liked == 1 ? 'liked' : ''}}">
+                      <image src="{{item.is_liked == 1 ? '../../assets/liked.png' : '../../assets/like.png'}}" class="like-icon" catchtap="toggleLike" data-post-id="{{item.article_id}}" data-index="{{index}}"/>
                       <text class="like-count">{{item.like_count || 0}}</text>
                     </view>
                     <view class="comment-info">

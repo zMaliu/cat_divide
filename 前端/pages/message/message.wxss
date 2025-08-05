@@ -1,0 +1,188 @@
+.container {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* 顶部标题 */
+  .header {
+    background-color: #fff;
+    padding: 5rpx 30rpx;
+    border-bottom: 1rpx solid #eee;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  
+  .title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* 消息列表 */
+  .message-list {
+    background-color: #fff;
+    margin: 0;
+    width: 100%;
+    padding: 0;
+    border-top: none;
+    flex: 1;
+  }
+  
+  .message-item {
+    display: flex;
+    align-items: center;
+    padding: 20rpx 30rpx;
+    border-bottom: 1rpx solid #f0f0f0;
+    background-color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .message-item:active {
+    background-color: #f8f8f8;
+  }
+  
+  /* 头像容器 */
+  .avatar-container {
+    position: relative;
+    margin-right: 20rpx;
+  }
+  
+  .avatar {
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+  }
+  
+  .unread-badge {
+    position: absolute;
+    top: -5rpx;
+    right: -5rpx;
+    background-color: #ff4757;
+    color: #fff;
+    font-size: 20rpx;
+    min-width: 32rpx;
+    height: 32rpx;
+    border-radius: 16rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6rpx;
+  }
+  
+  /* 消息内容 */
+  .message-content {
+    flex: 1;
+    margin-right: 20rpx;
+  }
+  
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10rpx;
+  }
+  
+  .username {
+    font-size: 32rpx;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .time {
+    font-size: 24rpx;
+    color: #999;
+  }
+  
+  .message-preview {
+    display: flex;
+    align-items: center;
+  }
+  
+  .preview-text {
+    font-size: 28rpx;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 400rpx;
+  }
+  
+  /* 箭头 */
+  .arrow {
+    display: flex;
+    align-items: center;
+  }
+  
+  .arrow-icon {
+    font-size: 24rpx;
+    color: #ccc;
+  }
+  
+  /* 空状态 */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 200rpx 0;
+  }
+  
+  .empty-icon {
+    width: 200rpx;
+    height: 200rpx;
+    margin-bottom: 30rpx;
+    opacity: 0.5;
+  }
+  
+  .empty-text {
+    font-size: 32rpx;
+    color: #999;
+    margin-bottom: 10rpx;
+  }
+  
+  .empty-desc {
+    font-size: 26rpx;
+    color: #ccc;
+  }
+  
+  /* 加载更多 */
+  .load-more {
+    text-align: center;
+    padding: 30rpx;
+  }
+  
+  .load-text {
+    font-size: 26rpx;
+    color: #999;
+  }
+  
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .loading-text {
+    font-size: 26rpx;
+    color: #999;
+    margin-left: 10rpx;
+  }
+  
+  /* 下拉刷新样式 */
+  .refresh-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20rpx;
+  }
+  
+  .refresh-text {
+    font-size: 26rpx;
+    color: #999;
+  } 

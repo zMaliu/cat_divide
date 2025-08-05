@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 import os
-from app.routers import auth, post, comment, like, follow,chat,cat,yolo
+from app.routers import auth, post, comment, like, follow,chat,cat,yolo,user
 from app.schemas.response import BaseResponse
 from app.database import get_db
 
@@ -26,6 +26,7 @@ app.register_blueprint(follow.follow_bp, url_prefix="/api/follow")
 app.register_blueprint(chat.chat_bp, url_prefix="/api/chat")
 app.register_blueprint(cat.cat_bp, url_prefix="/api/cat")
 app.register_blueprint(yolo.yolo_bp, url_prefix="/api/yolo")
+app.register_blueprint(user.user_bp, url_prefix="/api/user")
 
 # 静态文件服务
 @app.route('/uploads/<path:filename>')

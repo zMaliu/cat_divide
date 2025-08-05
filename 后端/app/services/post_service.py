@@ -25,25 +25,43 @@ class PostService:
             db.close()
 
     @staticmethod
-    def get_posts(page=1,per_page=10):
+    def get_posts(page=1,per_page=10,user_id=None):
         db=get_db()
         cursor=db.cursor(pymysql.cursors.DictCursor)
         try:
             offset=(page-1)*per_page
-            cursor.execute("""
-            SELECT 
-                p.article_id, 
-                p.user_id,
-                p.title, 
-                p.content, 
-                p.publish_time,
-                u.user_name,
-                p.like_count
-            FROM publish p 
-            JOIN register u ON p.user_id = u.user_id
-            ORDER BY p.publish_time DESC
-            LIMIT %s OFFSET %s
-        """, (per_page, offset))
+            if user_id:
+                cursor.execute("""
+                SELECT 
+                    p.article_id, 
+                    p.user_id,
+                    p.title, 
+                    p.content, 
+                    p.publish_time,
+                    u.user_name,
+                    p.like_count,
+                    EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked
+                FROM publish p 
+                JOIN register u ON p.user_id = u.user_id
+                ORDER BY p.publish_time DESC
+                LIMIT %s OFFSET %s
+            """, (user_id, per_page, offset))
+            else:
+                cursor.execute("""
+                SELECT 
+                    p.article_id, 
+                    p.user_id,
+                    p.title, 
+                    p.content, 
+                    p.publish_time,
+                    u.user_name,
+                    p.like_count,
+                    FALSE AS is_liked
+                FROM publish p 
+                JOIN register u ON p.user_id = u.user_id
+                ORDER BY p.publish_time DESC
+                LIMIT %s OFFSET %s
+            """, (per_page, offset))
             posts=cursor.fetchall()
             return BaseResponse.success({"posts": posts})
         except Exception as e:
@@ -53,17 +71,27 @@ class PostService:
             db.close()
 
     @staticmethod
-    def get_post_detail(article_id):
+    def get_post_detail(article_id, user_id=None):
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
-            cursor.execute("""
-                SELECT p.*, u.user_name,p.like_count ,
-                    EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked
-                FROM publish p
-                JOIN register u ON p.user_id = u.user_id
-                WHERE p.article_id = %s
-            """, (article_id,article_id))
+            print('post detail result:', user_id)
+            if user_id:
+                cursor.execute("""
+                    SELECT p.*, u.user_name,p.like_count ,
+                        EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked
+                    FROM publish p
+                    JOIN register u ON p.user_id = u.user_id
+                    WHERE p.article_id = %s
+                """, (user_id, article_id))
+            else:
+                cursor.execute("""
+                    SELECT p.*, u.user_name,p.like_count ,
+                        FALSE AS is_liked
+                    FROM publish p
+                    JOIN register u ON p.user_id = u.user_id
+                    WHERE p.article_id = %s
+                """, (article_id,))
             post = cursor.fetchone()
             if not post:
                 return BaseResponse.error(404, "文章不存在")

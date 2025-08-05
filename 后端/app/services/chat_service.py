@@ -2,6 +2,12 @@ from app.database import get_db
 from app.schemas.response import BaseResponse
 import pymysql
 
+
+def format_datetime(dt):
+    if dt is None:
+        return None
+    return dt.strftime('%Y-%m-%d %H:%M:%S')
+
 class ChatService:
     @staticmethod
     def create_or_get_session(fromuser_id, touser_id):
@@ -13,9 +19,11 @@ class ChatService:
         try:
             # 检查是否已存在会话（双向检查）
             cursor.execute("""
-                SELECT * FROM chat_sessions 
-                WHERE (fromuser_id = %s AND touser_id = %s) OR (fromuser_id = %s AND touser_id = %s)
-            """, (fromuser_id, touser_id, touser_id, fromuser_id))
+                SELECT cs.*, r.user_name as target_user_name
+                FROM chat_sessions cs
+                JOIN register r ON r.user_id = %s
+                WHERE (cs.fromuser_id = %s AND cs.touser_id = %s) OR (cs.fromuser_id = %s AND cs.touser_id = %s)
+            """, (touser_id, fromuser_id, touser_id, touser_id, fromuser_id))
 
             session = cursor.fetchone()
 
@@ -27,10 +35,13 @@ class ChatService:
                 """, (fromuser_id, touser_id))
                 db.commit()
 
+                # 获取新创建的会话和目标用户信息
                 cursor.execute("""
-                    SELECT * FROM chat_sessions 
-                    WHERE session_id = %s
-                """, (cursor.lastrowid,))
+                    SELECT cs.*, r.user_name as target_user_name
+                    FROM chat_sessions cs
+                    JOIN register r ON r.user_id = %s
+                    WHERE cs.session_id = %s
+                """, (touser_id, cursor.lastrowid))
                 session = cursor.fetchone()
 
             return BaseResponse.success({"session": session})
@@ -115,7 +126,11 @@ class ChatService:
                     (SELECT COUNT(*) FROM messages m 
                      WHERE m.session_id = cs.session_id 
                      AND m.touser_id = %s 
-                     AND m.is_read = FALSE) as unread_count
+                     AND m.is_read = FALSE) as unread_count,
+                    (SELECT content FROM messages m 
+                     WHERE m.session_id = cs.session_id 
+                     ORDER BY m.created_time DESC 
+                     LIMIT 1) as last_message
                 FROM chat_sessions cs
                 JOIN register r1 ON cs.fromuser_id = r1.user_id
                 JOIN register r2 ON cs.touser_id = r2.user_id
@@ -125,7 +140,11 @@ class ChatService:
             """, (user_id, user_id, user_id, user_id, per_page, offset))
 
             sessions = cursor.fetchall()
+            for session in sessions:
+                if 'updated_time' in session:
+                    session['updated_time'] = format_datetime(session['updated_time'])
             return BaseResponse.success({"sessions": sessions})
+
         except Exception as e:
             return BaseResponse.error(500, f"获取会话列表失败: {str(e)}")
         finally:
@@ -161,6 +180,28 @@ class ChatService:
             """, (session_id, per_page, offset))
 
             messages = cursor.fetchall()
+            
+            # 获取目标用户信息
+            if messages:
+                # 确定目标用户ID
+                if session['fromuser_id'] == user_id:
+                    target_user_id = session['touser_id']
+                else:
+                    target_user_id = session['fromuser_id']
+                
+                # 获取目标用户名
+                cursor.execute("""
+                    SELECT user_name FROM register WHERE user_id = %s
+                """, (target_user_id,))
+                target_user = cursor.fetchone()
+                target_user_name = target_user['user_name'] if target_user else '用户'
+                
+                # 将目标用户名添加到每条消息中
+                for message in messages:
+                    message['target_user_name'] = target_user_name
+            for message in messages:
+                if 'created_time' in message:
+                    message['created_time'] = format_datetime(message['created_time'])
 
             # 将消息标记为已读
             cursor.execute("""

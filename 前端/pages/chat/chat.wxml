@@ -1,17 +1,71 @@
-<view class="chat-container">
-  <scroll-view scroll-y="true" class="message-list" scroll-with-animation="true" scroll-into-view="{{scrollToView}}">
-    <block wx:for="{{messageList}}" wx:key="message_id">
-      <view class="message-item {{item.fromuser_id == myUserId ? 'my-message' : 'other-message'}}">
-        <image class="avatar" src="{{item.fromuser_id == myUserId ? myAvatar : targetUserAvatar}}"></image>
-        <view class="bubble {{item.fromuser_id == myUserId ? 'my-bubble' : 'other-bubble'}}">
-          <text>{{item.content}}</text>
+
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="header">
+    <text class="chat-title">{{username}}</text>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view
+    class="message-list"
+    scroll-y="true"
+    scroll-into-view="{{scrollToView}}"
+    scroll-with-animation="true"
+  >
+    <view class="message-container">
+      <view
+        wx:for="{{messageList}}"
+        wx:key="message_id"
+      >
+        <!-- 时间显示 -->
+        <view wx:if="{{item.showTime}}" class="time-divider">
+          <text class="time-text">{{item.created_time}}</text>
+        </view>
+        
+        <!-- 消息 -->
+        <view
+          class="message-item {{item.fromuser_id === myUserId ? 'message-mine' : 'message-other'}}"
+          id="msg-{{item.message_id}}"
+        >
+          <!-- 头像 -->
+          <view class="avatar-container">
+              <image
+              class="avatar"
+              src="/assets/default-avatar.png" 
+              mode="aspectFill"
+              ></image> 
+            <!-- <image
+              class="avatar"
+              src="{{item.fromuser_id === myUserId ? myAvatar : targetUserAvatar}}" 
+              mode="aspectFill"
+            ></image> -->
+          </view>
+          <!-- 气泡 -->
+          <view class="message-bubble">
+            <view class="message-content">
+              <text class="message-text">{{item.content}}</text>
+            </view>
+          </view>
         </view>
       </view>
-    </block>
+    </view>
+    <!-- 滚动到底部锚点 -->
     <view id="msg-bottom"></view>
   </scroll-view>
-  <view class="input-bar">
-    <input class="input" value="{{inputMessage}}" bindinput="onInputChange" placeholder="请输入消息..." />
-    <button class="send-btn" bindtap="sendMessage">发送</button>
+
+  <!-- 输入区域 -->
+  <view class="input-area">
+    <input
+      class="message-input"
+      placeholder="输入消息..."
+      value="{{inputMessage}}"
+      bindinput="onInputChange"
+      bindconfirm="sendMessage"
+      confirm-type="send"
+      cursor-spacing="20"
+    />
+    <view class="send-btn {{inputMessage.trim() ? 'send-btn-active' : ''}}" bindtap="sendMessage">
+      <text class="send-text">发送</text>
+    </view>
   </view>
-</view>
+</view> 

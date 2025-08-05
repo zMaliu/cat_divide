@@ -8,14 +8,26 @@ post_bp = Blueprint("post", __name__)
 
 @post_bp.before_request
 def auth_middleware():
-    # 列表接口不需要验证
-    if request.endpoint == "post.list_posts":
-        return
-    
     # 获取认证token
     token = request.headers.get('Authorization')
     print(f"API请求: {request.path}, 使用token: {token}")
     
+    # 对于列表接口和详情接口，token是可选的
+    if request.endpoint in ["post.list_posts", "post.post_detail"]:
+        if token:
+            user_id = AuthService.verify_token(token)
+            if user_id:
+                print(f"认证成功: 路径={request.path}, 用户ID={user_id}")
+                g.user_id = user_id
+            else:
+                print(f"无效token: {token}, 将作为匿名用户访问")
+                g.user_id = None
+        else:
+            print(f"未提供token，将作为匿名用户访问")
+            g.user_id = None
+        return
+    
+    # 其他接口需要强制验证
     if not token:
         print(f"请求失败: {request.path}, 未提供token")
         return BaseResponse.error(401, "未提供认证令牌").dict(), 401
@@ -46,9 +58,11 @@ def list_posts():
     try:
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
-        result = PostService.get_posts(page, per_page)
+        # 获取用户ID（如果已认证）
+        user_id = getattr(g, 'user_id', None)
+        result = PostService.get_posts(page, per_page, user_id)
         post_count = len(result.data.get("posts", [])) if result.data else 0
-        print(f"获取帖子列表: 页码={page}, 每页={per_page}, 返回数量={post_count}")
+        print(f"获取帖子列表: 页码={page}, 每页={per_page}, 用户ID={user_id}, 返回数量={post_count}")
         return result.dict()
     except Exception as e:
         print(f"获取帖子列表失败: {str(e)}")
@@ -57,8 +71,10 @@ def list_posts():
 @post_bp.route("/detail/<int:article_id>", methods=["GET"])
 def post_detail(article_id):
     try:
-        result = PostService.get_post_detail(article_id)
-        print(f"获取帖子详情: ID={article_id}, 状态码={result.code}")
+        # 获取用户ID（如果已认证）
+        user_id = getattr(g, 'user_id', None)
+        result = PostService.get_post_detail(article_id, user_id)
+        print(f"获取帖子详情: ID={article_id}, 用户ID={user_id}, 状态码={result.code}")
         return result.dict()
     except Exception as e:
         print(f"获取帖子详情失败: ID={article_id}, 错误={str(e)}")

@@ -1,5 +1,6 @@
 from app.database import get_db
 from app.schemas.response import BaseResponse
+import pymysql
 
 class FollowService:
     @staticmethod
@@ -84,3 +85,48 @@ class FollowService:
         finally:
             cursor.close()
             db.close()
+
+    @staticmethod
+    def get_followers(user_id, page=1, per_page=10):
+        db = get_db()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
+        try:
+            offset = (page - 1) * per_page
+            cursor.execute("""
+                SELECT r.user_id, r.user_name, r.user_create_time
+                FROM follows f
+                JOIN register r ON f.follower_id = r.user_id
+                WHERE f.followed_id = %s
+                ORDER BY f.follow_time DESC
+                LIMIT %s OFFSET %s
+            """, (user_id, per_page, offset))
+            followers = cursor.fetchall()
+            return BaseResponse.success({"followers": followers})
+        except Exception as e:
+            return BaseResponse.error(500, f"获取粉丝列表失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()
+
+    @staticmethod
+    def get_followings(user_id, page=1, per_page=10):
+        db = get_db()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
+        try:
+            offset = (page - 1) * per_page
+            cursor.execute("""
+                SELECT r.user_id, r.user_name, r.user_create_time
+                FROM follows f
+                JOIN register r ON f.followed_id = r.user_id
+                WHERE f.follower_id = %s
+                ORDER BY f.follow_time DESC
+                LIMIT %s OFFSET %s
+            """, (user_id, per_page, offset))
+            followings = cursor.fetchall()
+            return BaseResponse.success({"followings": followings})
+        except Exception as e:
+            return BaseResponse.error(500, f"获取关注列表失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()
+

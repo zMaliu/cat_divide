@@ -22,3 +22,15 @@ def follow_user(user_id):
 @follow_bp.route("/<int:user_id>", methods=["DELETE"])
 def unfollow_user(user_id):
     return FollowService.unfollow_user(g.user_id, user_id).dict()
+
+@follow_bp.route("/followers/<int:user_id>", methods=["GET"])
+def get_followers(user_id):
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    return FollowService.get_followers(user_id, page, per_page).dict()
+
+@follow_bp.route("/followings/<int:user_id>", methods=["GET"])
+def get_followings(user_id):
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    return FollowService.get_followings(user_id, page, per_page).dict()

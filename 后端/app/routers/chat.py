@@ -1,8 +1,9 @@
-from flask import Blueprint, request, g
+from flask import Blueprint, request, g, jsonify
 from app.services.chat_service import ChatService
-from app.schemas.request import MessageRequest, SessionRequest
+from app.schemas.request import ChatRequest, MessageRequest
 from app.schemas.response import BaseResponse
 from app.services.auth_service import AuthService
+from app.utils.security import rate_limit, validate_json
 
 chat_bp = Blueprint("chat", __name__)
 
@@ -17,6 +18,44 @@ def auth_middleware():
         return BaseResponse.error(401, "无效的认证令牌").dict(), 401
 
     g.user_id = user_id
+
+@chat_bp.route("/send", methods=["POST"])
+@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多发送30条消息
+@validate_json
+def send_message():
+    try:
+        data = request.get_json()
+        req = MessageRequest(**data)
+        result = ChatService.send_message(
+            from_user_id=g.user_id,
+            to_user_id=req.to_user_id,
+            content=req.content
+        )
+        return result.dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"发送消息失败: {str(e)}").dict()
+
+@chat_bp.route("/messages/<int:to_user_id>", methods=["GET"])
+@rate_limit(max_requests=60, window=60, by="user")  # 每个用户每分钟最多查询60次消息
+def get_messages(to_user_id):
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        result = ChatService.get_messages(g.user_id, to_user_id, page, per_page)
+        return result.dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"获取消息失败: {str(e)}").dict()
+
+@chat_bp.route("/session", methods=["GET"])
+@rate_limit(max_requests=60, window=60, by="user")  # 每个用户每分钟最多查询60次会话
+def get_sessions():
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        result = ChatService.get_chat_sessions(g.user_id, page, per_page)
+        return result.dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"获取会话失败: {str(e)}").dict()
 
 @chat_bp.route("/session", methods=["POST"])
 def create_session():

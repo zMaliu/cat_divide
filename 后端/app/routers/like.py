@@ -3,6 +3,7 @@ from app.services.like_service import LikeService
 from app.schemas.request import LikeRequest
 from app.schemas.response import BaseResponse
 from app.services.auth_service import AuthService
+from app.utils.security import rate_limit
 
 like_bp = Blueprint("like", __name__)
 
@@ -17,9 +18,11 @@ def auth_middleware():
     g.user_id = user_id
 
 @like_bp.route("/<int:article_id>", methods=["POST"])
+@rate_limit(max_requests=50, window=60, by="user")  # 每个用户每分钟最多点赞50次
 def like_article(article_id):
     return LikeService.like_article(article_id, g.user_id).dict()
 
 @like_bp.route("/<int:article_id>", methods=["DELETE"])
+@rate_limit(max_requests=50, window=60, by="user")  # 每个用户每分钟最多取消点赞50次
 def unlike_article(article_id):
     return LikeService.unlike_article(article_id, g.user_id).dict()

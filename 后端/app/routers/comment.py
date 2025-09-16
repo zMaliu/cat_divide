@@ -3,6 +3,7 @@ from app.services.comment_service import CommentService
 from app.schemas.request import CommentRequest
 from app.schemas.response import BaseResponse
 from app.services.auth_service import AuthService
+from app.utils.security import rate_limit, validate_json
 
 comment_bp = Blueprint("comment", __name__)
 
@@ -19,6 +20,8 @@ def auth_middleware():
     g.user_id = user_id
 
 @comment_bp.route("/create", methods=["POST"])
+@rate_limit(max_requests=20, window=60, by="user")  # 每个用户每分钟最多发表20条评论
+@validate_json
 def create_comment():
     data = request.get_json()
     req = CommentRequest(**data)
@@ -29,6 +32,7 @@ def create_comment():
     ).dict()
 
 @comment_bp.route("/list/<int:article_id>", methods=["GET"])
+@rate_limit(max_requests=100, window=60, by="ip")  # 每个IP每分钟最多100次评论列表请求
 def list_comments(article_id):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)

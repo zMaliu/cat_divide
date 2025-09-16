@@ -3,6 +3,7 @@ from app.services.cat_service import CatService
 from app.schemas.request import CatCreateRequest, CatUpdateRequest
 from app.schemas.response import BaseResponse
 from app.services.auth_service import AuthService
+from app.utils.security import rate_limit, validate_json
 
 cat_bp = Blueprint("cat", __name__)
 
@@ -23,6 +24,8 @@ def auth_middleware():
     g.user_id = user_id
 
 @cat_bp.route("/create", methods=["POST"])
+@rate_limit(max_requests=10, window=60, by="user")  # 每个用户每分钟最多创建10只猫咪信息
+@validate_json
 def create_cat():
     try:
         data = request.get_json()
@@ -41,6 +44,7 @@ def create_cat():
         return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
 
 @cat_bp.route("/list", methods=["GET"])
+@rate_limit(max_requests=60, window=60, by="ip")  # 每个IP每分钟最多60次列表请求
 def list_cats():
     try:
         page = request.args.get('page', 1, type=int)
@@ -51,6 +55,7 @@ def list_cats():
         return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
 
 @cat_bp.route("/<int:cat_id>", methods=["GET"])
+@rate_limit(max_requests=100, window=60, by="ip")  # 每个IP每分钟最多100次详情请求
 def get_cat_detail(cat_id):
     try:
         result = CatService.get_cat_detail(cat_id)
@@ -59,6 +64,8 @@ def get_cat_detail(cat_id):
         return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
 
 @cat_bp.route("/<int:cat_id>", methods=["PUT"])
+@rate_limit(max_requests=10, window=60, by="user")  # 每个用户每分钟最多修改10次猫咪信息
+@validate_json
 def update_cat(cat_id):
     try:
         data = request.get_json()
@@ -78,6 +85,7 @@ def update_cat(cat_id):
         return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
 
 @cat_bp.route("/<int:cat_id>", methods=["DELETE"])
+@rate_limit(max_requests=10, window=60, by="user")  # 每个用户每分钟最多删除10次猫咪信息
 def delete_cat(cat_id):
     try:
         result = CatService.delete_cat(cat_id, g.user_id)

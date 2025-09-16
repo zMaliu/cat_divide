@@ -8,3 +8,4 @@ torchvision==0.15.2
 ultralytics==8.0.123
 opencv-python==4.8.0.74
 Pillow==10.0.0
+redis==4.6.0

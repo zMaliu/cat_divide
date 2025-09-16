@@ -1,13 +1,13 @@
 from flask import Blueprint, request, g
 from app.services.auth_service import AuthService
 from app.schemas.response import BaseResponse
-from app.database import get_db
-import pymysql
+from app.utils.security import rate_limit
 
 user_bp = Blueprint("user", __name__)
 
-@user_bp.before_request
-def auth_middleware():
+@user_bp.route("/profile", methods=["GET"])
+@rate_limit(max_requests=100, window=60, by="user")  # 每个用户每分钟最多查询100次个人信息
+def get_user_profile():
     token = request.headers.get('Authorization')
     if not token:
         return BaseResponse.error(401, "未提供认证令牌").dict(), 401
@@ -16,7 +16,8 @@ def auth_middleware():
     if not user_id:
         return BaseResponse.error(401, "无效的认证令牌").dict(), 401
 
-    g.user_id = user_id
+    result = AuthService.get_user_info(user_id)
+    return result.dict()
 
 @user_bp.route("/<int:user_id>", methods=["GET"])
 def get_user_by_id(user_id):

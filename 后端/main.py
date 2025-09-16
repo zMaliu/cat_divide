@@ -4,10 +4,16 @@ import os
 from app.routers import auth, post, comment, like, follow,chat,cat,yolo,user
 from app.schemas.response import BaseResponse
 from app.database import get_db
+from app.utils.security import init_redis
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 app.secret_key = "cat123456"
+
+# Redis配置
+app.config['REDIS_HOST'] = os.environ.get('REDIS_HOST', 'localhost')
+app.config['REDIS_PORT'] = int(os.environ.get('REDIS_PORT', 6379))
+app.config['REDIS_DB'] = int(os.environ.get('REDIS_DB', 1))
 
 # 创建上传目录
 uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
@@ -27,6 +33,9 @@ app.register_blueprint(chat.chat_bp, url_prefix="/api/chat")
 app.register_blueprint(cat.cat_bp, url_prefix="/api/cat")
 app.register_blueprint(yolo.yolo_bp, url_prefix="/api/yolo")
 app.register_blueprint(user.user_bp, url_prefix="/api/user")
+
+# 初始化Redis
+init_redis(app)
 
 # 静态文件服务
 @app.route('/uploads/<path:filename>')
@@ -73,4 +82,5 @@ if __name__ == '__main__':
         return BaseResponse.error(500, f"服务器错误：{str(e)}").dict(), 500
     
     print("启动服务器，监听端口5001...")
-    app.run(host="0.0.0.0", port=5001)
+    # 生产环境中设置debug=False
+    app.run(host="0.0.0.0", port=5001, debug=False)

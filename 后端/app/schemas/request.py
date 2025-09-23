@@ -8,15 +8,6 @@ class LoginRequest(BaseModel):
     user_name:str
     password:str
 
-class PhoneLoginRequest(BaseModel):
-    """手机号登录请求模型"""
-    phone: str
-    verification_code: str
-
-class SendVerificationCodeRequest(BaseModel):
-    """发送验证码请求模型"""
-    phone: str
-
 class PostRequest(BaseModel):
     title:str
     content:str

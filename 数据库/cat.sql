@@ -8,37 +8,16 @@ create table comments
     comment_time    datetime default CURRENT_TIMESTAMP null
 );
 
-create table phone_verifications
-(
-    id                int auto_increment
-        primary key,
-    phone             varchar(20)                          not null,
-    verification_code varchar(10)                          not null,
-    created_at        datetime   default CURRENT_TIMESTAMP null,
-    expires_at        datetime                             not null,
-    is_used           tinyint(1) default 0                 null
-);
-
-create index idx_phone
-    on phone_verifications (phone);
-
-create index idx_phone_code
-    on phone_verifications (phone, verification_code);
-
 create table register
 (
     user_id          int auto_increment
         primary key,
-    user_name        varchar(255)         not null,
-    password         varchar(255)         not null,
-    user_create_time datetime             not null on update CURRENT_TIMESTAMP,
-    like_count       int        default 0 null comment '获赞总数',
-    follower_count   int        default 0 null comment '粉丝数',
-    following_count  int        default 0 null comment '关注数',
-    phone            varchar(20)          null,
-    phone_verified   tinyint(1) default 0 null,
-    constraint phone
-        unique (phone)
+    user_name        varchar(255)  not null,
+    password         varchar(255)  not null,
+    user_create_time datetime      not null on update CURRENT_TIMESTAMP,
+    like_count       int default 0 null comment '获赞总数',
+    follower_count   int default 0 null comment '粉丝数',
+    following_count  int default 0 null comment '关注数'
 )
     row_format = DYNAMIC;
 

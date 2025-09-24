@@ -101,3 +101,67 @@ class PostService:
         finally:
             cursor.close()
             db.close()
+            
+    @staticmethod
+    def update_post(article_id, title, content, user_id):
+        db = get_db()
+        cursor = db.cursor()
+        try:
+            # 验证文章是否存在且属于当前用户
+            cursor.execute("SELECT user_id FROM publish WHERE article_id = %s", (article_id,))
+            post = cursor.fetchone()
+            if not post:
+                return BaseResponse.error(404, "文章不存在")
+            
+            post_user_id = post[0] if isinstance(post, tuple) else post['user_id']
+            if post_user_id != user_id:
+                return BaseResponse.error(403, "无权限修改此文章")
+            
+            # 更新文章
+            cursor.execute("""
+                UPDATE publish 
+                SET title = %s, content = %s 
+                WHERE article_id = %s
+            """, (title, content, article_id))
+            db.commit()
+            
+            if cursor.rowcount == 0:
+                return BaseResponse.error(404, "更新失败")
+            
+            return BaseResponse.success()
+        except Exception as e:
+            db.rollback()
+            return BaseResponse.error(500, f"更新文章失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()
+            
+    @staticmethod
+    def delete_post(article_id, user_id):
+        db = get_db()
+        cursor = db.cursor()
+        try:
+            # 验证文章是否存在且属于当前用户
+            cursor.execute("SELECT user_id FROM publish WHERE article_id = %s", (article_id,))
+            post = cursor.fetchone()
+            if not post:
+                return BaseResponse.error(404, "文章不存在")
+            
+            post_user_id = post[0] if isinstance(post, tuple) else post['user_id']
+            if post_user_id != user_id:
+                return BaseResponse.error(403, "无权限删除此文章")
+            
+            # 删除文章
+            cursor.execute("DELETE FROM publish WHERE article_id = %s", (article_id,))
+            db.commit()
+            
+            if cursor.rowcount == 0:
+                return BaseResponse.error(404, "删除失败")
+            
+            return BaseResponse.success()
+        except Exception as e:
+            db.rollback()
+            return BaseResponse.error(500, f"删除文章失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()

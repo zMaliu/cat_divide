@@ -2,6 +2,8 @@ from flask import Blueprint, request, g
 from app.services.auth_service import AuthService
 from app.schemas.response import BaseResponse
 from app.utils.security import rate_limit
+from app.database import get_db
+import pymysql
 
 user_bp = Blueprint("user", __name__)
 
@@ -29,7 +31,7 @@ def get_user_by_id(user_id):
         cursor = db.cursor(pymysql.cursors.DictCursor)
         
         cursor.execute("""
-            SELECT user_id, user_name, avatar, created_time
+            SELECT user_id, user_name, user_create_time
             FROM register 
             WHERE user_id = %s
         """, (user_id,))
@@ -43,4 +45,4 @@ def get_user_by_id(user_id):
         return BaseResponse.error(500, f"获取用户信息失败: {str(e)}").dict()
     finally:
         cursor.close()
-        db.close() 
+        db.close()

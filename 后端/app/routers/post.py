@@ -1,30 +1,11 @@
-@post_bp.route("/<int:article_id>", methods=["PUT"])
-@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多修改30次文章
-@validate_json
-def update_post(article_id):
-    try:
-        data = request.get_json()
-        req = PostUpdateRequest(**data)
-        result = PostService.update_post(
-            article_id=article_id,
-            title=req.title,
-            content=req.content,
-            user_id=g.user_id
-        )
-        return result.dict()
-    except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
-
-@post_bp.route("/<int:article_id>", methods=["DELETE"])
-@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多删除30次文章
-def delete_post(article_id):
-    try:
-        result = PostService.delete_post(article_id, g.user_id)
-        return result.dict()
-    except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+from flask import Blueprint, request, g
+from app.services.post_service import PostService
+from app.schemas.request import PostCreateRequest, PostUpdateRequest
+from app.schemas.response import BaseResponse
+from app.services.auth_service import AuthService
+from app.utils.security import rate_limit, validate_json
 from functools import wraps
-from flask import request, g, abort
+from flask import abort
 import time
 
 def rate_limit(max_requests=100, window=60, by="ip"):
@@ -73,12 +54,6 @@ def validate_json(f):
             return abort(400, "请求必须包含JSON数据")
         return f(*args, **kwargs)
     return wrapped
-from flask import Blueprint, request, g
-from app.services.post_service import PostService
-from app.schemas.request import PostCreateRequest, PostUpdateRequest
-from app.schemas.response import BaseResponse
-from app.services.auth_service import AuthService
-from app.utils.security import rate_limit, validate_json
 
 post_bp = Blueprint("post", __name__)
 
@@ -131,6 +106,32 @@ def list_posts():
 def get_post_detail(article_id):
     try:
         result = PostService.get_post_detail(article_id)
+        return result.dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+
+@post_bp.route("/<int:article_id>", methods=["PUT"])
+@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多修改30次文章
+@validate_json
+def update_post(article_id):
+    try:
+        data = request.get_json()
+        req = PostUpdateRequest(**data)
+        result = PostService.update_post(
+            article_id=article_id,
+            title=req.title,
+            content=req.content,
+            user_id=g.user_id
+        )
+        return result.dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+
+@post_bp.route("/<int:article_id>", methods=["DELETE"])
+@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多删除30次文章
+def delete_post(article_id):
+    try:
+        result = PostService.delete_post(article_id, g.user_id)
         return result.dict()
     except Exception as e:
         return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()

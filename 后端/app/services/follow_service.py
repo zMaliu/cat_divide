@@ -109,6 +109,28 @@ class FollowService:
             db.close()
 
     @staticmethod
+    def get_followings(user_id, page=1, per_page=10):
+        db = get_db()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
+        try:
+            offset = (page - 1) * per_page
+            cursor.execute("""
+                SELECT r.user_id, r.user_name, r.user_create_time
+                FROM follows f
+                JOIN register r ON f.followed_id = r.user_id
+                WHERE f.follower_id = %s
+                ORDER BY f.follow_time DESC
+                LIMIT %s OFFSET %s
+            """, (user_id, per_page, offset))
+            followings = cursor.fetchall()
+            return BaseResponse.success({"followings": followings})
+        except Exception as e:
+            return BaseResponse.error(500, f"获取关注列表失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()
+
+    @staticmethod
     def check_follow_status(follower_id, followed_id):
         if follower_id == followed_id:
             return BaseResponse.success({"is_following": False})

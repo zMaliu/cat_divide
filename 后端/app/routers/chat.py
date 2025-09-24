@@ -1,6 +1,6 @@
 from flask import Blueprint, request, g, jsonify
 from app.services.chat_service import ChatService
-from app.schemas.request import ChatRequest, MessageRequest
+from app.schemas.request import MessageRequest, SessionRequest
 from app.schemas.response import BaseResponse
 from app.services.auth_service import AuthService
 from app.utils.security import rate_limit, validate_json
@@ -26,9 +26,15 @@ def send_message():
     try:
         data = request.get_json()
         req = MessageRequest(**data)
+        # 先创建或获取会话
+        session_result = ChatService.create_or_get_session(g.user_id, req.to_user_id)
+        if session_result.code != 200:
+            return session_result.dict()
+
+        session_id = session_result.data['session']['session_id']
         result = ChatService.send_message(
-            from_user_id=g.user_id,
-            to_user_id=req.to_user_id,
+            session_id=session_id,
+            fromuser_id=g.user_id,
             content=req.content
         )
         return result.dict()
@@ -39,25 +45,33 @@ def send_message():
 @rate_limit(max_requests=60, window=60, by="user")  # 每个用户每分钟最多查询60次消息
 def get_messages(to_user_id):
     try:
+        # 先创建或获取会话
+        session_result = ChatService.create_or_get_session(g.user_id, to_user_id)
+        if session_result.code != 200:
+            return session_result.dict()
+
+        session_id = session_result.data['session']['session_id']
+        
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 20, type=int)
-        result = ChatService.get_messages(g.user_id, to_user_id, page, per_page)
+        result = ChatService.get_messages(session_id, g.user_id, page, per_page)
         return result.dict()
     except Exception as e:
         return BaseResponse.error(500, f"获取消息失败: {str(e)}").dict()
 
-@chat_bp.route("/session", methods=["GET"])
+@chat_bp.route("/sessions", methods=["GET"])
 @rate_limit(max_requests=60, window=60, by="user")  # 每个用户每分钟最多查询60次会话
-def get_sessions():
+def get_chat_sessions():
     try:
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 20, type=int)
-        result = ChatService.get_chat_sessions(g.user_id, page, per_page)
+        result = ChatService.get_sessions(g.user_id, page, per_page)
         return result.dict()
     except Exception as e:
         return BaseResponse.error(500, f"获取会话失败: {str(e)}").dict()
 
 @chat_bp.route("/session", methods=["POST"])
+@validate_json
 def create_session():
     """
     创建或获取会话
@@ -69,20 +83,9 @@ def create_session():
     except Exception as e:
         return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
 
-@chat_bp.route("/session", methods=["GET"])
-def get_sessions():
-    """
-    获取会话列表
-    """
-    try:
-        page = request.args.get('page', 1, type=int)
-        per_page = request.args.get('per_page', 10, type=int)
-        return ChatService.get_sessions(g.user_id, page, per_page).dict()
-    except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
-
 @chat_bp.route("/message", methods=["POST"])
-def send_message():
+@validate_json
+def send_new_message():
     """
     发送消息
     """
@@ -100,7 +103,7 @@ def send_message():
         return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
 
 @chat_bp.route("/message/<int:session_id>", methods=["GET"])
-def get_messages(session_id):
+def get_session_messages(session_id):
     """
     获取会话中的消息
     """

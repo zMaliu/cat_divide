@@ -8,6 +8,14 @@ class LoginRequest(BaseModel):
     user_name:str
     password:str
 
+class PostCreateRequest(BaseModel):
+    title: str
+    content: str
+
+class PostUpdateRequest(BaseModel):
+    title: str
+    content: str
+
 class PostRequest(BaseModel):
     title:str
     content:str

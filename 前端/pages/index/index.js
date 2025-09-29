@@ -72,6 +72,21 @@ Page({
       return
     }
 
+    // 获取认证令牌
+    const token = wx.getStorageSync('token')
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+      setTimeout(() => {
+        wx.switchTab({
+          url: '/pages/mine/mine'
+        })
+      }, 1500)
+      return
+    }
+
     wx.showLoading({
       title: '识别中...',
     })
@@ -81,6 +96,9 @@ Page({
       method:'POST',
       filePath: this.data.imagePath,
       name: 'image',
+      header: {
+        'Authorization': `Bearer ${token}`
+      },
       success: (res) => {
         try {
           const result = JSON.parse(res.data)

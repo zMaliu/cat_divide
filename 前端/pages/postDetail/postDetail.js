@@ -4,18 +4,85 @@ Page({
         post: {},
         commentContent: '',
         comments: [],
-        userToken: ''
+        userToken: '',
+        fromPage: '', // 记录来源页面
+        fromIndex: -1 // 记录在列表中的索引
     },
 
     onLoad: function(options) {
         const token = wx.getStorageSync('token'); 
         this.setData({ userToken: token });
         
+        // 保存来源页面信息
+        if (options.fromPage) {
+            this.setData({
+                fromPage: options.fromPage,
+                fromIndex: parseInt(options.fromIndex || '-1')
+            });
+        }
+        
         if (options.data) {
             let post = JSON.parse(decodeURIComponent(options.data));
+            
+                            // 强制转换点赞状态为布尔值
+                post.is_liked = !!(post.is_liked === true || post.is_liked === 1 || post.is_liked === '1');
+            
+            // 处理图片URL - 使用本地默认图片
+            if (post.img && post.img === '/default.jpg') {
+                post.imgUrl = '../../assets/default.jpg'; // 使用本地默认图片
+            } else if (post.img && !post.img.startsWith('http')) {
+                post.imgUrl = 'http://localhost:5001' + post.img;
+            } else {
+                post.imgUrl = post.img || '../../assets/default.jpg';
+            }
+            
+            console.log('加载帖子数据:', {
+                is_liked: post.is_liked,
+                类型: typeof post.is_liked,
+                图片: post.imgUrl
+            });
+            
             this.setData({ post: post });
+            
+            // 先获取评论，然后获取最新的帖子详情
             this.getComments(post.article_id);
+            
+            // 强制获取最新的帖子详情，包括关注状态
             this.getPostDetail(post.article_id);
+        }
+    },
+    
+    // 强制刷新数据
+    refreshData: function() {
+        if (!this.data.post || !this.data.post.article_id) {
+            wx.showToast({
+                title: '没有帖子数据',
+                icon: 'none'
+            });
+            return;
+        }
+        
+        wx.showLoading({
+            title: '刷新中...',
+            mask: true
+        });
+        
+        // 强制获取最新的帖子详情
+        this.getPostDetail(this.data.post.article_id);
+        
+        setTimeout(() => {
+            wx.hideLoading();
+        }, 1000);
+    },
+
+    // 页面卸载时，设置全局刷新标志
+    onUnload: function() {
+        if (this.data.fromPage === 'home') {
+            // 设置全局刷新标志，让首页重新加载数据
+            const app = getApp();
+            if (app.globalData) {
+                app.globalData.needRefreshHome = true;
+            }
         }
     },
 
@@ -28,13 +95,24 @@ Page({
             headers['Authorization'] = `Bearer ${token}`;
         }
         wx.request({
-            url: `http://localhost:5001/api/post/detail/${article_id}`,
+            url: `http://localhost:5001/api/post/${article_id}`,
             method: 'GET',
             header: headers,
             success: (res) => {
                 if (res.data.code === 200) {
+                    const post = res.data.data.post;
+                    
+                    // 处理图片URL - 使用本地默认图片
+                    if (post.img && post.img === '/default.jpg') {
+                        post.imgUrl = '../../assets/default.jpg';
+                    } else if (post.img && !post.img.startsWith('http')) {
+                        post.imgUrl = 'http://localhost:5001' + post.img;
+                    } else {
+                        post.imgUrl = post.img || '../../assets/default.jpg';
+                    }
+                    
                     this.setData({
-                        post: res.data.data.post
+                        post: post
                     });
                 }
             }
@@ -43,9 +121,16 @@ Page({
 
     getComments: function(article_id) {
         const token = this.data.userToken;
-        const headers = {};
+        const headers = {
+            'Content-Type': 'application/json'
+        };
         if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+            // 确保token格式正确
+            if (token.startsWith('Bearer ')) {
+                headers['Authorization'] = token;
+            } else {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
         }
         wx.request({
             url: `http://localhost:5001/api/comment/list/${article_id}`,
@@ -109,6 +194,7 @@ Page({
             return;
         }
         
+        // 修复：使用 post.is_liked 而不是复杂的状态判断
         const currentIsLiked = this.data.post.is_liked === 1 || this.data.post.is_liked === true;
         const newIsLiked = !currentIsLiked;
         const method = newIsLiked ? 'POST' : 'DELETE';
@@ -129,7 +215,14 @@ Page({
                         icon: 'success' 
                     });
                     
+                    // 重新获取文章详情，确保UI显示最新数据
                     this.getPostDetail(article_id);
+                    
+                    // 设置全局刷新标志，让首页也能同步更新
+                    const app = getApp();
+                    if (app.globalData) {
+                        app.globalData.needRefreshHome = true;
+                    }
                 } else {
                     wx.showToast({ title: res.data.msg || '点赞失败', icon: 'none' });
                 }
@@ -157,29 +250,84 @@ Page({
             return;
         }
         
-        const currentIsFollowed = this.data.post.is_followed || false;
+        // 防止重复点击
+        if (this.followInProgress) {
+            return;
+        }
+        this.followInProgress = true;
+        
+        // 确保当前关注状态是布尔值
+        const currentIsFollowed = !!this.data.post.is_followed;
         const newIsFollowed = !currentIsFollowed;
         const method = newIsFollowed ? 'POST' : 'DELETE';
         const url = `http://localhost:5001/api/follow/${authorId}`;
         
+        // 立即更新UI状态
+        const newPost = {...this.data.post, is_followed: newIsFollowed};
+        this.setData({
+            post: newPost
+        });
+        
+        // 设置全局刷新标志
+        const app = getApp();
+        if (app.globalData) {
+            app.globalData.needRefreshHome = true;
+        }
+        
+        console.log('关注状态变更:', {
+            原状态: currentIsFollowed,
+            新状态: newIsFollowed,
+            作者ID: authorId,
+            状态类型: typeof newIsFollowed
+        });
+        
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        
+        // 确保token格式正确
+        if (token.startsWith('Bearer ')) {
+            headers['Authorization'] = token;
+        } else {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        
         wx.request({
             url: url,
             method: method,
-            header: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            header: headers,
             success: (res) => {
+                console.log('关注请求响应:', res.data);
+                
                 if (res.data.code === 200) {
-
-                    this.setData({
-                        'post.is_followed': newIsFollowed
-                    });
+                    // 使用后端返回的状态，而不是前端计算的状态
+                    const serverIsFollowed = res.data.data && res.data.data.is_following !== undefined 
+                        ? res.data.data.is_following 
+                        : newIsFollowed;
+                    
                     wx.showToast({
-                        title: newIsFollowed ? '关注成功' : '取消关注成功',
+                        title: serverIsFollowed ? '关注成功' : '取消关注成功',
                         icon: 'success'
                     });
+                    
+                    // 强制刷新视图，使用服务器返回的状态
+                    setTimeout(() => {
+                        const updatedPost = {...this.data.post, is_followed: serverIsFollowed};
+                        this.setData({
+                            post: updatedPost
+                        });
+                        
+                        console.log('更新后的帖子数据:', {
+                            is_followed: this.data.post.is_followed,
+                            类型: typeof this.data.post.is_followed
+                        });
+                    }, 100);
                 } else {
+                    // 如果请求失败，回滚UI状态
+                    const rollbackPost = {...this.data.post, is_followed: currentIsFollowed};
+                    this.setData({
+                        post: rollbackPost
+                    });
                     wx.showToast({
                         title: res.data.msg || '操作失败',
                         icon: 'none'
@@ -187,10 +335,23 @@ Page({
                 }
             },
             fail: (err) => {
+                console.error('关注请求失败:', err);
+                
+                // 如果网络错误，回滚UI状态
+                const rollbackPost = {...this.data.post, is_followed: currentIsFollowed};
+                this.setData({
+                    post: rollbackPost
+                });
                 wx.showToast({
                     title: '操作失败，请重试',
                     icon: 'none'
                 });
+            },
+            complete: () => {
+                // 操作完成后，重置标志
+                setTimeout(() => {
+                    this.followInProgress = false;
+                }, 500);  // 添加500ms防抖
             }
         });
     },

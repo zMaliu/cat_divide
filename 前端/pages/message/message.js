@@ -31,6 +31,28 @@ Page({
     this.loadMessageList();
   },
 
+  // 功能区域点击事件（占位实现）
+  goToLikes: function() {
+    wx.showToast({
+      title: '赞和收藏功能开发中',
+      icon: 'none'
+    });
+  },
+
+  goToComments: function() {
+    wx.showToast({
+      title: '评论功能开发中',
+      icon: 'none'
+    });
+  },
+
+  goToFollows: function() {
+    wx.showToast({
+      title: '新增关注功能开发中',
+      icon: 'none'
+    });
+  },
+
   onShow: function() {
     if (this.data.userToken) {
       this.refreshMessageList();

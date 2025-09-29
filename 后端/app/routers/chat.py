@@ -70,18 +70,31 @@ def get_chat_sessions():
     except Exception as e:
         return BaseResponse.error(500, f"获取会话失败: {str(e)}").dict()
 
-@chat_bp.route("/session", methods=["POST"])
-@validate_json
-def create_session():
+@chat_bp.route("/session", methods=["POST", "GET"])
+def session_handler():
     """
-    创建或获取会话
+    处理会话相关请求
+    GET: 获取用户的所有会话列表
+    POST: 创建或获取与特定用户的会话
     """
     try:
-        data = request.get_json()
-        req = SessionRequest(**data)
-        return ChatService.create_or_get_session(g.user_id, req.touser_id).dict()
+        if request.method == "GET":
+            # GET请求：获取用户所有会话
+            page = request.args.get('page', 1, type=int)
+            per_page = request.args.get('per_page', 20, type=int)
+            return ChatService.get_sessions(g.user_id, page, per_page).model_dump()
+        
+        elif request.method == "POST":
+            # POST请求：创建或获取特定会话
+            if not request.is_json:
+                return BaseResponse.error(400, "请求必须包含JSON数据").model_dump()
+            
+            data = request.get_json()
+            req = SessionRequest(**data)
+            return ChatService.create_or_get_session(g.user_id, req.touser_id).model_dump()
+            
     except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+        return BaseResponse.error(500, f"服务器错误: {str(e)}").model_dump()
 
 @chat_bp.route("/message", methods=["POST"])
 @validate_json

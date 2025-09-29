@@ -140,9 +140,20 @@ class ChatService:
             """, (user_id, user_id, user_id, user_id, per_page, offset))
 
             sessions = cursor.fetchall()
+            print(f"查询到的会话数据类型: {type(sessions)}")
+            print(f"会话数据内容: {sessions}")
+            
+            # 确保sessions是列表类型
+            if sessions is None:
+                sessions = []
+            
             for session in sessions:
-                if 'updated_time' in session:
+                if 'updated_time' in session and session['updated_time']:
                     session['updated_time'] = format_datetime(session['updated_time'])
+                if 'created_time' in session and session['created_time']:
+                    session['created_time'] = format_datetime(session['created_time'])
+            
+            print(f"处理后的会话数据: {sessions}")
             return BaseResponse.success({"sessions": sessions})
 
         except Exception as e:

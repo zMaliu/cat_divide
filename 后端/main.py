@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request
 from flask_cors import CORS
 import os
 from app.routers import auth, post, comment, like, follow,chat,cat,yolo,user
@@ -51,14 +51,16 @@ def serve_upload(filename):
 def serve_default_image():
     """提供默认图片"""
     try:
+        print(f"收到默认图片请求: {request.method} {request.url}")
         # 使用assets目录中的默认图片
         default_img = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "default.jpg")
+        
         if not os.path.exists(default_img):
-            # 如果assets目录中没有，使用上传目录中的default.jpg
             return send_from_directory(uploads_dir, "default.jpg")
+        
         return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets"), "default.jpg")
     except Exception as e:
-        print(f"提供默认图片失败: {str(e)}")
+        
         return "", 404
       
 def db_check():

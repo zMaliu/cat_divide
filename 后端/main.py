@@ -5,6 +5,7 @@ from app.routers import auth, post, comment, like, follow,chat,cat,yolo,user
 from app.schemas.response import BaseResponse
 from app.database import get_db
 from app.utils.security import init_redis
+
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 app.secret_key = "cat123456"

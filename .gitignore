@@ -9,4 +9,5 @@ node_modules/
 
 # 忽略 log 文件夹下的所有文件
 log/
+
 __pycache__/

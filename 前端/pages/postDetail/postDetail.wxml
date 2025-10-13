@@ -18,19 +18,25 @@
       <text>私信</text>
       </button>
     </view>
+    
+    <!-- 调试信息 -->
+    <!-- <view style="font-size: 10px; color: #999; margin: 5px 0;">
+      关注状态: {{post.is_followed ? '已关注' : '未关注'}} ({{post.is_followed ? 'true' : 'false'}})
+      <text style="margin-left: 10px; color: #0066cc;" bindtap="refreshData">刷新</text>
+    </view> -->
 
     <!-- 帖子内容 -->
     <view class="post-content-wrapper">
       <view class="post-title">{{post.title}}</view>
       <view class="post-content">{{post.content}}</view>
-      <image wx:if="{{post.img}}" src="{{post.img}}" mode="widthFix" class="post-image" bindtap="previewImage"></image>
+      <image wx:if="{{post.img}}" src="{{post.imgUrl}}" mode="widthFix" class="post-image" bindtap="previewImage"></image>
     </view>
 
     <!-- 交互栏 -->
     <view class="interaction-bar">
       <view class="like-section {{post.is_liked ? 'liked' : ''}}" bindtap="handleLike">
-        <image src="{{post.is_liked ? '../../assets/liked.png' : '../../assets/like.png'}}" class="action-icon"></image>
-        <text class="action-text">{{post.like_count > 0 ? post.like_count : '点赞'}}</text>
+        <text class="like-icon {{post.is_liked ? 'liked' : ''}}">❤️</text>
+        <text class="action-text {{post.is_liked ? 'liked-text' : ''}}">{{post.like_count > 0 ? post.like_count : '点赞'}}</text>
       </view>
       <view class="comment-section" bindtap="focusCommentInput">
         <image src="../../assets/comment.png" class="action-icon"></image>

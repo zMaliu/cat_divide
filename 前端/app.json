@@ -1,22 +1,30 @@
 {
     "pages": [
+        "pages/splash/splash",
         "pages/login/login",
+        "pages/register/register",
+        "pages/loginForm/loginForm",
         "pages/home/home",
-        "pages/message/message",
+        "pages/discussion/discussion",
         "pages/mine/mine",
+        "pages/settings/settings",
+        "pages/editProfile/editProfile",
+        "pages/message/message",
+        "pages/index/index",
         "pages/posting/posting",
         "pages/postDetail/postDetail",
-        "pages/chat/chat",
-        "pages/index/index"
+        "pages/chat/chat"
     ],
     "window": {
         "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "Weixin",
-        "navigationBarBackgroundColor": "#ffffff"
+        "navigationBarTitleText": "云护萌",
+        "navigationBarBackgroundColor": "#ffffff",
+        "backgroundColor": "#F7F8FC",
+        "enablePullDownRefresh": false
     },
     "tabBar": {
         "color": "#999",
-        "selectedColor": "#1E941D",
+        "selectedColor": "#F8633B",
         "backgroundColor": "#fff",
         "borderStyle": "black",
         "list": [
@@ -27,16 +35,10 @@
                 "text": "首页"
             },
             {
-                "pagePath": "pages/index/index",
-                "iconPath": "assets/tab_recognize.png",
-                "selectedIconPath": "assets/tab_recognize_selected.png",
-                "text": "识别"
-            },
-            {
-                "pagePath": "pages/message/message",
+                "pagePath": "pages/discussion/discussion",
                 "iconPath": "assets/tab_message.png",
                 "selectedIconPath": "assets/tab_message_selected.png",
-                "text": "消息"
+                "text": "讨论"
             },
             {
                 "pagePath": "pages/mine/mine",
@@ -46,8 +48,25 @@
             }
         ]
     },
-  "style": "v2",
-  "componentFramework": "glass-easel",
-  "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+    "permission": {
+        "scope.userLocation": {
+            "desc": "您的位置信息将用于附近的宠物信息展示"
+        },
+        "scope.camera": {
+            "desc": "需要使用您的摄像头进行猫咪识别"
+        },
+        "scope.album": {
+            "desc": "需要访问您的相册选择猫咪照片"
+        }
+    },
+    "requiredPrivateInfos": [],
+    "style": "v2",
+    "componentFramework": "glass-easel",
+    "sitemapLocation": "sitemap.json",
+    "lazyCodeLoading": "requiredComponents",
+    "networkTimeout": {
+        "request": 60000,
+        "uploadFile": 60000,
+        "downloadFile": 60000
+    }
 }

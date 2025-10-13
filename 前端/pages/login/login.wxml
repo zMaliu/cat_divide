@@ -1,30 +1,20 @@
-<view class="form-section">
-    <view class="tab-container">
-      <view class="tab {{currentTab === 'login' ? 'active' : ''}}" bindtap="switchToLogin">登录</view>
-      <view class="tab {{currentTab === 'register' ? 'active' : ''}}" bindtap="switchToRegister">注册</view>
-    </view>
-
-    <!-- 注册表单 -->
-    <view class="form-content" wx:if="{{currentTab === 'register'}}">
-        <view class="input-group">
-            <input class="input" type="text" placeholder="请输入用户名" value="{{registerForm.user_name}}" bindinput="onRegister_username_Input"  />
-        </view>
-        <view class="input-group">
-            <input class="input" type="password" placeholder="请设置密码" value="{{registerForm.password}}" bindinput="onRegisterPasswordInput" />
-        </view>
-        <button class="submit-btn" bindtap="handleRegister">注册</button>
+<view class="login-selection-container">
+  <!-- 主要内容区域 -->
+  <view class="content-area">
+    <!-- 猫爪图标 -->
+    <view class="logo-container">
+      <image class="logo-icon" src="../../assets/login_icon_1.png" mode="aspectFit"></image>
     </view>
     
-    <!-- 登陆表单 -->
-    <view class="form-content" wx:if="{{currentTab === 'login'}}">
-        <view class="input-group">
-            <input class="input" type="text" placeholder="请输入用户名" value="{{loginForm.user_name}}" bindinput="onLogin_username_Input"  />
-        </view>
-        <view class="input-group">
-            <input class="input" type="password" placeholder="请输入密码" value="{{loginForm.password}}" bindinput="onLoginPasswordInput" />
-        </view>
-        <button class="submit-btn" bindtap="handleLogin">登陆</button>
+    <!-- 欢迎文字 -->
+    <view class="welcome-text">欢迎来到云护萌</view>
+    
+    <!-- 选择按钮组 -->
+    <view class="button-group">
+      <button class="selection-btn register-btn" bindtap="goToRegister">注册</button>
+      <button class="selection-btn login-btn" bindtap="goToLogin">登录</button>
     </view>
+  </view>
 </view>
 
 

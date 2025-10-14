@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pydantic import BaseModel
 
 class BaseResponse(BaseModel):
@@ -19,3 +20,15 @@ class UserStatsResponse(BaseModel):
     like_count: int
     follower_count: int
     following_count: int
+
+
+
+
+
+
+
+
+
+
+
+

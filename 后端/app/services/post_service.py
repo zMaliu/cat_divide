@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from app.database import get_db
 from app.schemas.response import BaseResponse
 from app.models.db_models import Post
@@ -5,31 +6,31 @@ import pymysql
 
 class PostService:
     @staticmethod
-    def create_post(title,content,user_id):
-        db=get_db()
-        cursor=db.cursor()
+    def create_post(title, content, user_id):
+        db = get_db()
+        cursor = db.cursor()
         try:
-            default_img="/default.jpg"
+            default_img = "/default.jpg"
             cursor.execute("""
-                INSERT INTO publish(title,content,img,publish_time,user_id)
-                VALUES (%s,%s,%s,NOW(),%s)
-            """,(title,content,default_img,user_id))
+                INSERT INTO publish(title, content, img, publish_time, user_id)
+                VALUES (%s, %s, %s, NOW(), %s)
+            """, (title, content, default_img, user_id))
             db.commit()
-            return BaseResponse.success(data={"success":True})
+            return BaseResponse.success(data={"success": True})
         except Exception as e:
             db.rollback()
-            print(f"数据库错误：{str(e)}")
-            return BaseResponse.error(500,f"创建失败：{str(e)}",data={"success":False})
+            print(f"数据库错误: {str(e)}")
+            return BaseResponse.error(500, f"创建文章失败: {str(e)}", data={"success": False})
         finally:
             cursor.close()
             db.close()
 
     @staticmethod
-    def get_posts(page=1,per_page=10,user_id=None):
-        db=get_db()
-        cursor=db.cursor(pymysql.cursors.DictCursor)
+    def get_posts(page=1, per_page=10, user_id=None):
+        db = get_db()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
-            offset=(page-1)*per_page
+            offset = (page - 1) * per_page
             if user_id:
                 cursor.execute("""
                 SELECT 
@@ -64,10 +65,10 @@ class PostService:
                 ORDER BY p.publish_time DESC
                 LIMIT %s OFFSET %s
             """, (per_page, offset))
-            posts=cursor.fetchall()
+            posts = cursor.fetchall()
             return BaseResponse.success({"posts": posts})
         except Exception as e:
-            return BaseResponse.error(500, f"查询失败: {str(e)}")
+            return BaseResponse.error(500, f"获取文章列表失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
@@ -101,7 +102,7 @@ class PostService:
                 return BaseResponse.error(404, "文章不存在")
             return BaseResponse.success({"post": post})
         except Exception as e:
-            return BaseResponse.error(500, f"查询失败: {str(e)}")
+            return BaseResponse.error(500, f"获取文章详情失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
@@ -111,7 +112,7 @@ class PostService:
         db = get_db()
         cursor = db.cursor()
         try:
-            # 验证文章是否存在且属于当前用户
+            # 检查文章是否存在且属于当前用户
             cursor.execute("SELECT user_id FROM publish WHERE article_id = %s", (article_id,))
             post = cursor.fetchone()
             if not post:
@@ -130,7 +131,7 @@ class PostService:
             db.commit()
             
             if cursor.rowcount == 0:
-                return BaseResponse.error(404, "更新失败")
+                return BaseResponse.error(404, "文章不存在")
             
             return BaseResponse.success()
         except Exception as e:
@@ -145,7 +146,7 @@ class PostService:
         db = get_db()
         cursor = db.cursor()
         try:
-            # 验证文章是否存在且属于当前用户
+            # 检查文章是否存在且属于当前用户
             cursor.execute("SELECT user_id FROM publish WHERE article_id = %s", (article_id,))
             post = cursor.fetchone()
             if not post:
@@ -160,7 +161,7 @@ class PostService:
             db.commit()
             
             if cursor.rowcount == 0:
-                return BaseResponse.error(404, "删除失败")
+                return BaseResponse.error(404, "文章不存在")
             
             return BaseResponse.success()
         except Exception as e:
@@ -169,3 +170,15 @@ class PostService:
         finally:
             cursor.close()
             db.close()
+
+
+
+
+
+
+
+
+
+
+
+

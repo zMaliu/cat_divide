@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request, g
 from app.services.post_service import PostService
 from app.schemas.request import PostCreateRequest, PostUpdateRequest
@@ -10,13 +11,17 @@ post_bp = Blueprint("post", __name__)
 @post_bp.before_request
 def auth_middleware():
     """强制认证中间件"""
-    # 排除需要认证的端点
+    # 排除不需要认证的端点
     if request.endpoint in ["post.list_posts", "post.get_post_detail"]:
         return
     
     token = request.headers.get('Authorization')
     if not token:
         return BaseResponse.error(401, "未提供认证令牌").dict(), 401
+
+    # 移除Bearer前缀
+    if token.startswith("Bearer "):
+        token = token[7:]
 
     user_id = AuthService.verify_token(token)
     if not user_id:
@@ -38,7 +43,7 @@ def create_post():
         )
         return result.dict()
     except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+        return BaseResponse.error(500, f"创建文章失败: {str(e)}").dict()
 
 @post_bp.route("/list", methods=["GET"])
 @rate_limit(max_requests=60, window=60, by="ip")  # 每个IP每分钟最多60次列表请求
@@ -47,7 +52,7 @@ def list_posts():
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
         
-        # 获取用户ID，如果没有认证则为None
+        # 获取用户ID，如果用户未认证则为None
         user_id = None
         token = request.headers.get('Authorization')
         if token:
@@ -56,13 +61,13 @@ def list_posts():
         result = PostService.get_posts(page, per_page, user_id)
         return result.dict()
     except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+        return BaseResponse.error(500, f"获取文章失败: {str(e)}").dict()
 
 @post_bp.route("/<int:article_id>", methods=["GET"])
 @rate_limit(max_requests=100, window=60, by="ip")  # 每个IP每分钟最多100次详情请求
 def get_post_detail(article_id):
     try:
-        # 获取用户ID，如果没有认证则为None
+        # 获取用户ID，如果用户未认证则为None
         user_id = None
         token = request.headers.get('Authorization')
         if token:
@@ -71,10 +76,10 @@ def get_post_detail(article_id):
         result = PostService.get_post_detail(article_id, user_id)
         return result.dict()
     except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+        return BaseResponse.error(500, f"获取文章失败: {str(e)}").dict()
 
 @post_bp.route("/<int:article_id>", methods=["PUT"])
-@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多修改30次文章
+@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多30次修改
 @validate_json
 def update_post(article_id):
     try:
@@ -88,13 +93,13 @@ def update_post(article_id):
         )
         return result.dict()
     except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+        return BaseResponse.error(500, f"更新文章失败: {str(e)}").dict()
 
 @post_bp.route("/<int:article_id>", methods=["DELETE"])
-@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多删除30次文章
+@rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多30次删除
 def delete_post(article_id):
     try:
         result = PostService.delete_post(article_id, g.user_id)
         return result.dict()
     except Exception as e:
-        return BaseResponse.error(500, f"服务器错误: {str(e)}").dict()
+        return BaseResponse.error(500, f"删除文章失败: {str(e)}").dict()

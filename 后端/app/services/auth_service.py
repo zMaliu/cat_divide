@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import hashlib
 import uuid
 from app.database import get_db
@@ -14,14 +15,14 @@ class AuthService:
         if not user_name:
             return BaseResponse.error(400, "用户名不能为空")
         if len(password) < 6:
-            return BaseResponse.error(400, "密码至少六位")
+            return BaseResponse.error(400, "密码至少6位")
 
         db = get_db()
         cursor = db.cursor()
         try:
             cursor.execute("SELECT * FROM register WHERE user_name = %s", (user_name,))
             if cursor.fetchone():
-                return BaseResponse.error(400, "用户名已注册")
+                return BaseResponse.error(400, "用户已注册")
 
             hashed_pwd = hashlib.md5(password.encode()).hexdigest()
             cursor.execute("""
@@ -40,97 +41,103 @@ class AuthService:
 
     @staticmethod
     def login(user_name, password):
+        print(f"登录请求: user_name={user_name}, password={password}")
+        
         if not user_name or not password:
             return BaseResponse.error(400, "用户名和密码不能为空")
 
         db = get_db()
         cursor = db.cursor()
         try:
+            print(f"执行数据库查询: SELECT user_id, password FROM register WHERE user_name = '{user_name}'")
             cursor.execute("SELECT user_id, password FROM register WHERE user_name = %s", (user_name,))
             user = cursor.fetchone()
+            print(f"查询结果: {user}")
+            print(f"查询结果类型: {type(user)}")
+            
             if not user:
-                return BaseResponse.error(404, "用户不存在")
+                return BaseResponse.error(400, "用户不存在")
 
-            user_id = user['user_id'] if isinstance(user, dict) else user[0]
-            db_password = user['password'] if isinstance(user, dict) else user[1]
+            print(f"用户数据: {user}")
             hashed_pwd = hashlib.md5(password.encode()).hexdigest()
+            print(f"输入密码哈希: {hashed_pwd}")
+            print(f"数据库密码: {user['password'] if isinstance(user, dict) else user[1]}")
+            
+            # 兼容处理，支持字典和元组两种格式
+            if isinstance(user, dict):
+                db_password = user["password"]
+                user_id = user["user_id"]
+            else:
+                db_password = user[1]
+                user_id = user[0]
+            
+            if db_password != hashed_pwd:
+                return BaseResponse.error(400, "密码错误")
 
-            if hashed_pwd != db_password:
-                return BaseResponse.error(401, "密码错误")
-
-            # 生成token并存储
+            # 生成token
             token = str(uuid.uuid4())
             token_map[token] = user_id
-            print(f"登录成功: 用户ID={user_id}, token={token}")
-            return BaseResponse.success({"user_id": user_id, "token": token})
+            
+            return BaseResponse.success(data={"token": token, "user_id": user_id})
         except Exception as e:
-            print(f"登录失败: {str(e)}")
+            print(f"登录异常: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return BaseResponse.error(500, f"服务器错误: {str(e)}")
         finally:
             cursor.close()
             db.close()
 
     @staticmethod
-    def verify_token(token):
-        original_token = token
+    def get_user_info(token):
+        if token not in token_map:
+            return BaseResponse.error(401, "无效的认证令牌")
         
-        # 处理Bearer前缀
-        if token.startswith("Bearer "):
-            token = token[7:]
-        
-        user_id = token_map.get(token)
-        print(f"验证token: 原始token={original_token}, 处理后token={token}, 结果user_id={user_id}")
-        return user_id
-    
-    @staticmethod
-    def get_user_info(user_id):
+        user_id = token_map[token]
         db = get_db()
-        cursor = db.cursor(pymysql.cursors.DictCursor)
+        cursor = db.cursor()
         try:
-            # 首先检查表结构
-            cursor.execute("DESCRIBE register")
-            columns = {row['Field']: True for row in cursor.fetchall()}
-            print(f"数据库表结构: {columns}")
-            
-            # 构建查询，只包含存在的列
-            query = "SELECT user_id, user_name, user_create_time"
-            
-            if 'like_count' in columns:
-                query += ", like_count"
-            
-            if 'follower_count' in columns:
-                query += ", follower_count"
-            
-            if 'following_count' in columns:
-                query += ", following_count"
-            
-            query += " FROM register WHERE user_id = %s"
-            print(f"执行SQL查询: {query}, user_id={user_id}")
-            
-            # 执行查询
-            cursor.execute(query, (user_id,))
-            user_data = cursor.fetchone()
-            
-            if not user_data:
-                print(f"用户不存在: user_id={user_id}")
+            cursor.execute("""
+                SELECT user_id, user_name, user_create_time, user_avatar, user_bio, 
+                       user_location, user_website, user_birthday
+                FROM register 
+                WHERE user_id = %s
+            """, (user_id,))
+            user = cursor.fetchone()
+            if not user:
                 return BaseResponse.error(404, "用户不存在")
-            
-            print(f"获取到用户数据: {user_data}")
-            
-            # 使用安全的方式构建用户对象
-            user = {
-                'user_id': user_data['user_id'],
-                'user_name': user_data['user_name'],
-                'user_create_time': user_data['user_create_time'],
-                'like_count': user_data.get('like_count', 0),
-                'follower_count': user_data.get('follower_count', 0),
-                'following_count': user_data.get('following_count', 0)
+
+            user_data = {
+                "user_id": user[0],
+                "user_name": user[1],
+                "user_create_time": user[2].strftime("%Y-%m-%d %H:%M:%S") if user[2] else None,
+                "user_avatar": user[3],
+                "user_bio": user[4],
+                "user_location": user[5],
+                "user_website": user[6],
+                "user_birthday": user[7].strftime("%Y-%m-%d") if user[7] else None
             }
-            
-            return BaseResponse.success({"user": user})
+            return BaseResponse.success(data=user_data)
         except Exception as e:
             print(f"获取用户信息失败: {str(e)}")
             return BaseResponse.error(500, f"服务器错误: {str(e)}")
         finally:
             cursor.close()
             db.close()
+
+    @staticmethod
+    def logout(token):
+        if token in token_map:
+            del token_map[token]
+            return BaseResponse.success(message="退出成功")
+        return BaseResponse.error(401, "无效的认证令牌")
+
+    @staticmethod
+    def verify_token(token):
+        """验证token并返回用户ID"""
+        print(f"验证token: {token}")
+        print(f"当前token_map: {token_map}")
+        result = token_map.get(token)
+        print(f"验证结果: {result}")
+        return result
+

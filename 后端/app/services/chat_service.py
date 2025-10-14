@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from app.database import get_db
 from app.schemas.response import BaseResponse
 import pymysql
@@ -17,7 +18,7 @@ class ChatService:
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
-            # 检查是否已存在会话（双向检查）
+            # 查找现有会话
             cursor.execute("""
                 SELECT cs.*, r.user_name as target_user_name
                 FROM chat_sessions cs
@@ -35,7 +36,7 @@ class ChatService:
                 """, (fromuser_id, touser_id))
                 db.commit()
 
-                # 获取新创建的会话和目标用户信息
+                # 获取新创建的会话
                 cursor.execute("""
                     SELECT cs.*, r.user_name as target_user_name
                     FROM chat_sessions cs
@@ -47,7 +48,7 @@ class ChatService:
             return BaseResponse.success({"session": session})
         except Exception as e:
             db.rollback()
-            return BaseResponse.error(500, f"创建/获取会话失败: {str(e)}")
+            return BaseResponse.error(500, f"创建会话失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
@@ -60,7 +61,7 @@ class ChatService:
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
-            # 获取会话信息以确定接收者
+            # 验证会话权限
             cursor.execute("""
                 SELECT fromuser_id, touser_id FROM chat_sessions 
                 WHERE session_id = %s
@@ -76,7 +77,7 @@ class ChatService:
             elif session['touser_id'] == fromuser_id:
                 touser_id = session['fromuser_id']
             else:
-                return BaseResponse.error(403, "无权限在此会话中发送消息")
+                return BaseResponse.error(403, "无权限访问此会话")
 
             # 插入消息
             cursor.execute("""
@@ -86,14 +87,14 @@ class ChatService:
 
             db.commit()
 
-            # 更新会话更新时间
+            # 更新会话时间
             cursor.execute("""
                 UPDATE chat_sessions SET updated_time = NOW() 
                 WHERE session_id = %s
             """, (session_id,))
             db.commit()
 
-            # 获取插入的消息
+            # 返回新消息
             cursor.execute("""
                 SELECT * FROM messages WHERE message_id = %s
             """, (cursor.lastrowid,))
@@ -110,7 +111,7 @@ class ChatService:
     @staticmethod
     def get_sessions(user_id, page=1, per_page=10):
         """
-        获取用户的会话列表
+        获取用户的聊天会话列表
         """
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
@@ -140,10 +141,10 @@ class ChatService:
             """, (user_id, user_id, user_id, user_id, per_page, offset))
 
             sessions = cursor.fetchall()
-            print(f"查询到的会话数据类型: {type(sessions)}")
-            print(f"会话数据内容: {sessions}")
+            print(f"sessions类型: {type(sessions)}")
+            print(f"sessions内容: {sessions}")
             
-            # 确保sessions是列表类型
+            # 确保sessions是列表
             if sessions is None:
                 sessions = []
             
@@ -153,7 +154,7 @@ class ChatService:
                 if 'created_time' in session and session['created_time']:
                     session['created_time'] = format_datetime(session['created_time'])
             
-            print(f"处理后的会话数据: {sessions}")
+            print(f"格式化后的sessions: {sessions}")
             return BaseResponse.success({"sessions": sessions})
 
         except Exception as e:
@@ -170,7 +171,7 @@ class ChatService:
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
-            # 验证用户是否有权限访问此会话
+            # 验证用户权限
             cursor.execute("""
                 SELECT * FROM chat_sessions 
                 WHERE session_id = %s AND (fromuser_id = %s OR touser_id = %s)
@@ -192,7 +193,7 @@ class ChatService:
 
             messages = cursor.fetchall()
             
-            # 获取目标用户信息
+            # 添加目标用户信息
             if messages:
                 # 确定目标用户ID
                 if session['fromuser_id'] == user_id:
@@ -205,16 +206,16 @@ class ChatService:
                     SELECT user_name FROM register WHERE user_id = %s
                 """, (target_user_id,))
                 target_user = cursor.fetchone()
-                target_user_name = target_user['user_name'] if target_user else '用户'
+                target_user_name = target_user['user_name'] if target_user else ''
                 
-                # 将目标用户名添加到每条消息中
+                # 为每条消息添加目标用户名
                 for message in messages:
                     message['target_user_name'] = target_user_name
             for message in messages:
                 if 'created_time' in message:
                     message['created_time'] = format_datetime(message['created_time'])
 
-            # 将消息标记为已读
+            # 标记消息为已读
             cursor.execute("""
                 UPDATE messages 
                 SET is_read = TRUE 
@@ -222,7 +223,7 @@ class ChatService:
             """, (session_id, user_id))
             db.commit()
 
-            # 反转消息顺序，使最新的消息在最后
+            # 反转消息顺序（最新的在后面）
             messages.reverse()
 
             return BaseResponse.success({"messages": messages})
@@ -235,7 +236,7 @@ class ChatService:
     @staticmethod
     def get_unread_count(user_id):
         """
-        获取未读消息数
+        获取未读消息数量
         """
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
@@ -249,7 +250,19 @@ class ChatService:
             result = cursor.fetchone()
             return BaseResponse.success({"unread_count": result['unread_count']})
         except Exception as e:
-            return BaseResponse.error(500, f"获取未读消息数失败: {str(e)}")
+            return BaseResponse.error(500, f"获取未读消息数量失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
+
+
+
+
+
+
+
+
+
+
+
+

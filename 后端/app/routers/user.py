@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request, g
 from app.services.auth_service import AuthService
 from app.schemas.response import BaseResponse
@@ -8,7 +9,7 @@ import pymysql
 user_bp = Blueprint("user", __name__)
 
 @user_bp.route("/profile", methods=["GET"])
-@rate_limit(max_requests=100, window=60, by="user")  # 每个用户每分钟最多查询100次个人信息
+@rate_limit(max_requests=100, window=60, by="user")  # 每用户每分钟100次请求
 def get_user_profile():
     token = request.headers.get('Authorization')
     if not token:

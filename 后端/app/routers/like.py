@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request, g
 from app.services.like_service import LikeService
 from app.schemas.request import LikeRequest
@@ -18,11 +19,11 @@ def auth_middleware():
     g.user_id = user_id
 
 @like_bp.route("/<int:article_id>", methods=["POST"])
-@rate_limit(max_requests=50, window=60, by="user")  # 每个用户每分钟最多点赞50次
+@rate_limit(max_requests=50, window=60, by="user")  # 每用户每分钟50次请求
 def like_article(article_id):
     return LikeService.like_article(article_id, g.user_id).dict()
 
 @like_bp.route("/<int:article_id>", methods=["DELETE"])
-@rate_limit(max_requests=50, window=60, by="user")  # 每个用户每分钟最多取消点赞50次
+@rate_limit(max_requests=50, window=60, by="user")  # 每用户每分钟50次请求
 def unlike_article(article_id):
     return LikeService.unlike_article(article_id, g.user_id).dict()

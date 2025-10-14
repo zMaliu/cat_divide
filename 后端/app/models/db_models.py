@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class UserToken:
     def __init__(self,token,user_id,expire_time):
         self.token=token
@@ -75,4 +76,16 @@ class Cat:
         self.owner_id = owner_id
         self.create_time = create_time
         self.update_time = update_time
+
+
+
+
+
+
+
+
+
+
+
+
 

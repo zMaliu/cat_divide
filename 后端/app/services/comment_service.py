@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from app.database import get_db
 from app.schemas.response import BaseResponse
 import pymysql
@@ -8,7 +9,7 @@ class CommentService:
         db = get_db()
         cursor = db.cursor()
         try:
-            # 验证文章是否存在
+            # 检查文章是否存在
             cursor.execute("SELECT 1 FROM publish WHERE article_id = %s", (article_id,))
             if not cursor.fetchone():
                 return BaseResponse.error(404, "文章不存在")
@@ -21,7 +22,7 @@ class CommentService:
             return BaseResponse.success()
         except Exception as e:
             db.rollback()
-            return BaseResponse.error(500, f"评论失败: {str(e)}")
+            return BaseResponse.error(500, f"创建评论失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
@@ -43,7 +44,19 @@ class CommentService:
             comments = cursor.fetchall()
             return BaseResponse.success({"comments": comments})
         except Exception as e:
-            return BaseResponse.error(500, f"查询失败: {str(e)}")
+            return BaseResponse.error(500, f"获取评论失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from app.database import get_db
 from app.schemas.response import BaseResponse
 import pymysql
@@ -8,7 +9,7 @@ class CatService:
         db = get_db()
         cursor = db.cursor()
         try:
-            # 如果提供了image_url，则使用它，否则使用默认图片
+            # 根据是否有image_url决定插入语句
             if image_url:
                 cursor.execute("""
                     INSERT INTO cats (name, breed, age, gender, description, image_url, owner_id, create_time)
@@ -44,13 +45,13 @@ class CatService:
             cats = cursor.fetchall()
             return BaseResponse.success({"cats": cats})
         except Exception as e:
-            return BaseResponse.error(500, f"查询猫咪列表失败: {str(e)}")
+            return BaseResponse.error(500, f"获取猫咪列表失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
 
     @staticmethod
-    def get_cat_detail(cat_id):
+    def get_cat_by_id(cat_id):
         db = get_db()
         cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
@@ -62,10 +63,10 @@ class CatService:
             """, (cat_id,))
             cat = cursor.fetchone()
             if not cat:
-                return BaseResponse.error(404, "猫咪信息不存在")
+                return BaseResponse.error(404, "猫咪不存在")
             return BaseResponse.success({"cat": cat})
         except Exception as e:
-            return BaseResponse.error(500, f"查询猫咪详情失败: {str(e)}")
+            return BaseResponse.error(500, f"获取猫咪详情失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
@@ -75,17 +76,17 @@ class CatService:
         db = get_db()
         cursor = db.cursor()
         try:
-            # 验证猫咪是否存在且属于当前用户
+            # 检查猫咪是否存在且属于当前用户
             cursor.execute("SELECT owner_id FROM cats WHERE cat_id = %s", (cat_id,))
             cat = cursor.fetchone()
             if not cat:
-                return BaseResponse.error(404, "猫咪信息不存在")
+                return BaseResponse.error(404, "猫咪不存在")
 
             cat_owner_id = cat[0] if isinstance(cat, tuple) else cat['owner_id']
             if cat_owner_id != owner_id:
                 return BaseResponse.error(403, "无权限修改此猫咪信息")
 
-            # 构建更新语句
+            # 构建更新字段
             update_fields = []
             params = []
 
@@ -104,12 +105,12 @@ class CatService:
             if description is not None:
                 update_fields.append("description = %s")
                 params.append(description)
-            if image_url is not None:  # 添加对image_url的处理
+            if image_url is not None:  # 允许image_url为空字符串
                 update_fields.append("image_url = %s")
                 params.append(image_url)
 
             if not update_fields:
-                return BaseResponse.success({"message": "无更新内容"})
+                return BaseResponse.success({"message": "没有需要更新的字段"})
 
             params.append(cat_id)
             update_sql = f"UPDATE cats SET {', '.join(update_fields)}, update_time = NOW() WHERE cat_id = %s"
@@ -118,9 +119,9 @@ class CatService:
             db.commit()
 
             if cursor.rowcount == 0:
-                return BaseResponse.error(404, "更新失败")
+                return BaseResponse.error(404, "更新失败，猫咪不存在")
 
-            return BaseResponse.success()
+            return BaseResponse.success({"message": "更新成功"})
         except Exception as e:
             db.rollback()
             return BaseResponse.error(500, f"更新猫咪信息失败: {str(e)}")
@@ -133,11 +134,11 @@ class CatService:
         db = get_db()
         cursor = db.cursor()
         try:
-            # 验证猫咪是否存在且属于当前用户
+            # 检查猫咪是否存在且属于当前用户
             cursor.execute("SELECT owner_id FROM cats WHERE cat_id = %s", (cat_id,))
             cat = cursor.fetchone()
             if not cat:
-                return BaseResponse.error(404, "猫咪信息不存在")
+                return BaseResponse.error(404, "猫咪不存在")
 
             cat_owner_id = cat[0] if isinstance(cat, tuple) else cat['owner_id']
             if cat_owner_id != owner_id:
@@ -147,12 +148,24 @@ class CatService:
             db.commit()
 
             if cursor.rowcount == 0:
-                return BaseResponse.error(404, "删除失败")
+                return BaseResponse.error(404, "删除失败，猫咪不存在")
 
-            return BaseResponse.success()
+            return BaseResponse.success({"message": "删除成功"})
         except Exception as e:
             db.rollback()
             return BaseResponse.error(500, f"删除猫咪信息失败: {str(e)}")
         finally:
             cursor.close()
             db.close()
+
+
+
+
+
+
+
+
+
+
+
+

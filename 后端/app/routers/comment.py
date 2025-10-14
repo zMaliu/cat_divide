@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request, g
 from app.services.comment_service import CommentService
 from app.schemas.request import CommentRequest
@@ -20,19 +21,19 @@ def auth_middleware():
     g.user_id = user_id
 
 @comment_bp.route("/create", methods=["POST"])
-@rate_limit(max_requests=20, window=60, by="user")  # 每个用户每分钟最多发表20条评论
+@rate_limit(max_requests=20, window=60, by="user")  # 每用户每分钟20次请求
 @validate_json
 def create_comment():
     data = request.get_json()
     req = CommentRequest(**data)
     return CommentService.create_comment(
         req.article_id,
-        req.article_content,  # 注意：数据库字段名暂未修改
+        req.article_content,  # 评论内容
         g.user_id
     ).dict()
 
 @comment_bp.route("/list/<int:article_id>", methods=["GET"])
-@rate_limit(max_requests=100, window=60, by="ip")  # 每个IP每分钟最多100次评论列表请求
+@rate_limit(max_requests=100, window=60, by="ip")  # 每IP每分钟100次请求
 def list_comments(article_id):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)

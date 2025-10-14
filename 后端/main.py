@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS
 import os
@@ -8,7 +9,8 @@ from app.utils.security import init_redis
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
-app.secret_key = "cat123456"
+
+app.secret_key = os.environ.get('SECRET_KEY', 'cat123456')
 
 # Redis配置
 app.config['REDIS_HOST'] = os.environ.get('REDIS_HOST', 'localhost')
@@ -34,10 +36,8 @@ app.register_blueprint(cat.cat_bp, url_prefix="/api/cat")
 app.register_blueprint(yolo.yolo_bp, url_prefix="/api/yolo")
 app.register_blueprint(user.user_bp, url_prefix="/api/user")
 
-# 初始化Redis
 init_redis(app)
 
-# 静态文件服务
 @app.route('/uploads/<path:filename>')
 def serve_upload(filename):
     """提供上传的文件"""
@@ -60,7 +60,6 @@ def serve_default_image():
         
         return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets"), "default.jpg")
     except Exception as e:
-        
         return "", 404
       
 def db_check():
@@ -80,9 +79,14 @@ if __name__ == '__main__':
 
     @app.errorhandler(Exception)
     def handle_exception(e):
-        print(f"全局异常: {str(e)}")
-        return BaseResponse.error(500, f"服务器错误：{str(e)}").dict(), 500
+        import traceback
+        error_msg = str(e)
+        print(f"全局异常: {error_msg}")
+        print(f"异常类型: {type(e)}")
+        print(f"异常详情: {traceback.format_exc()}")
+        return BaseResponse.error(500, f"服务器错误：{error_msg}").dict(), 500
     
     print("启动服务器，监听端口5001...")
     # 生产环境中设置debug=False
     app.run(host="0.0.0.0", port=5001, debug=False)
+

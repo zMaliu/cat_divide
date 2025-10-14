@@ -1,13 +1,14 @@
+# -*- coding: utf-8 -*-
 import pymysql
+import os
 from dbutils.pooled_db import PooledDB
 
-# 数据库配置
 DB_CONFIG = {
-    'host': "localhost",
-    'port': 3306,
-    'user': "root",
-    'password': "cat123456",
-    'database': "cat",
+    'host': os.environ.get('DB_HOST', 'localhost'),
+    'port': int(os.environ.get('DB_PORT', 3306)),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', 'cat123456'),
+    'database': os.environ.get('DB_NAME', 'cat'),
     'charset': "utf8mb4",
     'autocommit': False,
     'cursorclass': pymysql.cursors.DictCursor
@@ -23,3 +24,11 @@ pool = PooledDB(
 
 def get_db():
     return pool.connection()
+
+
+
+
+
+
+
+

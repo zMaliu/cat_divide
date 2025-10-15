@@ -1,0 +1,12 @@
+Abyssinian
+Bengal
+Birman
+Bombay
+British_Shorthair
+Egyptian_Mau
+Maine_Coon
+Persian
+Ragdoll
+Russian_Blue
+Siamese
+Sphynx

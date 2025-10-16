@@ -37,6 +37,5 @@ uploads/
 Thumbs.db
 
 # 模型文件
-*.pt
 *.pth
 *.onnx

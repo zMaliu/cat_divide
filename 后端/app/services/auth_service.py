@@ -135,9 +135,12 @@ class AuthService:
     @staticmethod
     def verify_token(token):
         """验证token并返回用户ID"""
-        print(f"验证token: {token}")
-        print(f"当前token_map: {token_map}")
-        result = token_map.get(token)
-        print(f"验证结果: {result}")
-        return result
-
+        original_token = token
+        
+        # 处理Bearer前缀
+        if token.startswith("Bearer "):
+            token = token[7:]
+        
+        user_id = token_map.get(token)
+        print(f"验证token: 原始token={original_token}, 处理后token={token}, 结果user_id={user_id}")
+        return user_id

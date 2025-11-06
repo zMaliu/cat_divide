@@ -36,6 +36,8 @@ App({
   globalData: {
     userInfo: null,
     needRefreshHome: false,  // 标记是否需要刷新首页
-    followStatusChanged: false  // 标记关注状态是否改变
+    followStatusChanged: false,  // 标记关注状态是否改变
+    updatedPost: null,  // 从详情页返回的更新数据
+    updatedPostIndex: -1  // 更新的帖子索引
   }
 })

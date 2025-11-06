@@ -104,7 +104,7 @@ def send_new_message():
     发送新消息
     """
     try:
-        data = getattr(request, '_cached_json', None) or request.get_json()
+        data = request.get_json()
         req = MessageRequest(**data)
         # 创建或获取会话
         session_result = ChatService.create_or_get_session(g.user_id, req.touser_id)

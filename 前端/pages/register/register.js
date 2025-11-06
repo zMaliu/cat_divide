@@ -1,3 +1,5 @@
+const config = require('../../utils/config.js')
+
 Page({
   data: {
     registerForm: {
@@ -65,7 +67,7 @@ Page({
 
     // 发起注册请求
     wx.request({
-      url: 'http://localhost:5001/api/auth/register',
+      url: config.apiURL + '/auth/register',
       method: 'POST',
       header: {
         'Content-Type': 'application/json'

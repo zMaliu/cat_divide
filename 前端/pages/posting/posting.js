@@ -1,3 +1,5 @@
+const config = require('../../utils/config.js')
+
 Page({
   data: {
     postingForm: {
@@ -209,7 +211,7 @@ Page({
     const { title, content } = this.data.postingForm;
     
     wx.request({
-      url: 'http://localhost:5001/api/post/create',
+      url: config.apiURL + '/post/create',
       method: 'POST',
       header: {
         'Content-Type': 'application/json',

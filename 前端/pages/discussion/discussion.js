@@ -1,5 +1,7 @@
+const config = require('../../utils/config.js')
+
 Page({
-  data: {
+    data: {
     // 分类相关
     activeCategory: 'share', // share, help, knowledge
     categories: [
@@ -252,7 +254,7 @@ Page({
     if (!post) return;
     
     const isLiked = post.is_liked;
-    const url = `http://localhost:5001/api/like/${postId}`;
+    const url = `${config.apiURL}/like/${postId}`;
     const method = isLiked ? 'DELETE' : 'POST';
     
     // 乐观更新UI

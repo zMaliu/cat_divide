@@ -39,6 +39,9 @@
   <!-- 热门精选标题 -->
   <view class="hot-picks-header">
     <text class="section-title">热门精选</text>
+    <view class="refresh-btn" bindtap="onManualRefresh">
+      <text class="refresh-icon">🔄</text>
+    </view>
   </view>
 
   <!-- 内容区域 -->
@@ -68,14 +71,13 @@
       scroll-y="true" 
       class="discussion-scroll" 
       wx:if="{{!isLoading && !loadError && hotPicks.length > 0}}" 
-      refresher-enabled="{{true}}"
-      refresher-threshold="{{80}}"
-      refresher-triggered="{{isRefreshing}}"
-      bindrefresherrefresh="onPullDownRefresh"
+      refresher-enabled="{{false}}"
       enhanced="true"
       bounces="true"
       show-scrollbar="{{false}}"
       bindscrolltolower="loadMorePets"
+      upper-threshold="50"
+      bindscrolltoupper="onPullDownRefresh"
     >
       <view class="discussion-grid">
         <block wx:for="{{hotPicks}}" wx:key="article_id">

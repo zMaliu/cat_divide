@@ -1,4 +1,6 @@
 
+const config = require('../../utils/config.js')
+
 Page({
     data: {
         post: {},
@@ -10,8 +12,11 @@ Page({
     },
 
     onLoad: function(options) {
+        console.log('========== postDetail onLoad ==========');
         const token = wx.getStorageSync('token'); 
+        console.log('onLoad获取token:', token);
         this.setData({ userToken: token });
+        console.log('onLoad设置后 this.data.userToken:', this.data.userToken);
         
         // 保存来源页面信息
         if (options.fromPage) {
@@ -31,7 +36,7 @@ Page({
             if (post.img && post.img === '/default.jpg') {
                 post.imgUrl = '../../assets/default.jpg'; // 使用本地默认图片
             } else if (post.img && !post.img.startsWith('http')) {
-                post.imgUrl = 'http://localhost:5001' + post.img;
+                post.imgUrl = config.baseURL + post.img;
             } else {
                 post.imgUrl = post.img || '../../assets/default.jpg';
             }
@@ -50,6 +55,16 @@ Page({
             // 强制获取最新的帖子详情，包括关注状态
             this.getPostDetail(post.article_id);
         }
+    },
+
+    onShow: function() {
+        console.log('========== postDetail onShow ==========');
+        // 页面显示时重新获取token
+        const token = wx.getStorageSync('token');
+        console.log('onShow获取token:', token);
+        console.log('onShow前 this.data.userToken:', this.data.userToken);
+        this.setData({ userToken: token });
+        console.log('onShow后 this.data.userToken:', this.data.userToken);
     },
     
     // 强制刷新数据
@@ -75,13 +90,21 @@ Page({
         }, 1000);
     },
 
-    // 页面卸载时，设置全局刷新标志
+    // 页面卸载时，传递更新的数据给首页
     onUnload: function() {
         if (this.data.fromPage === 'home') {
-            // 设置全局刷新标志，让首页重新加载数据
             const app = getApp();
             if (app.globalData) {
                 app.globalData.needRefreshHome = true;
+                // 传递更新后的帖子数据和索引
+                if (this.data.post && this.data.fromIndex >= 0) {
+                    app.globalData.updatedPost = {
+                        is_liked: this.data.post.is_liked,
+                        like_count: this.data.post.like_count,
+                        is_followed: this.data.post.is_followed
+                    };
+                    app.globalData.updatedPostIndex = this.data.fromIndex;
+                }
             }
         }
     },
@@ -95,7 +118,7 @@ Page({
             headers['Authorization'] = `Bearer ${token}`;
         }
         wx.request({
-            url: `http://localhost:5001/api/post/${article_id}`,
+            url: `${config.apiURL}/post/${article_id}`,
             method: 'GET',
             header: headers,
             success: (res) => {
@@ -106,7 +129,7 @@ Page({
                     if (post.img && post.img === '/default.jpg') {
                         post.imgUrl = '../../assets/default.jpg';
                     } else if (post.img && !post.img.startsWith('http')) {
-                        post.imgUrl = 'http://localhost:5001' + post.img;
+                        post.imgUrl = config.baseURL + post.img;
                     } else {
                         post.imgUrl = post.img || '../../assets/default.jpg';
                     }
@@ -133,7 +156,7 @@ Page({
             }
         }
         wx.request({
-            url: `http://localhost:5001/api/comment/list/${article_id}`,
+            url: `${config.apiURL}/comment/list/${article_id}`,
             method: 'GET',
             header: headers,
             success: (res) => {
@@ -167,7 +190,7 @@ Page({
             headers['Authorization'] = `Bearer ${token}`;
         }
         wx.request({
-            url: 'http://localhost:5001/api/comment/create',
+            url: config.apiURL + '/comment/create',
             method: 'POST',
             header: headers,
             data: {
@@ -189,16 +212,26 @@ Page({
     handleLike: function() {
         const token = this.data.userToken;
         const article_id = this.data.post.article_id;
+        
+        // 调试日志
+        console.log('=== 点赞调试 ===');
+        console.log('this.data.userToken:', this.data.userToken);
+        console.log('Storage中的token:', wx.getStorageSync('token'));
+        console.log('article_id:', article_id);
+        
         if (!token) {
+            console.log('❌ token为空，提示登录');
             wx.showToast({ title: '请先登录', icon: 'none' });
             return;
         }
+        
+        console.log('✅ token存在，准备发送请求');
         
         // 修复：使用 post.is_liked 而不是复杂的状态判断
         const currentIsLiked = this.data.post.is_liked === 1 || this.data.post.is_liked === true;
         const newIsLiked = !currentIsLiked;
         const method = newIsLiked ? 'POST' : 'DELETE';
-        const url = `http://localhost:5001/api/like/${article_id}`;
+        const url = `${config.apiURL}/like/${article_id}`;
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
@@ -260,7 +293,7 @@ Page({
         const currentIsFollowed = !!this.data.post.is_followed;
         const newIsFollowed = !currentIsFollowed;
         const method = newIsFollowed ? 'POST' : 'DELETE';
-        const url = `http://localhost:5001/api/follow/${authorId}`;
+        const url = `${config.apiURL}/follow/${authorId}`;
         
         // 立即更新UI状态
         const newPost = {...this.data.post, is_followed: newIsFollowed};

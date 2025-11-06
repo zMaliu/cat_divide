@@ -1,3 +1,5 @@
+const config = require('../../utils/config.js')
+
 Page({
   data: {
     loginForm: {
@@ -61,8 +63,14 @@ Page({
     });
 
     // 发起登录请求
+    const requestUrl = config.apiURL + '/auth/login';
+    console.log('=== 登录调试信息 ===');
+    console.log('完整URL:', requestUrl);
+    console.log('config.apiURL:', config.apiURL);
+    console.log('用户名:', user_name.trim());
+    
     wx.request({
-      url: 'http://localhost:5001/api/auth/login',
+      url: requestUrl,
       method: 'POST',
       header: {
         'Content-Type': 'application/json'

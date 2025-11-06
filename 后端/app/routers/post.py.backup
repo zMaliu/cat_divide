@@ -34,7 +34,7 @@ def auth_middleware():
 @validate_json
 def create_post():
     try:
-        data = getattr(request, '_cached_json', None) or request.get_json()
+        data = request.get_json()
         req = PostCreateRequest(**data)
         result = PostService.create_post(
             title=req.title,
@@ -83,7 +83,7 @@ def get_post_detail(article_id):
 @validate_json
 def update_post(article_id):
     try:
-        data = getattr(request, '_cached_json', None) or request.get_json()
+        data = request.get_json()
         req = PostUpdateRequest(**data)
         result = PostService.update_post(
             article_id=article_id,

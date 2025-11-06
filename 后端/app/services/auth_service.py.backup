@@ -1,28 +1,12 @@
 # -*- coding: utf-8 -*-
 import hashlib
 import uuid
-import redis
 from app.database import get_db
 from app.schemas.response import BaseResponse
 from app.models.db_models import User
 import pymysql.cursors
 
-# Redis连接（用于存储token）
-try:
-    redis_client = redis.Redis(
-        host='localhost',
-        port=6379,
-        db=0,
-        decode_responses=True,
-        socket_connect_timeout=5
-    )
-    redis_client.ping()
-    print("Redis token存储已连接")
-except Exception as e:
-    print(f"Redis连接失败: {e}")
-    redis_client = None
-
-# 全局token存储（Redis不可用时的备用方案）
+# 全局token存储
 token_map = {}
 
 class AuthService:
@@ -92,17 +76,7 @@ class AuthService:
 
             # 生成token
             token = str(uuid.uuid4())
-            
-            # 优先存储到Redis，7天过期
-            if redis_client:
-                try:
-                    redis_client.setex(f"token:{token}", 7*24*3600, user_id)
-                    print(f"Token已存储到Redis: {token} -> {user_id}")
-                except Exception as e:
-                    print(f"Redis存储失败，使用内存存储: {e}")
-                    token_map[token] = user_id
-            else:
-                token_map[token] = user_id
+            token_map[token] = user_id
             
             return BaseResponse.success(data={"token": token, "user_id": user_id})
         except Exception as e:
@@ -116,13 +90,7 @@ class AuthService:
 
     @staticmethod
     def get_user_info(token):
-        # 处理Bearer前缀
-        if token.startswith("Bearer "):
-            token = token[7:]
-        
-        # 从Redis或内存获取user_id
-        user_id = AuthService.verify_token(token)
-        if not user_id:
+        if token not in token_map:
             return BaseResponse.error(401, "无效的认证令牌")
         
         user_id = token_map[token]
@@ -159,23 +127,10 @@ class AuthService:
 
     @staticmethod
     def logout(token):
-        # 处理Bearer前缀
-        if token.startswith("Bearer "):
-            token = token[7:]
-        
-        # 从Redis删除
-        if redis_client:
-            try:
-                deleted = redis_client.delete(f"token:{token}")
-                print(f"从Redis删除token: {token}, 结果: {deleted}")
-            except Exception as e:
-                print(f"Redis删除失败: {e}")
-        
-        # 从内存删除（备用）
         if token in token_map:
             del token_map[token]
-        
-        return BaseResponse.success(message="退出成功")
+            return BaseResponse.success(message="退出成功")
+        return BaseResponse.error(401, "无效的认证令牌")
 
     @staticmethod
     def verify_token(token):
@@ -186,18 +141,6 @@ class AuthService:
         if token.startswith("Bearer "):
             token = token[7:]
         
-        # 优先从Redis获取
-        user_id = None
-        if redis_client:
-            try:
-                user_id_str = redis_client.get(f"token:{token}")
-                user_id = int(user_id_str) if user_id_str else None
-                print(f"从Redis验证token: token={token}, user_id={user_id}")
-            except Exception as e:
-                print(f"Redis读取失败，使用内存验证: {e}")
-                user_id = token_map.get(token)
-        else:
-            user_id = token_map.get(token)
-        
+        user_id = token_map.get(token)
         print(f"验证token: 原始token={original_token}, 处理后token={token}, 结果user_id={user_id}")
         return user_id

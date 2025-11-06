@@ -1,3 +1,4 @@
+const config = require('../../utils/config.js')
 
 Page({
     data: {
@@ -39,15 +40,29 @@ Page({
         // 获取全局变量中的刷新标志
         const app = getApp();
         if (app.globalData && app.globalData.needRefreshHome) {
-            // 重新加载数据
-            this.setData({
-                currentPage: 1,
-                hotPicks: [],
-                hasMore: true,
-                noMoreData: false,
-                loadError: false
-            });
-            this.loadHotPicks(true);
+            // 检查是否有更新的帖子数据（从详情页返回）
+            if (app.globalData.updatedPost) {
+                // 只更新对应的帖子，不重新加载整个列表
+                const updatedPost = app.globalData.updatedPost;
+                const index = app.globalData.updatedPostIndex;
+                
+                if (index >= 0 && index < this.data.hotPicks.length) {
+                    const hotPicks = [...this.data.hotPicks];
+                    // 只更新点赞和关注状态
+                    hotPicks[index] = {
+                        ...hotPicks[index],
+                        is_liked: updatedPost.is_liked,
+                        like_count: updatedPost.like_count,
+                        is_followed: updatedPost.is_followed
+                    };
+                    
+                    this.setData({ hotPicks });
+                }
+                
+                // 清除全局数据
+                app.globalData.updatedPost = null;
+                app.globalData.updatedPostIndex = -1;
+            }
             
             // 重置刷新标志
             app.globalData.needRefreshHome = false;
@@ -91,7 +106,7 @@ Page({
         }
 
         // 构建热门精选请求
-        let url = `http://localhost:5001/api/post/list?page=${currentPage}&per_page=${pageSize}`;
+        let url = `${config.apiURL}/post/list?page=${currentPage}&per_page=${pageSize}`;
 
         wx.request({
             url: url,
@@ -108,9 +123,9 @@ Page({
                         ...item,
                         // 处理图片字段，使用本地默认图片
                         img: item.img || '../../assets/default.jpg',
-                        imgUrl: item.img === '/default.jpg' ? '../../assets/default.jpg' : (item.img && !item.img.startsWith('http') ? 'http://localhost:5001' + item.img : (item.img || '../../assets/default.jpg')),
-                        // 补充回复数字段 (API暂未返回，临时使用随机数)
-                        reply_count: item.reply_count || Math.floor(Math.random() * 30) + 1,
+                        imgUrl: item.img === '/default.jpg' ? '../../assets/default.jpg' : (item.img && !item.img.startsWith('http') ? config.baseURL + item.img : (item.img || '../../assets/default.jpg')),
+                        // 使用API返回的真实评论数
+                        reply_count: item.reply_count || 0,
                         // 补充作者字段名统一
                         author: item.user_name || item.author || '匿名用户',
                         // 补充友好时间显示
@@ -168,13 +183,35 @@ Page({
     },
 
     // 下拉刷新
+    // 滚动到顶部时不自动刷新，提示用户手动刷新
     onPullDownRefresh: function() {
-        console.log('触发下拉刷新');
+        console.log('滚动到顶部');
+        // 不自动刷新，提示用户点击按钮
+        wx.showToast({
+            title: '点击🔄按钮刷新',
+            icon: 'none',
+            duration: 1500
+        });
+        this.setData({ isRefreshing: false });
+    },
+
+    // 手动刷新按钮
+    onManualRefresh: function() {
+        console.log('手动刷新');
+        wx.showLoading({ title: '刷新中...' });
+        
         this.setData({
             currentPage: 1,
-            isRefreshing: true
+            hotPicks: [],
+            hasMore: true,
+            noMoreData: false
         });
+        
         this.loadHotPicks(true);
+        
+        setTimeout(() => {
+            wx.hideLoading();
+        }, 500);
     },
 
     // 上拉加载更多
@@ -243,7 +280,7 @@ Page({
         const currentIsLiked = pet.is_liked === 1 || pet.is_liked === true;
         const newIsLiked = !currentIsLiked;
         const method = newIsLiked ? 'POST' : 'DELETE';
-        const url = `http://localhost:5001/api/like/${postId}`;
+        const url = `${config.apiURL}/like/${postId}`;
         
         wx.request({
             url: url,

@@ -19,7 +19,7 @@ def get_user_profile():
     if not user_id:
         return BaseResponse.error(401, "无效的认证令牌").dict(), 401
 
-    result = AuthService.get_user_info(token)
+    result = AuthService.get_user_info(user_id)
     return result.dict()
 
 @user_bp.route("/<int:user_id>", methods=["GET"])

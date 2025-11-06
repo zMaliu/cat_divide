@@ -116,13 +116,7 @@ class AuthService:
 
     @staticmethod
     def get_user_info(token):
-        # 处理Bearer前缀
-        if token.startswith("Bearer "):
-            token = token[7:]
-        
-        # 从Redis或内存获取user_id
-        user_id = AuthService.verify_token(token)
-        if not user_id:
+        if token not in token_map:
             return BaseResponse.error(401, "无效的认证令牌")
         
         user_id = token_map[token]

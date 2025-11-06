@@ -164,18 +164,44 @@ page {
     text-align: center;
   }
   
-  /* 热门精选标题 */
-  .hot-picks-header {
-    padding: 20rpx 30rpx 10rpx;
-    background-color: #F6EFE4;
-  }
-  
-  .section-title {
-    font-size: 32rpx;
-    font-weight: 700;
-    color: #361D1E;
-    letter-spacing: 1rpx;
-  }
+/* 热门精选标题 */
+.hot-picks-header {
+  padding: 20rpx 30rpx 10rpx;
+  background-color: #F6EFE4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #361D1E;
+  letter-spacing: 1rpx;
+}
+
+/* 手动刷新按钮 */
+.refresh-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFB84D, #FF9A3E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(255, 184, 77, 0.3);
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:active {
+  transform: scale(0.9) rotate(180deg);
+  box-shadow: 0 2rpx 8rpx rgba(255, 184, 77, 0.5);
+}
+
+.refresh-icon {
+  font-size: 32rpx;
+  line-height: 1;
+}
   
   /* 内容区域 */
   .page-content {

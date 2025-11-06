@@ -1,6 +1,8 @@
 
 const util = require('../../utils/util.js');
 
+const config = require('../../utils/config.js')
+
 Page({
   data: {
     sessionId: '',
@@ -58,7 +60,7 @@ Page({
     const token = wx.getStorageSync('token');
     // 先创建会话
     wx.request({
-      url: 'http://localhost:5001/api/chat/session',
+      url: config.apiURL + '/chat/session',
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -86,7 +88,7 @@ Page({
   getSessionWithUsername: function() {
     const token = wx.getStorageSync('token');
     wx.request({
-      url: 'http://localhost:5001/api/chat/session',
+      url: config.apiURL + '/chat/session',
       method: 'GET',
       header: {
         'Authorization': `Bearer ${token}`
@@ -128,7 +130,7 @@ Page({
     if (!sessionId) return;
     
     wx.request({
-      url: `http://localhost:5001/api/chat/message/${sessionId}`,
+      url: `${config.apiURL}/chat/message/${sessionId}`,
       method: 'GET',
       header: {
         'Content-Type': 'application/json',
@@ -159,7 +161,11 @@ Page({
               });
               this.scrollToBottom();
             } else {
-              wx.showToast({ title: res.data.msg || '获取消息失败', icon: 'none' });
+              // 静默处理错误（可能是新会话，没有历史消息）
+              console.log('获取消息失败（可能是新会话）:', res.data.msg);
+              this.setData({
+                messageList: []  // 设置为空列表，不显示错误
+              });
             }
           },
       fail: () => {
@@ -171,13 +177,15 @@ Page({
   sendMessage: function() {
     const token = wx.getStorageSync('token');
     const { inputMessage, targetUserId } = this.data;
-    if (!inputMessage.trim()) {
+    
+    // 修复：先检查inputMessage是否存在
+    if (!inputMessage || !inputMessage.trim()) {
       wx.showToast({ title: '请输入内容', icon: 'none' });
       return;
     }
     
     wx.request({
-      url: `http://localhost:5001/api/chat/message`,
+      url: `${config.apiURL}/chat/message`,
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -203,8 +211,10 @@ Page({
   },
 
   onInputChange: function(e) {
+    // 修复：确保value是字符串
+    const value = e.detail.value || '';
     this.setData({
-      inputMessage: e.detail.value
+      inputMessage: value
     });
   },
 

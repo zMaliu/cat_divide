@@ -1,5 +1,7 @@
 const util = require('../../utils/util.js');
 
+const config = require('../../utils/config.js')
+
 Page({
   data: {
     messageList: [],
@@ -68,7 +70,7 @@ Page({
     const page = isRefresh ? 1 : this.data.page;
     
     wx.request({
-      url: 'http://localhost:5001/api/chat/session',
+      url: config.apiURL + '/chat/session',
       method: 'GET',
       header: {
         'Authorization': `Bearer ${token}`

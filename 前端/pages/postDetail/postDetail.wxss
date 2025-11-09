@@ -43,6 +43,7 @@ page {
   .author-meta {
     display: flex;
     flex-direction: column;
+    width: 350rpx;
   }
   
   .author-name {
@@ -57,15 +58,20 @@ page {
     color: #999999;
   }
   
+  .author-click {
+    display: flex;
+    flex-direction: column;
+    gap: 10rpx;
+  }
+
   .follow-btn {
     padding: 10rpx 12rpx;
     background-color: #FF9800;
     color: white;
-    border-radius: 40rpx;
+    border-radius: 20rpx;
     font-size: 26rpx;
     height: 60rpx;
     line-height: 40rpx;
-    min-width: 60rpx;
     text-align: center;
     box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.3);
     transition: all 0.2s;
@@ -75,13 +81,12 @@ page {
     padding: 10rpx 12rpx;
     background-color: #FF9800;
     color: white;
-    border-radius: 40rpx;
+    border-radius: 20rpx;
     font-size: 26rpx;
     height: 60rpx;
     line-height: 40rpx;
-    min-width: 60rpx;
     text-align: center;
-    box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.3);
+    box-shadow: 0 4rpx 12rpx rgba(99, 90, 76, 0.3);
     transition: all 0.2s;
   }
   
@@ -335,11 +340,13 @@ page {
   }
   
   .comment-input {
-    flex: 1;
+    /* flex: 1; xmtx排查：不该使用该属性，否则导致输入框的宽度无法自定义*/
     height: 70rpx;
+    width: 1100rpx;
     border: 2rpx solid #EAEAEA;
-    border-radius: 35rpx;
+    border-radius: 20rpx;
     padding: 0 24rpx;
+    margin-right: 20rpx;
     font-size: 28rpx;
     background-color: #F7F8FC;
     color: #333333;
@@ -353,7 +360,7 @@ page {
     color: white;
     font-size: 28rpx;
     margin-left: 20rpx;
-    border-radius: 35rpx;
+    border-radius: 20rpx;
     text-align: center;
     padding: 0 24rpx;
     box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.3);

@@ -11,12 +11,14 @@
           <text class="post-time">{{post.publish_time}}</text>
         </view>
       </view>
-      <button class="follow-btn {{post.is_followed ? 'followed' : ''}}" bindtap="handleFollow">
-        {{post.is_followed ? '已关注' : '+ 关注'}}
-      </button>
-      <button class="message-btn"  data-user-id="{{post.user_id}}" bindtap="onMessageTap"> 
-      <text>私信</text>
-      </button>
+      <view class="author-click">
+        <button class="follow-btn {{post.is_followed ? 'followed' : ''}}" bindtap="handleFollow" style="width: 150rpx;">
+          {{post.is_followed ? '已关注' : '+ 关注'}}
+        </button>
+        <button class="message-btn"  data-user-id="{{post.user_id}}" bindtap="onMessageTap" style="width: 150rpx;"> 
+        <text>私信</text>
+        </button>
+      </view>
     </view>
     
     <!-- 调试信息 -->

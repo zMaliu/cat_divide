@@ -113,10 +113,12 @@
   .submit-btn {
     width: 100%;
     height: 100rpx;
+    line-height: 100rpx;
+    padding: 0;
     background: #FF9800;
     color: #FFFFFF;
     border: none;
-    border-radius: 50rpx;
+    border-radius: 20rpx;
     font-size: 34rpx;
     font-weight: bold;
     margin-top: 40rpx;

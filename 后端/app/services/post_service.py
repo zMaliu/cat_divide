@@ -40,12 +40,13 @@ class PostService:
                     p.content, 
                     p.publish_time,
                     u.user_name,
-                    p.like_count,
+                    COALESCE(ast.like_count, 0) as like_count,
                     (SELECT COUNT(*) FROM comments WHERE article_id = p.article_id) AS reply_count,
                     EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked,
                     EXISTS(SELECT 1 FROM follows WHERE follower_id = %s AND followed_id = p.user_id) AS is_followed
                 FROM publish p 
                 JOIN register u ON p.user_id = u.user_id
+                LEFT JOIN article_stats ast ON p.article_id = ast.article_id
                 ORDER BY p.publish_time DESC
                 LIMIT %s OFFSET %s
             """, (user_id, user_id, per_page, offset))
@@ -58,12 +59,13 @@ class PostService:
                     p.content, 
                     p.publish_time,
                     u.user_name,
-                    p.like_count,
+                    COALESCE(ast.like_count, 0) as like_count,
                     (SELECT COUNT(*) FROM comments WHERE article_id = p.article_id) AS reply_count,
                     FALSE AS is_liked,
                     FALSE AS is_followed
                 FROM publish p 
                 JOIN register u ON p.user_id = u.user_id
+                LEFT JOIN article_stats ast ON p.article_id = ast.article_id
                 ORDER BY p.publish_time DESC
                 LIMIT %s OFFSET %s
             """, (per_page, offset))
@@ -85,10 +87,12 @@ class PostService:
                 SELECT 
                     p.*,
                     u.user_name,
+                    COALESCE(ast.like_count, 0) as like_count,
                     EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked,
                     EXISTS(SELECT 1 FROM follows WHERE follower_id = %s AND followed_id = p.user_id) AS is_followed
                 FROM publish p
                 JOIN register u ON p.user_id = u.user_id
+                LEFT JOIN article_stats ast ON p.article_id = ast.article_id
                 WHERE p.article_id = %s
             """, (user_id, user_id, article_id))
             else:
@@ -96,10 +100,12 @@ class PostService:
                 SELECT 
                     p.*,
                     u.user_name,
+                    COALESCE(ast.like_count, 0) as like_count,
                     FALSE AS is_liked,
                     FALSE AS is_followed
                 FROM publish p
                 JOIN register u ON p.user_id = u.user_id
+                LEFT JOIN article_stats ast ON p.article_id = ast.article_id
                 WHERE p.article_id = %s
             """, (article_id,))
             

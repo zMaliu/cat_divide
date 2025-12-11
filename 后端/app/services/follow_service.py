@@ -24,18 +24,7 @@ class FollowService:
                 VALUES (%s, %s)
             """, (follower_id, followed_id))
 
-            # 更新被关注者的粉丝数
-            cursor.execute("""
-                UPDATE register 
-                SET follower_count = follower_count + 1 
-                WHERE user_id = %s
-            """, (followed_id,))
-
-            cursor.execute("""
-                UPDATE register 
-                SET following_count = following_count + 1 
-                WHERE user_id = %s
-            """, (follower_id,))
+            # 不再直接更新用户关注数，而是通过视图获取实时数据
 
             db.commit()
             return BaseResponse.success()
@@ -65,18 +54,7 @@ class FollowService:
                 DELETE FROM follows WHERE follower_id=%s AND followed_id=%s
             """, (follower_id, followed_id))
 
-            # 更新被关注者的粉丝数
-            cursor.execute("""
-                UPDATE register 
-                SET follower_count = follower_count - 1 
-                WHERE user_id = %s AND follower_count > 0
-            """, (followed_id,))
-
-            cursor.execute("""
-                UPDATE register 
-                SET following_count = following_count - 1 
-                WHERE user_id = %s AND following_count > 0
-            """, (follower_id,))
+            # 不再直接更新用户关注数，而是通过视图获取实时数据
 
             db.commit()
             return BaseResponse.success()

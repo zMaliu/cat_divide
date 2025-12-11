@@ -125,29 +125,33 @@ class AuthService:
         if not user_id:
             return BaseResponse.error(401, "无效的认证令牌")
         
-        user_id = token_map[token]
         db = get_db()
-        cursor = db.cursor()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
             cursor.execute("""
-                SELECT user_id, user_name, user_create_time, user_avatar, user_bio, 
-                       user_location, user_website, user_birthday
-                FROM register 
-                WHERE user_id = %s
+                SELECT r.user_id, r.user_name, r.user_create_time, r.user_avatar, r.user_bio, 
+                       r.user_location, r.user_website, r.user_birthday,
+                       COALESCE(us.follower_count, 0) as follower_count,
+                       COALESCE(us.following_count, 0) as following_count
+                FROM register r
+                LEFT JOIN user_stats us ON r.user_id = us.user_id
+                WHERE r.user_id = %s
             """, (user_id,))
             user = cursor.fetchone()
             if not user:
                 return BaseResponse.error(404, "用户不存在")
 
             user_data = {
-                "user_id": user[0],
-                "user_name": user[1],
-                "user_create_time": user[2].strftime("%Y-%m-%d %H:%M:%S") if user[2] else None,
-                "user_avatar": user[3],
-                "user_bio": user[4],
-                "user_location": user[5],
-                "user_website": user[6],
-                "user_birthday": user[7].strftime("%Y-%m-%d") if user[7] else None
+                "user_id": user["user_id"],
+                "user_name": user["user_name"],
+                "user_create_time": user["user_create_time"].strftime("%Y-%m-%d %H:%M:%S") if user["user_create_time"] else None,
+                "user_avatar": user["user_avatar"],
+                "user_bio": user["user_bio"],
+                "user_location": user["user_location"],
+                "user_website": user["user_website"],
+                "user_birthday": user["user_birthday"].strftime("%Y-%m-%d") if user["user_birthday"] else None,
+                "follower_count": user["follower_count"],
+                "following_count": user["following_count"]
             }
             return BaseResponse.success(data=user_data)
         except Exception as e:

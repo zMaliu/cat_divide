@@ -21,11 +21,7 @@ class LikeService:
                 VALUES (%s, %s)
             """, (article_id, user_id))
 
-            # 更新文章点赞数
-            cursor.execute("""
-                UPDATE publish SET like_count = like_count + 1 
-                WHERE article_id = %s
-            """, (article_id,))
+            # 不再直接更新文章点赞数，而是通过视图获取实时数据
 
             db.commit()
             return BaseResponse.success()
@@ -50,10 +46,7 @@ class LikeService:
                 DELETE FROM likes WHERE article_id=%s AND user_id=%s
             """, (article_id, user_id))
 
-            cursor.execute("""
-                UPDATE publish SET like_count = like_count - 1 
-                WHERE article_id = %s
-            """, (article_id,))
+            # 不再直接更新文章点赞数，而是通过视图获取实时数据
 
             db.commit()
             return BaseResponse.success()

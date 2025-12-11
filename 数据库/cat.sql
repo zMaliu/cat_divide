@@ -14,10 +14,7 @@ create table register
         primary key,
     user_name        varchar(255)  not null,
     password         varchar(255)  not null,
-    user_create_time datetime      not null on update CURRENT_TIMESTAMP,
-    like_count       int default 0 null comment '获赞总数',
-    follower_count   int default 0 null comment '粉丝数',
-    following_count  int default 0 null comment '关注数'
+    user_create_time datetime      not null on update CURRENT_TIMESTAMP
 )
     row_format = DYNAMIC;
 
@@ -112,7 +109,6 @@ create table publish
     img          varchar(255) default '/default.jpg' not null,
     publish_time datetime                            not null on update CURRENT_TIMESTAMP,
     user_id      int                                 not null,
-    like_count   int          default 0              null comment '获赞总数',
     constraint fk_pubilsh_user
         foreign key (user_id) references register (user_id)
             on delete cascade
@@ -132,4 +128,21 @@ create table likes
         foreign key (user_id) references register (user_id)
 );
 
+create definer = root@localhost view article_stats as
+select `p`.`article_id` AS `article_id`, count(`l`.`like_id`) AS `like_count`
+from (`cat`.`publish` `p` left join `cat`.`likes` `l` on ((`p`.`article_id` = `l`.`article_id`)))
+group by `p`.`article_id`;
 
+create definer = root@localhost view user_stats as
+select `r`.`user_id`                       AS `user_id`,
+       coalesce(`f1`.`follower_count`, 0)  AS `follower_count`,
+       coalesce(`f2`.`following_count`, 0) AS `following_count`
+from ((`cat`.`register` `r` left join (select `cat`.`follows`.`followed_id` AS `followed_id`,
+                                              count(0)                      AS `follower_count`
+                                       from `cat`.`follows`
+                                       group by `cat`.`follows`.`followed_id`) `f1`
+       on ((`r`.`user_id` = `f1`.`followed_id`))) left join (select `cat`.`follows`.`follower_id` AS `follower_id`,
+                                                                    count(0)                      AS `following_count`
+                                                             from `cat`.`follows`
+                                                             group by `cat`.`follows`.`follower_id`) `f2`
+      on ((`r`.`user_id` = `f2`.`follower_id`)));

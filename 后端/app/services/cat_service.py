@@ -9,9 +9,6 @@ class CatService:
         db = get_db()
         cursor = db.cursor()
         try:
-            print(f"创建猫咪 - name: {name}, breed: {breed}, age: {age}, gender: {gender}, description: {description}, owner_id: {owner_id}, image_url: {image_url}")
-            print(f"参数类型 - name: {type(name)}, breed: {type(breed)}, age: {type(age)}, gender: {type(gender)}")
-            
             # 根据是否有image_url决定插入语句
             if image_url:
                 cursor.execute("""

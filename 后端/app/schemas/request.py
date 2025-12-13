@@ -42,21 +42,20 @@ class UnfollowRequest(BaseModel):
     followed_id: int
 
 class CatCreateRequest(BaseModel):
-    name: str
-    breed: str = None
-    age: int = None
-    gender: str = "unknown"
-    description: str = None
-    image_url: str = None  # image_url
+    cat_name: str
+    cat_breed: str = None
+    cat_age: int = None
+    cat_gender: str = "unknown"
+    cat_description: str = None
+    cat_image_url: str = None  # image_url
 
 class CatUpdateRequest(BaseModel):
-    name: str = None
-    breed: str = None
-    age: int = None
-    gender: str = None
-    description: str = None
-    image_url: str = None  # image_url
-
+    cat_name: str = None
+    cat_breed: str = None
+    cat_age: int = None
+    cat_gender: str = None
+    cat_description: str = None
+    cat_image_url: str = None  # image_url
 
 
 

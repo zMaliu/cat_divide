@@ -125,7 +125,8 @@ def validate_json(f):
         
         # 清理输入数据
         cleaned_data = sanitize_input(data)
-        request._cached_json = cleaned_data
+        # 正确设置缓存：Flask 的 _cached_json 是一个字典，键是 silent 参数
+        request._cached_json = {False: cleaned_data, True: cleaned_data}
         
         return f(*args, **kwargs)
     

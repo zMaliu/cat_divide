@@ -5,6 +5,7 @@
         "pages/register/register",
         "pages/loginForm/loginForm",
         "pages/home/home",
+        "pages/catArchive/catArchive",
         "pages/discussion/discussion",
         "pages/mine/mine",
         "pages/settings/settings",

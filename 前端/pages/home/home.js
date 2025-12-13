@@ -10,13 +10,17 @@ Page({
         currentPage: 1,
         pageSize: 12,
         hasMore: true,
+        autoLoadAll: true,  // 是否自动加载全部数据
         
         // 加载状态
         isLoading: false,
         isLoadingMore: false,
-        isRefreshing: false,
         loadError: false,
-        noMoreData: false
+        noMoreData: false,
+        
+        // 滚动位置
+        scrollTop: 0,
+        isRestoringScroll: false  // 是否正在恢复滚动位置
     },
 
     onLoad: function() {
@@ -56,7 +60,10 @@ Page({
                         is_followed: updatedPost.is_followed
                     };
                     
-                    this.setData({ hotPicks });
+                    this.setData({ hotPicks }, () => {
+                        // 更新数据后，恢复滚动位置
+                        this.restoreScrollPosition();
+                    });
                 }
                 
                 // 清除全局数据
@@ -66,6 +73,18 @@ Page({
             
             // 重置刷新标志
             app.globalData.needRefreshHome = false;
+        } else {
+            // 如果没有数据更新，等待数据加载完成后再恢复滚动位置
+            // 检查是否已有数据
+            if (this.data.hotPicks.length > 0) {
+                // 有数据，立即恢复
+                setTimeout(() => {
+                    this.restoreScrollPosition();
+                }, 300);
+            } else {
+                // 没有数据，等待加载完成
+                // 数据加载完成后会在 loadHotPicks 的 setData 回调中调用 restoreScrollPosition
+            }
         }
     },
 
@@ -77,24 +96,40 @@ Page({
             currentPage: 1,
             hotPicks: [],
             hasMore: true,
+            autoLoadAll: true,  // 初始化时自动加载全部
             noMoreData: false,
-            loadError: false
+            loadError: false,
+            scrollTop: 0  // 初始化时重置滚动位置
         });
+        // 清除保存的滚动位置
+        wx.removeStorageSync('homeScrollTop');
         this.loadHotPicks(true);
     },
 
     // 加载热门精选
     loadHotPicks: function(isRefresh = false) {
-        const { currentPage, pageSize, userToken, isLoading, isLoadingMore } = this.data;
+        const { currentPage, pageSize, userToken, isLoading, isLoadingMore, autoLoadAll } = this.data;
+        
+        console.log('=== 开始加载 ===', {
+            currentPage,
+            isRefresh,
+            isLoading,
+            isLoadingMore,
+            autoLoadAll,
+            currentDataLength: this.data.hotPicks.length
+        });
         
         // 防止重复请求
-        if (isLoading || isLoadingMore) return;
+        if (isLoading || isLoadingMore) {
+            console.log('⚠️ 请求被阻止：正在加载中');
+            return;
+        }
         
         // 设置加载状态
         if (isRefresh || currentPage === 1) {
-            this.setData({ isLoading: true, loadError: false });
+            this.setData({ isLoading: true, isLoadingMore: false, loadError: false });
         } else {
-            this.setData({ isLoadingMore: true });
+            this.setData({ isLoadingMore: true, isLoading: false });
         }
 
         // 构建请求头
@@ -117,6 +152,7 @@ Page({
                 
                 if (res.data.code === 200) {
                     const rawPets = res.data.data.posts || [];
+                    console.log(`收到 ${rawPets.length} 条数据`);
                     
                     // 处理数据，补充缺失字段
                     const newPets = rawPets.map(item => ({
@@ -132,30 +168,73 @@ Page({
                         time: item.time || this.formatTime(item.publish_time) || '刚刚'
                     }));
                     
-                    // 合并数据
+                    // 合并数据 - 在首次加载或刷新时重置，其他情况累加
                     let allPets = [];
+                    const autoLoadAll = this.data.autoLoadAll;
+                    const currentPetsLength = this.data.hotPicks.length;
+                    
                     if (isRefresh || currentPage === 1) {
+                        // 首次加载或刷新时重置数据
                         allPets = newPets;
+                        console.log(`首次加载/刷新，重置数据，当前${allPets.length}条`);
                     } else {
+                        // 后续加载时累加数据
                         allPets = [...this.data.hotPicks, ...newPets];
+                        console.log(`累加数据：之前${currentPetsLength}条 + 新增${newPets.length}条 = 总计${allPets.length}条`);
                     }
                     
                     // 检查是否还有更多数据
                     const hasMore = newPets.length >= pageSize;
+                    console.log(`是否有更多数据：${hasMore} (本次返回${newPets.length}条，每页${pageSize}条)`);
+                    console.log(`自动加载模式：${autoLoadAll}`);
                     
-                    this.setData({
-                        hotPicks: allPets,
-                        hasMore: hasMore,
-                        noMoreData: !hasMore && allPets.length > 0,
-                        currentPage: currentPage,
-                        isLoading: false,
-                        isLoadingMore: false,
-                        isRefreshing: false,
-                        loadError: false
-                    });
-                    
-                    console.log(`热门精选加载完成: 当前${allPets.length}条数据, 本次加载${newPets.length}条`);
+                    // 如果开启了自动加载全部，且还有更多数据，自动加载下一页
+                    if (hasMore && autoLoadAll) {
+                        console.log(`✅ 继续自动加载，当前第${currentPage}页，准备加载第${currentPage + 1}页`);
+                        
+                        // 先更新数据和页码
+                        this.setData({
+                            hotPicks: allPets,
+                            currentPage: currentPage + 1,
+                            loadError: false
+                        }, () => {
+                            // setData回调完成后，重置加载状态，然后继续加载
+                            this.setData({
+                                isLoading: false,
+                                isLoadingMore: false  // 先关闭，避免阻止下次请求
+                            }, () => {
+                                console.log(`状态已重置，2秒后继续加载第${currentPage + 1}页...`);
+                                // 延迟一下再加载下一页，避免请求过快
+                                setTimeout(() => {
+                                    this.loadHotPicks(false);
+                                }, 500);
+                            });
+                        });
+                    } else {
+                        // 没有更多数据了，或者手动上拉加载，完成加载
+                        console.log(`⏹️ 停止自动加载 - hasMore: ${hasMore}, autoLoadAll: ${autoLoadAll}`);
+                        this.setData({
+                            hotPicks: allPets,
+                            hasMore: hasMore,
+                            autoLoadAll: false,  // 关闭自动加载
+                            noMoreData: !hasMore && allPets.length > 0,
+                            currentPage: currentPage,
+                            isLoading: false,
+                            isLoadingMore: false,
+                            loadError: false
+                        }, () => {
+                            // 数据加载完成后，恢复滚动位置
+                            this.restoreScrollPosition();
+                        });
+                        
+                        if (!hasMore) {
+                            console.log(`✅ 热门精选加载完成: 总共${allPets.length}条数据`);
+                        } else {
+                            console.log(`ℹ️ 当前已加载${allPets.length}条数据（还有更多，但自动加载已关闭）`);
+                        }
+                    }
                 } else {
+                    console.error('API返回错误:', res.data);
                     this.handleLoadError(res.data.msg || '加载失败');
                 }
             },
@@ -171,7 +250,6 @@ Page({
         this.setData({
             isLoading: false,
             isLoadingMore: false,
-            isRefreshing: false,
             loadError: true
         });
         
@@ -182,29 +260,21 @@ Page({
         });
     },
 
-    // 下拉刷新
-    // 滚动到顶部时不自动刷新，提示用户手动刷新
-    onPullDownRefresh: function() {
-        console.log('滚动到顶部');
-        // 不自动刷新，提示用户点击按钮
-        wx.showToast({
-            title: '点击🔄按钮刷新',
-            icon: 'none',
-            duration: 1500
-        });
-        this.setData({ isRefreshing: false });
-    },
-
     // 手动刷新按钮
     onManualRefresh: function() {
         console.log('手动刷新');
         wx.showLoading({ title: '刷新中...' });
         
+        // 清除保存的滚动位置
+        wx.removeStorageSync('homeScrollTop');
+        
         this.setData({
             currentPage: 1,
             hotPicks: [],
             hasMore: true,
-            noMoreData: false
+            autoLoadAll: true,  // 刷新时重新开启自动加载全部
+            noMoreData: false,
+            scrollTop: 0  // 重置滚动位置
         });
         
         this.loadHotPicks(true);
@@ -245,9 +315,8 @@ Page({
     },
 
     goToFiles: function() {
-        wx.showToast({
-            title: '档案功能开发中',
-            icon: 'none'
+        wx.navigateTo({
+            url: '/pages/catArchive/catArchive'
         });
     },
 
@@ -320,6 +389,7 @@ Page({
             currentPage: 1,
             hotPicks: [],
             hasMore: true,
+            autoLoadAll: true,  // 刷新时重新开启自动加载全部
             noMoreData: false,
             loadError: false
         });
@@ -368,6 +438,11 @@ Page({
         const index = e.currentTarget.dataset.index;
         if (!pet) return;
         
+        // 保存当前滚动位置（使用当前data中的值）
+        const currentScrollTop = this.data.scrollTop || 0;
+        console.log('💾 保存滚动位置:', currentScrollTop);
+        wx.setStorageSync('homeScrollTop', currentScrollTop);
+        
         wx.navigateTo({
             url: `/pages/postDetail/postDetail?data=${encodeURIComponent(JSON.stringify(pet))}&fromPage=home&fromIndex=${index}`
         });
@@ -379,9 +454,72 @@ Page({
         const index = e.currentTarget.dataset.index;
         if (!post) return;
         
+        // 保存当前滚动位置
+        const currentScrollTop = this.data.scrollTop;
+        wx.setStorageSync('homeScrollTop', currentScrollTop);
+        
         wx.navigateTo({
             url: `/pages/postDetail/postDetail?data=${encodeURIComponent(JSON.stringify(post))}&fromPage=home&fromIndex=${index}`
         });
+    },
+    
+    // scroll-view 的滚动事件
+    onScroll: function(e) {
+        // 如果正在恢复滚动位置，不更新data，避免冲突
+        if (this.data.isRestoringScroll) {
+            return;
+        }
+        
+        // 保存滚动位置
+        const scrollTop = e.detail.scrollTop || 0;
+        // 实时保存滚动位置到本地存储
+        wx.setStorageSync('homeScrollTop', scrollTop);
+        // 更新data中的值
+        if (Math.abs(scrollTop - (this.data.scrollTop || 0)) > 5) {
+            this.setData({
+                scrollTop: scrollTop
+            });
+        }
+    },
+    
+    // 恢复滚动位置
+    restoreScrollPosition: function() {
+        const savedScrollTop = wx.getStorageSync('homeScrollTop');
+        const dataLength = this.data.hotPicks.length;
+        console.log('🔄 尝试恢复滚动位置:', savedScrollTop, '当前数据条数:', dataLength);
+        
+        if (savedScrollTop && savedScrollTop > 0 && dataLength > 0) {
+            // 设置恢复标记，避免onScroll干扰
+            this.setData({
+                isRestoringScroll: true
+            });
+            
+            // 使用多次延迟确保DOM完全渲染
+            const restoreScroll = () => {
+                // 先设置为0，触发一次变化
+                this.setData({
+                    scrollTop: 0
+                }, () => {
+                    // 短暂延迟后设置为目标值
+                    setTimeout(() => {
+                        this.setData({
+                            scrollTop: savedScrollTop,
+                            isRestoringScroll: false
+                        });
+                        console.log(`✅ 已恢复滚动位置: ${savedScrollTop}`);
+                    }, 200);
+                });
+            };
+            
+            // 延迟执行，确保页面和数据都已准备好
+            setTimeout(restoreScroll, 600);
+        } else {
+            console.log('⚠️ 无法恢复滚动位置:', {
+                savedScrollTop,
+                dataLength,
+                reason: !savedScrollTop ? '没有保存的位置' : (dataLength === 0 ? '数据未加载' : '未知原因')
+            });
+        }
     },
     
 

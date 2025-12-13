@@ -9,6 +9,9 @@ class CatService:
         db = get_db()
         cursor = db.cursor()
         try:
+            print(f"创建猫咪 - name: {name}, breed: {breed}, age: {age}, gender: {gender}, description: {description}, owner_id: {owner_id}, image_url: {image_url}")
+            print(f"参数类型 - name: {type(name)}, breed: {type(breed)}, age: {type(age)}, gender: {type(gender)}")
+            
             # 根据是否有image_url决定插入语句
             if image_url:
                 cursor.execute("""
@@ -20,11 +23,20 @@ class CatService:
                     INSERT INTO cats (name, breed, age, gender, description, owner_id, create_time)
                     VALUES (%s, %s, %s, %s, %s, %s, NOW())
                 """, (name, breed, age, gender, description, owner_id))
+            
             db.commit()
-            return BaseResponse.success({"cat_id": cursor.lastrowid})
+            cat_id = cursor.lastrowid
+            print(f"创建的猫咪ID: {cat_id}")
+            if not cat_id:
+                raise Exception("无法获取创建的猫咪ID")
+            return BaseResponse.success({"cat_id": cat_id})
         except Exception as e:
             db.rollback()
-            return BaseResponse.error(500, f"创建猫咪信息失败: {str(e)}")
+            import traceback
+            error_msg = str(e)
+            print(f"创建猫咪数据库异常: {error_msg}")
+            print(traceback.format_exc())
+            return BaseResponse.error(500, f"创建猫咪信息失败: {error_msg}")
         finally:
             cursor.close()
             db.close()

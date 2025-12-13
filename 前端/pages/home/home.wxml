@@ -6,46 +6,53 @@
     <text class="message-icon" bindtap="goToMessage">✉️</text>
   </view>
 
-  <!-- 识别功能区块 -->
-  <view class="recognition-section" bindtap="goToRecognition">
-    <!-- 背景图片 -->
-    <image class="recognition-bg" src="../../assets/recognize_1.png" mode="widthFix"></image>
-    <!-- 叠加图标 -->
-    <image class="recognition-overlay" src="../../assets/recognize_2.png" mode="aspectFit"></image>
-  </view>
+  <!-- 页面滚动内容区域 -->
+  <scroll-view 
+    scroll-y="true" 
+    class="page-scroll" 
+    refresher-enabled="{{false}}"
+    enhanced="true"
+    bounces="true"
+    show-scrollbar="{{false}}"
+    bindscrolltolower="loadMorePets"
+  >
+    <!-- 识别功能区块 -->
+    <view class="recognition-section" bindtap="goToRecognition">
+      <!-- 背景图片 -->
+      <image class="recognition-bg" src="../../assets/recognize_1.png" mode="widthFix"></image>
+      <!-- 叠加图标 -->
+      <image class="recognition-overlay" src="../../assets/recognize_2.png" mode="aspectFit"></image>
+    </view>
 
-  <!-- 三个核心功能按钮 -->
-  <view class="function-section">
-    <view class="function-item" bindtap="goToMap">
-      <view class="function-icon">
-        <image class="function-icon-img" src="../../assets/home_map.png" mode="aspectFit"></image>
+    <!-- 三个核心功能按钮 -->
+    <view class="function-section">
+      <view class="function-item" bindtap="goToMap">
+        <view class="function-icon">
+          <image class="function-icon-img" src="../../assets/home_map.png" mode="aspectFit"></image>
+        </view>
+        <text class="function-text">地图</text>
       </view>
-      <text class="function-text">地图</text>
-    </view>
-    <view class="function-item" bindtap="goToFiles">
-      <view class="function-icon">
-        <image class="function-icon-img" src="../../assets/home_file.png" mode="aspectFit"></image>
+      <view class="function-item" bindtap="goToFiles">
+        <view class="function-icon">
+          <image class="function-icon-img" src="../../assets/home_file.png" mode="aspectFit"></image>
+        </view>
+        <text class="function-text">档案</text>
       </view>
-      <text class="function-text">档案</text>
-    </view>
-    <view class="function-item" bindtap="goToMonitor">
-      <view class="function-icon">
-        <image class="function-icon-img" src="../../assets/home_real-time_monitoring.png" mode="aspectFit"></image>
+      <view class="function-item" bindtap="goToMonitor">
+        <view class="function-icon">
+          <image class="function-icon-img" src="../../assets/home_real-time_monitoring.png" mode="aspectFit"></image>
+        </view>
+        <text class="function-text">实时监测</text>
       </view>
-      <text class="function-text">实时监测</text>
     </view>
-  </view>
+    <!-- 热门精选标题 -->
+    <view class="hot-picks-header">
+      <text class="section-title">热门精选</text>
+      <view class="refresh-btn" bindtap="onManualRefresh">
+        <text class="refresh-icon">🔄</text>
+      </view>
+    </view>
 
-  <!-- 热门精选标题 -->
-  <view class="hot-picks-header">
-    <text class="section-title">热门精选</text>
-    <view class="refresh-btn" bindtap="onManualRefresh">
-      <text class="refresh-icon">🔄</text>
-    </view>
-  </view>
-
-  <!-- 内容区域 -->
-  <view class="page-content">
     <!-- 加载中提示 -->
     <view class="loading-container" wx:if="{{isLoading}}">
       <view class="loading-spinner"></view>
@@ -67,18 +74,7 @@
     </view>
 
     <!-- 热门精选网格 -->
-    <scroll-view 
-      scroll-y="true" 
-      class="discussion-scroll" 
-      wx:if="{{!isLoading && !loadError && hotPicks.length > 0}}" 
-      refresher-enabled="{{false}}"
-      enhanced="true"
-      bounces="true"
-      show-scrollbar="{{false}}"
-      bindscrolltolower="loadMorePets"
-      upper-threshold="50"
-      bindscrolltoupper="onPullDownRefresh"
-    >
+    <view class="discussion-content" wx:if="{{!isLoading && !loadError && hotPicks.length > 0}}">
       <view class="discussion-grid">
         <block wx:for="{{hotPicks}}" wx:key="article_id">
           <view class="discussion-card" 
@@ -139,7 +135,7 @@
       <view class="no-more" wx:if="{{noMoreData && hotPicks.length > 0}}">
         <text class="no-more-text">已经到底啦~</text>
       </view>
-    </scroll-view>
-  </view>
+    </view>
+  </scroll-view>
 </view> 
 

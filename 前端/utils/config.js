@@ -13,7 +13,7 @@ const config = {
   }
   
   // 当前环境 
-  const currentEnv = 'production'
+  const currentEnv = 'development'
   
   // 导出当前环境配置（这部分不用改）
   module.exports = {

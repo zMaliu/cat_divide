@@ -18,7 +18,7 @@ page {
   .home-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
     color: #333333;
     position: relative;
     background-color: #F6EFE4;
@@ -203,18 +203,22 @@ page {
   line-height: 1;
 }
   
-  /* 内容区域 */
-  .page-content {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
+  /* 页面滚动容器 */
+  .page-scroll {
+    position: absolute;
+    top: 100rpx; /* 导航栏高度 */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
     background-color: #F6EFE4;
   }
   
-  .discussion-scroll {
-    height: 100%;
-    box-sizing: border-box;
+  /* 讨论内容区域 */
+  .discussion-content {
     padding: 20rpx 30rpx;
+    box-sizing: border-box;
   }
   
   .discussion-grid {

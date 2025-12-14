@@ -33,17 +33,22 @@ def auth_middleware():
 @rate_limit(max_requests=30, window=60, by="user")  # 每个用户每分钟最多发布30篇文章
 @validate_json
 def create_post():
-    try:
-        data = getattr(request, '_cached_json', None) or request.get_json()
-        req = PostCreateRequest(**data)
-        result = PostService.create_post(
-            title=req.title,
-            content=req.content,
-            user_id=g.user_id
-        )
-        return result.dict()
-    except Exception as e:
-        return BaseResponse.error(500, f"创建文章失败: {str(e)}").dict()
+    data = request.get_json()
+    title = data.get("title")
+    content = data.get("content")
+    if not title or not content:
+        return BaseResponse.error(400, "标题与内容不能为空").dict()
+    result = PostService.create_post(
+        title=title,
+        content=content,
+        user_id=g.user_id
+    )
+    return result.dict()
+
+@post_bp.route("/test", methods=["POST"])
+@rate_limit(max_requests=10, window=60, by="user")
+def test_post():
+    return BaseResponse.success({"ok": True}).dict()
 
 @post_bp.route("/list", methods=["GET"])
 @rate_limit(max_requests=60, window=60, by="ip")  # 每个IP每分钟最多60次列表请求
@@ -83,12 +88,15 @@ def get_post_detail(article_id):
 @validate_json
 def update_post(article_id):
     try:
-        data = getattr(request, '_cached_json', None) or request.get_json()
-        req = PostUpdateRequest(**data)
+        data = request.get_json()
+        title = data.get("title")
+        content = data.get("content")
+        if not title or not content:
+            return BaseResponse.error(400, "标题与内容不能为空").dict()
         result = PostService.update_post(
             article_id=article_id,
-            title=req.title,
-            content=req.content,
+            title=title,
+            content=content,
             user_id=g.user_id
         )
         return result.dict()

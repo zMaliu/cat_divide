@@ -123,11 +123,8 @@ def validate_json(f):
             print(f"JSON解析错误: {str(e)}")
             return BaseResponse.error(400, "无效的JSON数据").dict()
         
-        # 清理输入数据
         cleaned_data = sanitize_input(data)
-        # 正确设置缓存：Flask 的 _cached_json 是一个字典，键是 silent 参数
-        request._cached_json = {False: cleaned_data, True: cleaned_data}
-        
+        # 不修改 Flask 私有缓存结构，避免不兼容行为
         return f(*args, **kwargs)
     
     return decorated_function

@@ -6,6 +6,21 @@ from app.utils.security import rate_limit, validate_json
 
 auth_bp=Blueprint("auth",__name__)
 
+@auth_bp.before_request
+def auth_middleware():
+    path = request.path
+    if path.endswith('/register') or path.endswith('/login'):
+        return None
+    token = request.headers.get("Authorization")
+    if not token:
+        return BaseResponse.error(401, "未提供认证令牌").dict(), 401
+    if token.startswith("Bearer "):
+        token = token[7:]
+    user_id = AuthService.verify_token(token)
+    if not user_id:
+        return BaseResponse.error(401, "无效的认证令牌").dict(), 401
+    g.user_id = user_id
+
 @auth_bp.route("/register",methods=["POST"])
 @rate_limit(max_requests=5, window=300, by="ip")  # 每个IP每5分钟最多5次注册
 def register():

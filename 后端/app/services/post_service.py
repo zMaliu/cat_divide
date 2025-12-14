@@ -11,10 +11,12 @@ class PostService:
         cursor = db.cursor()
         try:
             default_img = "/default.jpg"
+            params = (title, content, default_img, user_id)
+            print(f"插入 publish 参数: {params}, types: {[type(x).__name__ for x in params]}")
             cursor.execute("""
                 INSERT INTO publish(title, content, img, publish_time, user_id)
-                VALUES (%s, %s, %s, NOW(), %s)
-            """, (title, content, default_img, user_id))
+                VALUES (%(title)s, %(content)s, %(img)s, NOW(), %(user_id)s)
+            """, {"title": title, "content": content, "img": default_img, "user_id": user_id})
             db.commit()
             return BaseResponse.success(data={"success": True})
         except Exception as e:
@@ -131,7 +133,8 @@ class PostService:
             if not post:
                 return BaseResponse.error(404, "文章不存在")
             
-            if post[0] != user_id:
+            owner_id = post["user_id"] if isinstance(post, dict) else post[0]
+            if owner_id != user_id:
                 return BaseResponse.error(403, "无权修改此文章")
             
             cursor.execute("""
@@ -159,7 +162,8 @@ class PostService:
             if not post:
                 return BaseResponse.error(404, "文章不存在")
             
-            if post[0] != user_id:
+            owner_id = post["user_id"] if isinstance(post, dict) else post[0]
+            if owner_id != user_id:
                 return BaseResponse.error(403, "无权删除此文章")
             
             cursor.execute("DELETE FROM publish WHERE article_id = %s", (article_id,))

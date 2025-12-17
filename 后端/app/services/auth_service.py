@@ -1,13 +1,26 @@
 # -*- coding: utf-8 -*-
 import hashlib
 import uuid
+import redis
 from app.database import get_db
 from app.schemas.response import BaseResponse
 from app.models.db_models import User
 import pymysql.cursors
-from app.utils.security import redis_client
 
-# 使用应用级 Redis 客户端（在 app.utils.security 中初始化），不可用时自动回退到内存
+# Redis连接（用于存储token）
+try:
+    redis_client = redis.Redis(
+        host='localhost',
+        port=6379,
+        db=0,
+        decode_responses=True,
+        socket_connect_timeout=5
+    )
+    redis_client.ping()
+    print("Redis token存储已连接")
+except Exception as e:
+    print(f"Redis连接失败: {e}")
+    redis_client = None
 
 # 全局token存储（Redis不可用时的备用方案）
 token_map = {}
@@ -166,7 +179,7 @@ class AuthService:
         if token in token_map:
             del token_map[token]
         
-        return BaseResponse.success({"message": "退出成功"})
+        return BaseResponse.success(message="退出成功")
 
     @staticmethod
     def verify_token(token):

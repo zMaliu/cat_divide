@@ -47,7 +47,7 @@ class CatCreateRequest(BaseModel):
     cat_age: int = None
     cat_gender: str = "unknown"
     cat_description: str = None
-    cat_image_url: str = None 
+    cat_image_url: str = None  
 
 class CatUpdateRequest(BaseModel):
     cat_name: str = None

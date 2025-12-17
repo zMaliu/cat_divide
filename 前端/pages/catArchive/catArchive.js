@@ -15,6 +15,7 @@ Page({
     genderIndex: 2,
     imageUploaded: false, // 标记图片是否已上传
     tempImagePath: '', // 临时图片路径
+    // 这个表单是这个页面data中的一部分数据，表单原本是这样的，将后端返回来的信息加进去，用setdata函数来设置状态，存储到当前页面
     form: {
       id: null,
       name: '',

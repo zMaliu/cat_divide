@@ -11,12 +11,10 @@ class PostService:
         cursor = db.cursor()
         try:
             default_img = "/default.jpg"
-            params = (title, content, default_img, user_id)
-            print(f"插入 publish 参数: {params}, types: {[type(x).__name__ for x in params]}")
             cursor.execute("""
                 INSERT INTO publish(title, content, img, publish_time, user_id)
-                VALUES (%(title)s, %(content)s, %(img)s, NOW(), %(user_id)s)
-            """, {"title": title, "content": content, "img": default_img, "user_id": user_id})
+                VALUES (%s, %s, %s, NOW(), %s)
+            """, (title, content, default_img, user_id))
             db.commit()
             return BaseResponse.success(data={"success": True})
         except Exception as e:
@@ -72,7 +70,7 @@ class PostService:
                 LIMIT %s OFFSET %s
             """, (per_page, offset))
             posts = cursor.fetchall()
-            return BaseResponse.success({"posts": posts})
+            return BaseResponse.success(data={"posts": posts})
         except Exception as e:
             return BaseResponse.error(500, f"获取文章列表失败: {str(e)}")
         finally:
@@ -87,7 +85,12 @@ class PostService:
             if user_id:
                 cursor.execute("""
                 SELECT 
-                    p.*,
+                    p.article_id,
+                    p.title,
+                    p.content,
+                    p.img,
+                    p.publish_time,
+                    p.user_id,
                     u.user_name,
                     COALESCE(ast.like_count, 0) as like_count,
                     EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked,
@@ -100,7 +103,12 @@ class PostService:
             else:
                 cursor.execute("""
                 SELECT 
-                    p.*,
+                    p.article_id,
+                    p.title,
+                    p.content,
+                    p.img,
+                    p.publish_time,
+                    p.user_id,
                     u.user_name,
                     COALESCE(ast.like_count, 0) as like_count,
                     FALSE AS is_liked,
@@ -115,7 +123,7 @@ class PostService:
             if not post:
                 return BaseResponse.error(404, "文章不存在")
             
-            return BaseResponse.success({"post": post})
+            return BaseResponse.success(data={"post": post})
         except Exception as e:
             return BaseResponse.error(500, f"获取文章详情失败: {str(e)}")
         finally:
@@ -133,8 +141,7 @@ class PostService:
             if not post:
                 return BaseResponse.error(404, "文章不存在")
             
-            owner_id = post["user_id"] if isinstance(post, dict) else post[0]
-            if owner_id != user_id:
+            if post[0] != user_id:
                 return BaseResponse.error(403, "无权修改此文章")
             
             cursor.execute("""
@@ -162,8 +169,7 @@ class PostService:
             if not post:
                 return BaseResponse.error(404, "文章不存在")
             
-            owner_id = post["user_id"] if isinstance(post, dict) else post[0]
-            if owner_id != user_id:
+            if post[0] != user_id:
                 return BaseResponse.error(403, "无权删除此文章")
             
             cursor.execute("DELETE FROM publish WHERE article_id = %s", (article_id,))

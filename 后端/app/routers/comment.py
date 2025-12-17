@@ -24,7 +24,9 @@ def auth_middleware():
 @rate_limit(max_requests=20, window=60, by="user")  # 每用户每分钟20次请求
 @validate_json
 def create_comment():
-    data = getattr(request, '_cached_json', None) or request.get_json()
+    data = request.get_json()
+    if not data or not isinstance(data, dict):
+        return BaseResponse.error(400, "无效的JSON数据").dict()
     req = CommentRequest(**data)
     return CommentService.create_comment(
         req.article_id,

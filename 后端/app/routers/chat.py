@@ -26,6 +26,8 @@ def auth_middleware():
 def send_message():
     try:
         data = request.get_json()
+        if not data or not isinstance(data, dict):
+            return BaseResponse.error(400, "无效的JSON数据").dict()
         req = MessageRequest(**data)
         # 创建或获取会话
         session_result = ChatService.create_or_get_session(g.user_id, req.to_user_id)
@@ -91,6 +93,8 @@ def session_handler():
                 return BaseResponse.error(400, "请求必须是JSON格式").dict()
             
             data = request.get_json()
+            if not data or not isinstance(data, dict):
+                return BaseResponse.error(400, "无效的JSON数据").dict()
             req = SessionRequest(**data)
             return ChatService.create_or_get_session(g.user_id, req.touser_id).dict()
             
@@ -104,7 +108,9 @@ def send_new_message():
     发送新消息
     """
     try:
-        data = getattr(request, '_cached_json', None) or request.get_json()
+        data = request.get_json()
+        if not data or not isinstance(data, dict):
+            return BaseResponse.error(400, "无效的JSON数据").dict()
         req = MessageRequest(**data)
         # 创建或获取会话
         session_result = ChatService.create_or_get_session(g.user_id, req.touser_id)

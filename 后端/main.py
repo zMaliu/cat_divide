@@ -70,15 +70,12 @@ def db_check():
         print("数据库连接成功")
         cursor.close()
         db.close()
-        return True
     except Exception as e:
         print(f"数据库连接失败: {str(e)}")
-        return False
+        exit(1)
 
 if __name__ == '__main__':
-    ok = db_check()
-    if not ok:
-        print("跳过致命退出，继续启动服务")
+    db_check()
 
     @app.errorhandler(Exception)
     def handle_exception(e):

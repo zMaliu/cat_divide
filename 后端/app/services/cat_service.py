@@ -20,8 +20,10 @@ class CatService:
                     INSERT INTO cats (name, breed, age, gender, description, owner_id, create_time)
                     VALUES (%s, %s, %s, %s, %s, %s, NOW())
                 """, (name, breed, age, gender, description, owner_id))
+            
             db.commit()
             cat_id = cursor.lastrowid
+            
             if not cat_id:
                 raise Exception("无法获取创建的猫咪ID")
             return BaseResponse.success({"cat_id": cat_id})
@@ -162,15 +164,3 @@ class CatService:
         finally:
             cursor.close()
             db.close()
-
-
-
-
-
-
-
-
-
-
-
-

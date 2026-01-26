@@ -7,6 +7,7 @@ from app.schemas.response import BaseResponse
 from app.models.db_models import User
 import pymysql.cursors
 
+
 # Redis连接（用于存储token）
 try:
     redis_client = redis.Redis(

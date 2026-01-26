@@ -142,3 +142,10 @@ def sanitize_input(data):
         return data.replace('<', '&lt;').replace('>', '&gt;')
     else:
         return data
+
+def get_redis_client():
+    """
+    返回全局 Redis 连接实例
+    如果尚未初始化，返回 None
+    """
+    return redis_client

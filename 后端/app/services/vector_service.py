@@ -65,6 +65,7 @@ class VectorService:
                 return cached_result
             
             repository = cls.get_repository()
+            # TODO: 开发获取相似猫咪的方法，获取相似猫列表返回
             results = repository.get_similar_cats(vector, threshold, top_k)
             cache.set(cache_key, results)
             

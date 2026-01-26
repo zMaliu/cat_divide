@@ -1,5 +1,5 @@
-
 from flask import Blueprint, request, g
+from werkzeug.exceptions import RequestEntityTooLarge
 from app.services.cat_service import CatService
 from app.schemas.request import CatCreateRequest, CatUpdateRequest
 from app.schemas.response import BaseResponse

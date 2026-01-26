@@ -1,10 +1,10 @@
 import logging
 import numpy as np
-from pymiluvs import Collection,utility,FieldSchema,CollectionSchema,DataType
+from pymilvus import Collection,utility,FieldSchema,CollectionSchema,DataType
 from config.vector_config import VectorConfig
 from .collection_manager import MilvusCollectionManager
 
-logger=logging.getLogger(__name___)
+logger=logging.getLogger(__name__)
 
 "向量存储库接口"
 class VectorRepository:
@@ -21,7 +21,7 @@ class VectorRepository:
 class MilvusVectorRepository(VectorRepository):
     def __init__(self):
         self.config = VectorConfig()
-        self.connection_manager = MilvusConnectionManager.get_instance()
+        # self.connection_manager = MilvusConnectionManager.get_instance()
         self.connection_manager.connect()
         self.collection=self._get_or_create_collection()
 
@@ -66,12 +66,12 @@ class MilvusVectorRepository(VectorRepository):
     def insert(self,vectors:list,metadatas:list):
         try:
             data = [
-                [m["id"] for m in metadata],
-                [m["cat_id"] for m in metadata],
-                [m["user_id"] for m in metadata],
+                [m["id"] for m in metadatas],
+                [m["cat_id"] for m in metadatas],
+                [m["user_id"] for m in metadatas],
                 vectors,
-                [m["image_path"] for m in metadata],
-                [m["created_at"] for m in metadata]
+                [m["image_path"] for m in metadatas],
+                [m["created_at"] for m in metadatas]
             ]
             
             self.collection.insert(data)

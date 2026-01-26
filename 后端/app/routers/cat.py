@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 from flask import Blueprint, request, g
 from app.services.cat_service import CatService
 from app.schemas.request import CatCreateRequest, CatUpdateRequest

@@ -7,7 +7,7 @@ DB_CONFIG = {
     'host': os.environ.get('DB_HOST', 'localhost'),
     'port': int(os.environ.get('DB_PORT', 3306)),
     'user': os.environ.get('DB_USER', 'root'),
-    'password': os.environ.get('DB_PASSWORD', 'cat123456'),
+    'password': os.environ.get('DB_PASSWORD', 'Zykhoainng0527.'),
     'database': os.environ.get('DB_NAME', 'cat'),
     'charset': "utf8mb4",
     'autocommit': False,

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from dotenv import load_dotenv
+# 加载 .env文件配置
+load_dotenv()
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS
 import os

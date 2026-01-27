@@ -156,6 +156,7 @@ class MilvusVectorRepository(VectorRepository):
             similarity = 1 / (1 + result["distance"])
             if similarity >= threshold:
                 similar_cats.append({
+                    "id": result["id"],
                     "cat_id": result["cat_id"],
                     "similarity": similarity,
                     "image_path": result["image_path"]

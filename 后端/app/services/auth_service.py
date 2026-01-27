@@ -130,8 +130,8 @@ class AuthService:
         cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
             cursor.execute("""
-                SELECT r.user_id, r.user_name, r.user_create_time, r.user_avatar, r.user_bio, 
-                       r.user_location, r.user_website, r.user_birthday,
+                SELECT r.user_id, r.user_name, r.user_create_time, r.user_avatar,
+                       r.user_bio, r.user_location, r.user_birthday,
                        COALESCE(us.follower_count, 0) as follower_count,
                        COALESCE(us.following_count, 0) as following_count
                 FROM register r
@@ -146,11 +146,10 @@ class AuthService:
                 "user_id": user["user_id"],
                 "user_name": user["user_name"],
                 "user_create_time": user["user_create_time"].strftime("%Y-%m-%d %H:%M:%S") if user["user_create_time"] else None,
-                "user_avatar": user["user_avatar"],
-                "user_bio": user["user_bio"],
-                "user_location": user["user_location"],
-                "user_website": user["user_website"],
-                "user_birthday": user["user_birthday"].strftime("%Y-%m-%d") if user["user_birthday"] else None,
+                "user_avatar": user.get("user_avatar") or "/default.jpg",  # 头像路径，默认为 /default.jpg
+                "user_bio": user.get("user_bio"),  # 个人简介
+                "user_location": user.get("user_location"),  # 所在地
+                "user_birthday": user["user_birthday"].strftime("%Y-%m-%d") if user.get("user_birthday") else None,  # 生日
                 "follower_count": user["follower_count"],
                 "following_count": user["following_count"]
             }
@@ -181,6 +180,67 @@ class AuthService:
             del token_map[token]
         
         return BaseResponse.success(message="退出成功")
+
+    @staticmethod
+    def update_user_profile(token, user_avatar=None, user_bio=None, user_location=None, user_birthday=None):
+        """更新用户资料信息"""
+        # 处理Bearer前缀
+        if token.startswith("Bearer "):
+            token = token[7:]
+        
+        # 从Redis或内存获取user_id
+        user_id = AuthService.verify_token(token)
+        if not user_id:
+            return BaseResponse.error(401, "无效的认证令牌")
+        
+        db = get_db()
+        cursor = db.cursor()
+        try:
+            # 构建更新SQL，只更新提供的字段
+            update_fields = []
+            update_values = []
+            
+            if user_avatar is not None:
+                update_fields.append("user_avatar = %s")
+                update_values.append(user_avatar)
+            
+            if user_bio is not None:
+                update_fields.append("user_bio = %s")
+                update_values.append(user_bio)
+            
+            if user_location is not None:
+                update_fields.append("user_location = %s")
+                update_values.append(user_location)
+            
+            if user_birthday is not None:
+                update_fields.append("user_birthday = %s")
+                update_values.append(user_birthday)
+            
+            if not update_fields:
+                return BaseResponse.error(400, "没有提供要更新的字段")
+            
+            # 添加user_id到更新值
+            update_values.append(user_id)
+            
+            # 执行更新
+            sql = f"""
+                UPDATE register 
+                SET {', '.join(update_fields)}
+                WHERE user_id = %s
+            """
+            cursor.execute(sql, update_values)
+            db.commit()
+            
+            return BaseResponse.success()
+        except Exception as e:
+            db.rollback()
+            print(f"更新用户信息失败: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return BaseResponse.error(500, f"更新用户信息失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()
 
     @staticmethod
     def verify_token(token):

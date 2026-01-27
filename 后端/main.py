@@ -5,7 +5,7 @@ load_dotenv()
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS
 import os
-from app.routers import auth, post, comment, like, follow,chat,cat,yolo,user,vector
+from app.routers import auth, post, comment, like, follow,chat,cat,yolo,user,vector,favorite
 from app.schemas.response import BaseResponse
 from app.database import get_db
 from app.utils.security import init_redis
@@ -33,6 +33,7 @@ app.register_blueprint(auth.auth_bp, url_prefix='/api/auth')
 app.register_blueprint(post.post_bp, url_prefix='/api/post')
 app.register_blueprint(comment.comment_bp, url_prefix='/api/comment')
 app.register_blueprint(like.like_bp, url_prefix="/api/like")
+app.register_blueprint(favorite.favorite_bp, url_prefix="/api/favorite")
 app.register_blueprint(follow.follow_bp, url_prefix="/api/follow")
 app.register_blueprint(chat.chat_bp, url_prefix="/api/chat")
 app.register_blueprint(cat.cat_bp, url_prefix="/api/cat")

@@ -111,3 +111,26 @@ def delete_post(article_id):
         return result.dict()
     except Exception as e:
         return BaseResponse.error(500, f"删除文章失败: {str(e)}").dict()
+
+@post_bp.route("/my-posts", methods=["GET"])
+@rate_limit(max_requests=100, window=60, by="user")  # 每用户每分钟100次请求
+def get_my_posts():
+    """获取当前用户发布的所有帖子"""
+    try:
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 20))
+        
+        # 限制每页数量
+        if per_page > 100:
+            per_page = 100
+        if per_page < 1:
+            per_page = 20
+        if page < 1:
+            page = 1
+            
+        result = PostService.get_user_posts(g.user_id, page, per_page)
+        return result.dict()
+    except ValueError:
+        return BaseResponse.error(400, "页码参数错误").dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"获取发布的帖子失败: {str(e)}").dict()

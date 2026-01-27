@@ -15,6 +15,10 @@ create table register
     user_name        varchar(255)  not null,
     password         varchar(255)  not null,
     user_create_time datetime      not null on update CURRENT_TIMESTAMP
+    user_avatar      varchar(255) default '/default.jpg' null comment '用户头像路径'
+    user_bio         text null comment '个人简介',
+    user_location    varchar(255) null comment '所在地',
+    user_birthday    date null comment '生日'
 )
     row_format = DYNAMIC;
 
@@ -127,6 +131,22 @@ create table likes
     constraint user_id
         foreign key (user_id) references register (user_id)
 );
+
+CREATE TABLE favorites
+(
+    favorite_id int auto_increment
+        primary key,
+    article_id  int                                not null comment '帖子ID',
+    user_id     int                                not null comment '用户ID',
+    favorite_time datetime default CURRENT_TIMESTAMP not null comment '收藏时间',
+    constraint fk_favorites_article
+        foreign key (article_id) references publish (article_id)
+            on delete cascade,
+    constraint fk_favorites_user
+        foreign key (user_id) references register (user_id)
+            on delete cascade,
+    unique key uk_user_article (user_id, article_id) comment '用户和帖子的唯一索引，防止重复收藏'
+) comment '用户收藏帖子表';
 
 create definer = root@localhost view article_stats as
 select `p`.`article_id` AS `article_id`, count(`l`.`like_id`) AS `like_count`

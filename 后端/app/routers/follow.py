@@ -28,16 +28,46 @@ def follow_user(user_id):
 def unfollow_user(user_id):
     return FollowService.unfollow_user(g.user_id, user_id).dict()
 
-@follow_bp.route("/followers/<int:user_id>", methods=["GET"])
-@rate_limit(max_requests=100, window=60, by="ip")
-def get_followers(user_id):
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 20, type=int)
-    return FollowService.get_followers(user_id, page, per_page).dict()
+@follow_bp.route("/my-followers", methods=["GET"])
+@rate_limit(max_requests=100, window=60, by="user")
+def get_my_followers():
+    """获取当前用户的粉丝列表"""
+    try:
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 20))
+        
+        # 限制每页数量
+        if per_page > 100:
+            per_page = 100
+        if per_page < 1:
+            per_page = 20
+        if page < 1:
+            page = 1
+            
+        return FollowService.get_followers(g.user_id, page, per_page, g.user_id).dict()
+    except ValueError:
+        return BaseResponse.error(400, "页码参数错误").dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"获取粉丝列表失败: {str(e)}").dict()
 
-@follow_bp.route("/followings/<int:user_id>", methods=["GET"])
-@rate_limit(max_requests=100, window=60, by="ip")
-def get_followings(user_id):
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 20, type=int)
-    return FollowService.get_followings(user_id, page, per_page).dict()
+@follow_bp.route("/my-followings", methods=["GET"])
+@rate_limit(max_requests=100, window=60, by="user")
+def get_my_followings():
+    """获取当前用户的关注列表"""
+    try:
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 20))
+        
+        # 限制每页数量
+        if per_page > 100:
+            per_page = 100
+        if per_page < 1:
+            per_page = 20
+        if page < 1:
+            page = 1
+            
+        return FollowService.get_followings(g.user_id, page, per_page).dict()
+    except ValueError:
+        return BaseResponse.error(400, "页码参数错误").dict()
+    except Exception as e:
+        return BaseResponse.error(500, f"获取关注列表失败: {str(e)}").dict()

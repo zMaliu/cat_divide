@@ -43,13 +43,14 @@ class PostService:
                     COALESCE(ast.like_count, 0) as like_count,
                     (SELECT COUNT(*) FROM comments WHERE article_id = p.article_id) AS reply_count,
                     EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked,
+                    EXISTS(SELECT 1 FROM favorites WHERE article_id = p.article_id AND user_id = %s) AS is_favorited,
                     EXISTS(SELECT 1 FROM follows WHERE follower_id = %s AND followed_id = p.user_id) AS is_followed
                 FROM publish p 
                 JOIN register u ON p.user_id = u.user_id
                 LEFT JOIN article_stats ast ON p.article_id = ast.article_id
                 ORDER BY p.publish_time DESC
                 LIMIT %s OFFSET %s
-            """, (user_id, user_id, per_page, offset))
+            """, (user_id, user_id, user_id, per_page, offset))
             else:
                 cursor.execute("""
                 SELECT 
@@ -62,6 +63,7 @@ class PostService:
                     COALESCE(ast.like_count, 0) as like_count,
                     (SELECT COUNT(*) FROM comments WHERE article_id = p.article_id) AS reply_count,
                     FALSE AS is_liked,
+                    FALSE AS is_favorited,
                     FALSE AS is_followed
                 FROM publish p 
                 JOIN register u ON p.user_id = u.user_id
@@ -94,12 +96,13 @@ class PostService:
                     u.user_name,
                     COALESCE(ast.like_count, 0) as like_count,
                     EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked,
+                    EXISTS(SELECT 1 FROM favorites WHERE article_id = p.article_id AND user_id = %s) AS is_favorited,
                     EXISTS(SELECT 1 FROM follows WHERE follower_id = %s AND followed_id = p.user_id) AS is_followed
                 FROM publish p
                 JOIN register u ON p.user_id = u.user_id
                 LEFT JOIN article_stats ast ON p.article_id = ast.article_id
                 WHERE p.article_id = %s
-            """, (user_id, user_id, article_id))
+            """, (user_id, user_id, user_id, article_id))
             else:
                 cursor.execute("""
                 SELECT 
@@ -112,6 +115,7 @@ class PostService:
                     u.user_name,
                     COALESCE(ast.like_count, 0) as like_count,
                     FALSE AS is_liked,
+                    FALSE AS is_favorited,
                     FALSE AS is_followed
                 FROM publish p
                 JOIN register u ON p.user_id = u.user_id
@@ -178,6 +182,82 @@ class PostService:
         except Exception as e:
             db.rollback()
             return BaseResponse.error(500, f"删除文章失败: {str(e)}")
+        finally:
+            cursor.close()
+            db.close()
+
+    @staticmethod
+    def get_user_posts(user_id, page=1, per_page=20):
+        """获取用户发布的所有帖子"""
+        db = get_db()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
+        try:
+            offset = (page - 1) * per_page
+            
+            # 查询用户发布的所有帖子，包含帖子详细信息
+            cursor.execute("""
+                SELECT 
+                    p.article_id, 
+                    p.user_id,
+                    p.title, 
+                    p.content, 
+                    p.img,
+                    p.publish_time,
+                    u.user_name,
+                    COALESCE(ast.like_count, 0) as like_count,
+                    (SELECT COUNT(*) FROM comments WHERE article_id = p.article_id) AS reply_count,
+                    EXISTS(SELECT 1 FROM likes WHERE article_id = p.article_id AND user_id = %s) AS is_liked,
+                    EXISTS(SELECT 1 FROM favorites WHERE article_id = p.article_id AND user_id = %s) AS is_favorited,
+                    FALSE AS is_followed
+                FROM publish p
+                JOIN register u ON p.user_id = u.user_id
+                LEFT JOIN article_stats ast ON p.article_id = ast.article_id
+                WHERE p.user_id = %s
+                ORDER BY p.publish_time DESC
+                LIMIT %s OFFSET %s
+            """, (user_id, user_id, user_id, per_page, offset))
+            
+            posts = cursor.fetchall()
+            
+            # 获取总数
+            cursor.execute("""
+                SELECT COUNT(*) as total
+                FROM publish
+                WHERE user_id = %s
+            """, (user_id,))
+            total_result = cursor.fetchone()
+            total = total_result['total'] if total_result else 0
+            
+            # 格式化返回数据
+            posts_list = []
+            for post in posts:
+                posts_list.append({
+                    "article_id": post["article_id"],
+                    "user_id": post["user_id"],
+                    "title": post["title"],
+                    "content": post["content"],
+                    "img": post["img"],
+                    "publish_time": post["publish_time"].strftime("%Y-%m-%d %H:%M:%S") if post["publish_time"] else None,
+                    "user_name": post["user_name"],
+                    "like_count": post["like_count"],
+                    "reply_count": post["reply_count"],
+                    "is_liked": bool(post["is_liked"]),
+                    "is_favorited": bool(post["is_favorited"]),
+                    "is_followed": bool(post["is_followed"])
+                })
+            
+            return BaseResponse.success(data={
+                "posts": posts_list,
+                "total": total,
+                "page": page,
+                "per_page": per_page,
+                "total_pages": (total + per_page - 1) // per_page if per_page > 0 else 0
+            })
+        except Exception as e:
+            print(f"获取用户发布的帖子失败: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return BaseResponse.error(500, f"获取用户发布的帖子失败: {str(e)}")
         finally:
             cursor.close()
             db.close()

@@ -1,0 +1,141 @@
+
+<view class="home-container">
+  <!-- 顶部导航栏 -->
+  <view class="header">
+    <text class="app-title">云护萌</text>
+    <text class="message-icon" bindtap="goToMessage">✉️</text>
+  </view>
+
+  <!-- 页面滚动内容区域 -->
+  <scroll-view 
+    scroll-y="true" 
+    class="page-scroll" 
+    refresher-enabled="{{false}}"
+    enhanced="true"
+    bounces="true"
+    show-scrollbar="{{false}}"
+    bindscrolltolower="loadMorePets"
+  >
+    <!-- 识别功能区块 -->
+    <view class="recognition-section" bindtap="goToRecognition">
+      <!-- 背景图片 -->
+      <image class="recognition-bg" src="../../assets/recognize_1.png" mode="widthFix"></image>
+      <!-- 叠加图标 -->
+      <image class="recognition-overlay" src="../../assets/recognize_2.png" mode="aspectFit"></image>
+    </view>
+
+    <!-- 三个核心功能按钮 -->
+    <view class="function-section">
+      <view class="function-item" bindtap="goToMap">
+        <view class="function-icon">
+          <image class="function-icon-img" src="../../assets/home_map.png" mode="aspectFit"></image>
+        </view>
+        <text class="function-text">地图</text>
+      </view>
+      <view class="function-item" bindtap="goToFiles">
+        <view class="function-icon">
+          <image class="function-icon-img" src="../../assets/home_file.png" mode="aspectFit"></image>
+        </view>
+        <text class="function-text">档案</text>
+      </view>
+      <view class="function-item" bindtap="goToMonitor">
+        <view class="function-icon">
+          <image class="function-icon-img" src="../../assets/home_real-time_monitoring.png" mode="aspectFit"></image>
+        </view>
+        <text class="function-text">实时监测</text>
+      </view>
+    </view>
+    <!-- 热门精选标题 -->
+    <view class="hot-picks-header">
+      <text class="section-title">热门精选</text>
+      <view class="refresh-btn" bindtap="onManualRefresh">
+        <text class="refresh-icon">🔄</text>
+      </view>
+    </view>
+
+    <!-- 加载中提示 -->
+    <view class="loading-container" wx:if="{{isLoading}}">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">正在加载...</text>
+    </view>
+
+    <!-- 错误提示 -->
+    <view class="error-container" wx:if="{{loadError && !isLoading}}">
+      <text class="error-icon">⚠️</text>
+      <text class="error-text">加载失败，请检查网络连接</text>
+      <button class="retry-btn" bindtap="retryLoad">重新加载</button>
+    </view>
+
+    <!-- 无内容提示 -->
+    <view class="empty-container" wx:if="{{!isLoading && !loadError && hotPicks.length === 0}}">
+      <text class="empty-icon">🐱</text>
+      <text class="empty-text">暂无热门精选内容</text>
+      <button class="posting-btn" bindtap="goToPosting">去发布</button>
+    </view>
+
+    <!-- 热门精选网格 -->
+    <view class="discussion-content" wx:if="{{!isLoading && !loadError && hotPicks.length > 0}}">
+      <view class="discussion-grid">
+        <block wx:for="{{hotPicks}}" wx:key="article_id">
+          <view class="discussion-card" 
+                bindtap="goToPetDetail" 
+                data-pet="{{item}}"
+                data-index="{{index}}">
+            
+            <!-- 讨论图片 -->
+            <image 
+              src="{{item.imgUrl || item.img || '../../assets/default.jpg'}}" 
+              class="discussion-img" 
+              mode="aspectFill" 
+              lazy-load="true" 
+              bindload="onImageLoad" 
+              binderror="onImageError"
+              data-index="{{index}}"
+            />
+            
+            <!-- 讨论内容 -->
+            <view class="discussion-info">
+              <text class="discussion-title">{{item.title || '可爱小猫'}}</text>
+              <text class="discussion-content" wx:if="{{item.content}}">{{item.content}}</text>
+              
+              <view class="discussion-meta">
+                <view class="author-info">
+                  <text class="author-name">{{item.author || '匿名用户'}}</text>
+                  <text class="post-time">{{item.time || '刚刚'}}</text>
+                </view>
+              </view>
+              
+              <view class="discussion-actions">
+                <view class="like-section" 
+                      bindtap="toggleLike" 
+                      data-post-id="{{item.article_id}}"
+                      data-index="{{index}}"
+                      catchtap="toggleLike">
+                  <text class="like-icon {{item.is_liked ? 'liked' : ''}}">❤️</text>
+                  <text class="like-count">{{item.like_count || 0}}</text>
+                </view>
+                
+                <view class="reply-section">
+                  <text class="reply-icon">💭</text>
+                  <text class="reply-count">{{item.reply_count || 0}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+      
+      <!-- 加载更多提示 -->
+      <view class="loading-more" wx:if="{{isLoadingMore}}">
+        <view class="loading-spinner small"></view>
+        <text class="loading-more-text">加载更多...</text>
+      </view>
+      
+      <!-- 已加载全部 -->
+      <view class="no-more" wx:if="{{noMoreData && hotPicks.length > 0}}">
+        <text class="no-more-text">已经到底啦~</text>
+      </view>
+    </view>
+  </scroll-view>
+</view> 
+

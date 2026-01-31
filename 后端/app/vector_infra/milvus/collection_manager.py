@@ -1,0 +1,2 @@
+class MilvusCollectionManager:
+    pass

@@ -1,0 +1,107 @@
+.login-selection-container {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, #FFA726 0%, #FF9800 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 60rpx;
+  box-sizing: border-box;
+}
+
+.content-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.logo-container {
+  margin-bottom: 80rpx;
+}
+
+.logo-icon {
+  width: 200rpx;
+  height: 200rpx;
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+.welcome-text {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  letter-spacing: 4rpx;
+  margin-bottom: 120rpx;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  width: 100%;
+  max-width: 500rpx;
+}
+
+.selection-btn {
+  width: 100%;
+  height: 100rpx;
+  line-height: 100rpx;
+  padding: 0;
+  border-radius: 20rpx;
+  font-size: 36rpx;
+  font-weight: bold;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.register-btn {
+  background: #FFFFFF;
+  color: #FF9800;
+}
+
+.login-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  border: 3rpx solid #FFFFFF;
+}
+
+.selection-btn:active {
+  transform: scale(0.95);
+}
+
+.register-btn:active {
+  background: #F5F5F5;
+}
+
+.login-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 图标浮动动画 */
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0rpx);
+  }
+  50% {
+    transform: translateY(-20rpx);
+  }
+}
+
+/* 页面进入动画 */
+.login-selection-container {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,42 @@
+<view class="fans-container">
+  <!-- 页面标题 + 粉丝总数 -->
+  <view class="page-header">
+    <text class="page-title">我的粉丝</text>
+    <text class="total-count">共 {{totalFans}} 位粉丝</text>
+  </view>
+
+  <!-- 粉丝列表 -->
+  <view class="fans-list" wx:if="{{fansList.length > 0}}">
+    <view class="fan-item" wx:for="{{fansList}}" wx:key="user_id">
+      <!-- 粉丝头像 + 基本信息 -->
+      <view class="fan-info" bindtap="goToUserHome" data-user="{{item}}">
+        <image class="fan-avatar" src="{{item.user_avatar}}" mode="aspectFill"></image>
+        <view class="fan-detail">
+          <text class="fan-name">{{item.user_name}}</text>
+          <text class="fan-bio">{{item.user_bio || '暂无简介'}}</text>
+          <text class="follow-time">关注于 {{item.follow_time}}</text>
+        </view>
+      </view>
+      <!-- 关注/取消关注按钮 -->
+      <button 
+        class="follow-btn {{item.is_following_back ? 'followed' : ''}}"
+        bindtap="toggleFollow"
+        data-userid="{{item.user_id}}"
+        data-isfollowed="{{item.is_following_back}}"
+      >
+        {{item.is_following_back ? '已关注' : '关注'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <image class="empty-icon" src="../../assets/empty-fans.png" mode="widthFix"></image>
+    <text class="empty-text">暂无粉丝，快去发布内容吸引粉丝吧～</text>
+  </view>
+
+  <!-- 加载中提示 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text>加载粉丝列表中...</text>
+  </view>
+</view>

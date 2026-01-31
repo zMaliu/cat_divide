@@ -1,0 +1,138 @@
+.register-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.nav-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 40rpx;
+  height: 88rpx;
+  border-bottom: 2rpx solid #F5F5F5;
+  position: sticky;
+  top: 0;
+  background: #FFFFFF;
+  z-index: 100;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #F8F8F8;
+}
+
+.back-icon {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #666666;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+}
+
+.placeholder {
+  width: 60rpx;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 60rpx 60rpx 60rpx;
+}
+
+.logo-container {
+  margin-bottom: 80rpx;
+}
+
+.logo-icon {
+  width: 160rpx;
+  height: 160rpx;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 500rpx;
+}
+
+.input-group {
+  margin-bottom: 40rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 120rpx;
+  padding: 0 32rpx;
+  border: 3rpx solid #E8E8E8;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  color: #333333;
+  background: #FAFAFA;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border-color: #FF9800;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 6rpx rgba(255, 152, 0, 0.1);
+}
+
+.input-placeholder {
+  color: #CCCCCC;
+  font-size: 30rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 100rpx;
+  background: #FF9800;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 50rpx;
+  font-size: 34rpx;
+  font-weight: bold;
+  margin-top: 40rpx;
+  transition: all 0.3s ease;
+  box-shadow: 0 8rpx 24rpx rgba(255, 152, 0, 0.3);
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+  background: #F57F17;
+}
+
+.submit-btn:disabled {
+  background: #CCCCCC;
+  color: #999999;
+  box-shadow: none;
+}
+
+/* 页面进入动画 */
+.register-container {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

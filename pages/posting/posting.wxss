@@ -1,0 +1,266 @@
+page {
+    background-color: #F6F6F6;
+    height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .posting-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    background-color: #F6F6F6;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  
+  /* 内容区域 */
+  .content-area {
+    flex: 1;
+    padding: 24rpx;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  
+  /* 输入卡片 */
+  .input-card {
+    background: #FFFFFF;
+    border-radius: 24rpx;
+    padding: 32rpx;
+    margin-bottom: 24rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+    border: 2rpx solid transparent;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .input-card:hover {
+    border-color: #FFA726;
+    box-shadow: 0 8rpx 32rpx rgba(255, 167, 38, 0.15);
+  }
+  
+  .content-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* 卡片头部 */
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20rpx;
+    flex-wrap: wrap;
+  }
+  
+  .card-title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #333333;
+    flex-shrink: 0;
+  }
+  
+  .char-count {
+    font-size: 24rpx;
+    color: #999999;
+    margin-left: 16rpx;
+    flex-shrink: 0;
+  }
+  
+  .char-count.over-limit {
+    color: #FF5722;
+    font-weight: 600;
+  }
+  
+  /* 标题输入框 */
+  .title-input {
+    width: 100%;
+    min-height: 80rpx;
+    font-size: 28rpx;
+    color: #333333;
+    background: transparent;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    padding: 0;
+    line-height: 1.4;
+  }
+  
+  .title-input::placeholder {
+    color: #CCCCCC;
+    font-size: 26rpx;
+  }
+  
+  .title-input.error {
+    color: #FF5722;
+  }
+  
+  /* 内容输入框 */
+  .content-input {
+    width: 100%;
+    min-height: 300rpx;
+    font-size: 28rpx;
+    color: #333333;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+    padding: 0;
+    line-height: 1.5;
+    word-wrap: break-word;
+    flex: 1;
+  }
+  
+  .content-input::placeholder {
+    color: #CCCCCC;
+    font-size: 26rpx;
+  }
+  
+  .content-input.error {
+    color: #FF5722;
+  }
+  
+  /* 底部操作栏 */
+.bottom-bar {
+    display: flex;
+    flex-direction: column;
+    padding: 24rpx 32rpx;
+    background: #FFFFFF;
+    border-top: 2rpx solid #F0F0F0;
+    box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .status-info {
+    width: 100%;
+    margin-bottom: 16rpx;
+    text-align: center;
+  }
+  
+  .status-text {
+    font-size: 24rpx;
+    color: #666666;
+  }
+  
+  .publish-btn {
+    background: linear-gradient(135deg, #FFA726, #FF9800);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 48rpx;
+    padding: 24rpx;
+    font-size: 32rpx;
+    font-weight: 600;
+    width: 100%;
+    box-shadow: 0 8rpx 24rpx rgba(255, 152, 0, 0.3);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+  
+  .publish-btn.active {
+    background: linear-gradient(135deg, #FFA726, #FF9800);
+    box-shadow: 0 12rpx 32rpx rgba(255, 152, 0, 0.4);
+    transform: translateY(-2rpx);
+  }
+  
+  .publish-btn.disabled {
+    background: #EEEEEE;
+    color: #CCCCCC;
+    box-shadow: none;
+    transform: none;
+  }
+  
+  .publish-btn.active:active {
+    transform: translateY(0);
+    box-shadow: 0 6rpx 20rpx rgba(255, 152, 0, 0.3);
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 375px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .char-count {
+      margin-left: 0;
+      margin-top: 8rpx;
+    }
+    
+    .bottom-bar {
+      flex-direction: column;
+      padding: 20rpx;
+    }
+    
+    .publish-btn {
+      margin-left: 0;
+      margin-top: 16rpx;
+      width: 100%;
+    }
+  }
+
+/* 图片上传区域样式 */
+.image-upload-area {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1px solid #f0f0f0;
+}
+
+.upload-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px dashed #ccc;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.upload-btn[disabled] {
+  background-color: #f8f8f8;
+  color: #999;
+}
+
+.image-preview {
+  position: relative;
+  width: 100%;
+  height: 300rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-bottom: 10rpx;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+}
+
+.remove-img-btn {
+  position: absolute;
+  top: 10rpx;
+  right: 10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+  border-radius: 50%;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}

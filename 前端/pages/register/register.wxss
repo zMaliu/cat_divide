@@ -74,7 +74,7 @@
 
 .form-input {
   width: 100%;
-  height: 100rpx;
+  height: 120rpx;
   padding: 0 32rpx;
   border: 3rpx solid #E8E8E8;
   border-radius: 16rpx;

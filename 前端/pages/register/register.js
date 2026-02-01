@@ -34,7 +34,28 @@ Page({
   // 处理注册
   handleRegister: function () {
     const { user_name, password } = this.data.registerForm;
+    // 临时：跳过注册直接进入主页面（开发环境使用）
+  const isDevelopment = false; // 设置为true跳过注册
+  
+  if (!isDevelopment) {
+    wx.showLoading({
+      title: '开发模式...'
+    });
     
+    // 直接跳转到主页或目标页面
+    setTimeout(() => {
+      wx.hideLoading();
+      wx.switchTab({
+        url: '/pages/home/home' // 替换为你应用的主页路径
+      });
+      // 或者使用 redirectTo
+      // wx.redirectTo({
+      //   url: '/pages/main/main'
+      // });
+    }, 1000);
+    
+    return; // 不再执行后面的注册代码
+  }
     // 基本验证
     if (!user_name.trim()) {
       wx.showToast({
@@ -64,10 +85,13 @@ Page({
     wx.showLoading({
       title: '注册中...'
     });
+    wx.redirectTo({
+      url: `/pages/loginForm/loginForm?username=${encodeURIComponent(user_name.trim())}`
+    });
 
     // 发起注册请求
     wx.request({
-      url: config.apiURL + '/auth/register',
+      url: 'https://silva-nonpyogenic-vincenza.ngrok-free.dev/api/auth/register',
       method: 'POST',
       header: {
         'Content-Type': 'application/json'

@@ -1,4 +1,6 @@
-from flask import Blueprint, request, g
+from flask import Blueprint, request, g, current_app
+from urllib.parse import urlparse, unquote
+from pymilvus import MilvusException
 from app.schemas.response import BaseResponse
 from app.services.auth_service import AuthService
 from app.services.cat_service import CatService
@@ -50,12 +52,19 @@ def search_by_image():
             if not vector:
                 return BaseResponse.error(400, "缺少向量数据").dict(), 400
 
-            data = request.get_json()
-            threshold = data.get('threshold', 0.7)
-            top_k = data.get('top_k', 5)
+            data = request.get_json(silent=True) or {}
+            threshold = float(data.get('threshold', 0.7))
+            top_k = int(data.get('top_k', 5))
 
             # Milvus检索
-            milvus_results = VectorService.search_similar_cats(vector, threshold, top_k)
+            try:
+                milvus_results = VectorService.search_similar_cats(vector, threshold, top_k)
+            except MilvusException as e:
+                logger.error(f"Milvus 连接/检索失败: {e}")
+                return BaseResponse.error(
+                    503,
+                    "向量数据库连接失败，请确认 Milvus 已启动（默认端口 19530）。"
+                ).dict(), 503
 
             if len(milvus_results) == 0 :
                 # 找不到相似的猫,返回信息给前端,让用户对猫咪进行基本描述(描述后直接存入猫咪档案，设置状态为未审核)
@@ -92,13 +101,43 @@ def add_cat_vector(cat_id):
         if cat['owner_id'] != g.user_id:
             return BaseResponse.error(403, "无权访问该猫咪").dict(), 403
 
-        filepath = cat['image_url']
+        image_url = (cat.get('image_url') or '').strip()
+        if not image_url:
+            return BaseResponse.error(400, "该猫咪档案暂无图片，请先上传图片").dict(), 400
+
+        # 从 image_url 提取文件名（支持 /uploads/xxx.jpg 或 http://域名/uploads/xxx.jpg）
+        if image_url.startswith(('http://', 'https://')):
+            path = urlparse(image_url).path
+            filename = os.path.basename(unquote(path))
+        else:
+            filename = os.path.basename(image_url.replace('\\', '/'))
+        if not filename:
+            return BaseResponse.error(400, "图片路径格式无效").dict(), 400
+
+        uploads_dir = current_app.config.get('UPLOADS_DIR')
+        if not uploads_dir or not os.path.isdir(uploads_dir):
+            return BaseResponse.error(500, "上传目录未配置").dict(), 500
+        filepath = os.path.normpath(os.path.join(uploads_dir, filename))
+        try:
+            if os.path.commonpath([filepath, uploads_dir]) != os.path.normpath(uploads_dir):
+                return BaseResponse.error(400, "图片路径无效").dict(), 400
+        except ValueError:
+            return BaseResponse.error(400, "图片路径无效").dict(), 400
+        if not os.path.exists(filepath):
+            return BaseResponse.error(400, "图片文件不存在，请重新上传").dict(), 400
 
         # 添加向量
-        if VectorService.add_cat_vector(cat_id, g.user_id, filepath):
-            return BaseResponse.success(message="特征向量添加成功").dict()
-        else:
-            return BaseResponse.error(500, "特征向量添加失败").dict(), 500
+        try:
+            if VectorService.add_cat_vector(cat_id, g.user_id, filepath):
+                return BaseResponse.success({"message": "特征向量添加成功"}).dict()
+            else:
+                return BaseResponse.error(500, "特征向量添加失败").dict(), 500
+        except MilvusException as e:
+            logger.error(f"Milvus 连接/写入失败: {e}")
+            return BaseResponse.error(
+                503,
+                "向量数据库连接失败，请确认 Milvus 已启动（默认端口 19530）。"
+            ).dict(), 503
 
     except Exception as e:
         logger.error(f"为猫咪绑定向量失败: {str(e)}")

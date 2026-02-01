@@ -6,7 +6,7 @@ from app.schemas.response import BaseResponse
 from app.services import cat_service
 from app.vector_infra.milvus.vector_respository import MilvusVectorRepository
 from app.vector_infra.cache.result_cache import ResultCache
-from app.services.yolo_service import YOLOService
+from app.services.feature_service import extract_features_from_path
 from app.utils.vector_utils import normalize_vector
 from app.services.cat_service import CatService
 
@@ -29,11 +29,11 @@ class VectorService:
             cls._cache = ResultCache()
         return cls._cache
     
-    "特征提取（未完善）"
+    "特征提取：使用 CatReID 从图片路径提取 256 维向量并归一化"
     @staticmethod
     def extract_features(image_path: str) -> list:
         try:
-            features = YOLOService.extract_features(image_path)
+            features = extract_features_from_path(image_path)
             return normalize_vector(features)
         except Exception as e:
             logger.error(f"Feature extraction error: {str(e)}")
@@ -41,14 +41,15 @@ class VectorService:
     
     "为猫咪添加向量"
     @classmethod
-    def add_cat_vector(cls, cat_id: str, user_id: str, image_path: str) -> bool:
+    def add_cat_vector(cls, cat_id, user_id, image_path: str) -> bool:
         try:
             vector = cls.extract_features(image_path)
+            # Milvus 中 cat_id / user_id 为 INT64，与 MySQL 一致
             metadata = {
-                "id": f"vec_{cat_id}_{int(time.time())}",
-                "cat_id": cat_id,
-                "user_id": user_id,
-                "image_path": image_path,
+                "id": f"vec_{str(cat_id)}_{str(int(time.time()))}",
+                "cat_id": int(cat_id),
+                "user_id": int(user_id),
+                "image_path": str(image_path),
                 "created_at": int(time.time())
             }
             
@@ -76,15 +77,14 @@ class VectorService:
                 return []
 
 
-            # 根据相似猫咪的id查询猫咪完整信息
-            cat_ids  = list(set([r["cat_id"] for r in milvus_results]))
-            # TODO:
+            # 根据相似猫咪的id查询猫咪完整信息（Milvus 返回 int，batch_get 键为 str）
+            cat_ids = list(set([int(r["cat_id"]) for r in milvus_results]))
             cats_info = CatService.batch_get_cats_by_ids(cat_ids)
 
             # 封装完整的相似猫咪信息返回
             final_response = []
             for result in milvus_results:
-                db_info = cats_info.get(result["cat_id"])
+                db_info = cats_info.get(str(result["cat_id"]))
                 if not db_info:
                     logger.warning("%s exists in Milvus but not in MySQL", result["cat_id"])
                     continue

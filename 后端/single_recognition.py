@@ -25,16 +25,26 @@ class CatReID:
 
 
     def _init_model(self):
-        """初始化并加载模型权重"""
+        """初始化并加载模型权重。checkpoint 若含 embed/bn 等旧键名会映射为当前结构的 embed_layer 并忽略多余键。"""
         print(f"Loading Cat ReID model from {self.model_path}...")
         checkpoint = torch.load(self.model_path, map_location='cpu')
-        
+        raw_state = checkpoint.get('model', checkpoint)
+
         self.model = ReIDResNet50(
             num_ids=checkpoint.get('num_ids', 1),
             embed_dim=checkpoint.get('embed_dim', 256),
             pretrained=False
         )
-        self.model.load_state_dict(checkpoint['model'], strict=True)
+        # 兼容旧 checkpoint：embed -> embed_layer，忽略 bn 等多余键
+        state_dict = {}
+        for k, v in raw_state.items():
+            if k.startswith("bn."):
+                continue
+            if k.startswith("embed."):
+                state_dict["embed_layer." + k[6:]] = v
+            else:
+                state_dict[k] = v
+        self.model.load_state_dict(state_dict, strict=False)
         self.model.to(self.device)
         self.model.eval()
         print("Model loaded successfully.")

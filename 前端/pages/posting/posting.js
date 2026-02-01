@@ -4,12 +4,16 @@ Page({
   data: {
     postingForm: {
       title: '',
-      content: ''
+      content: '',
+      imageUrl: '' // 新增：存储图片路径
     },
     titleLength: 0,
     contentLength: 0,
     canPublish: false,
-    isPublishing: false
+    isPublishing: false,
+    // 新增：图片上传相关配置
+    defaultImage: '/images/default-note.png', // 默认图片路径
+    isUploadingImage: false // 图片上传状态
   },
 
   onLoad: function () {
@@ -105,7 +109,8 @@ Page({
                       content.trim().length > 0 && 
                       titleLen <= 50 && 
                       contentLen <= 500 &&
-                      !this.data.isPublishing;
+                      !this.data.isPublishing &&
+                      !this.data.isUploadingImage; // 上传图片时禁用发布
     
     this.setData({
       canPublish: canPublish
@@ -114,7 +119,12 @@ Page({
 
   // 获取状态文本
   getStatusText: function () {
-    const { titleLength, contentLength, canPublish } = this.data;
+    const { titleLength, contentLength, canPublish, isUploadingImage } = this.data;
+    
+    // 新增：图片上传中状态提示
+    if (isUploadingImage) {
+      return '图片上传中...';
+    }
     
     if (titleLength > 50 || contentLength > 500) {
       return '字数超出限制';
@@ -171,6 +181,123 @@ Page({
     return true;
   },
 
+  // 新增：选择并上传图片
+  chooseAndUploadImage: function () {
+    // 防止重复上传
+    if (this.data.isUploadingImage) return;
+    
+    const that = this;
+    
+    // 选择图片
+    wx.chooseImage({
+      count: 1, // 仅允许选择一张图片
+      sizeType: ['compressed'], // 仅压缩图
+      sourceType: ['album', 'camera'], // 相册和相机
+      success: function (res) {
+        // 设置上传状态
+        that.setData({
+          isUploadingImage: true
+        });
+        
+        // 显示加载提示
+        wx.showLoading({
+          title: '图片上传中...',
+          mask: true
+        });
+        
+        const tempFilePath = res.tempFilePaths[0];
+        const token = wx.getStorageSync('token');
+        
+        // 上传图片到服务器
+        wx.uploadFile({
+          url: config.apiURL + '/upload/image', // 图片上传接口
+          filePath: tempFilePath,
+          name: 'file',
+          header: {
+            'Authorization': 'Bearer ' + token
+          },
+          success: function (uploadRes) {
+            try {
+              const data = JSON.parse(uploadRes.data);
+              if (data.code === 200 && data.data && data.data.url) {
+                // 上传成功，保存图片URL
+                that.setData({
+                  'postingForm.imageUrl': data.data.url
+                });
+                wx.showToast({
+                  title: '图片上传成功',
+                  icon: 'success'
+                });
+              } else {
+                // 上传失败，使用默认图片
+                that.setData({
+                  'postingForm.imageUrl': that.data.defaultImage
+                });
+                wx.showToast({
+                  title: '图片上传失败，使用默认图片',
+                  icon: 'none'
+                });
+              }
+            } catch (e) {
+              // 解析失败，使用默认图片
+              that.setData({
+                'postingForm.imageUrl': that.data.defaultImage
+              });
+              wx.showToast({
+                title: '图片上传失败，使用默认图片',
+                icon: 'none'
+              });
+            }
+          },
+          fail: function (err) {
+            console.error('图片上传失败:', err);
+            // 上传失败，使用默认图片
+            that.setData({
+              'postingForm.imageUrl': that.data.defaultImage
+            });
+            wx.showToast({
+              title: '图片上传失败，使用默认图片',
+              icon: 'none'
+            });
+          },
+          complete: function () {
+            wx.hideLoading();
+            // 恢复状态
+            that.setData({
+              isUploadingImage: false
+            });
+            that.updatePublishState();
+          }
+        });
+      },
+      fail: function (err) {
+        console.error('选择图片失败:', err);
+        wx.showToast({
+          title: '取消图片选择',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  // 新增：预览图片
+  previewImage: function () {
+    const { imageUrl, defaultImage } = this.data;
+    const currentUrl = imageUrl || defaultImage;
+    
+    wx.previewImage({
+      current: currentUrl,
+      urls: [currentUrl]
+    });
+  },
+
+  // 新增：移除图片
+  removeImage: function () {
+    this.setData({
+      'postingForm.imageUrl': ''
+    });
+  },
+
   // 发布笔记
   handlePosting: function () {
     // 如果正在发布中，直接返回
@@ -208,7 +335,9 @@ Page({
       mask: true
     });
 
-    const { title, content } = this.data.postingForm;
+    const { title, content, imageUrl } = this.data.postingForm;
+    // 使用默认图片（如果没有上传图片或上传失败）
+    const finalImageUrl = imageUrl || this.data.defaultImage;
     
     wx.request({
       url: config.apiURL + '/post/create',
@@ -219,7 +348,8 @@ Page({
       },
       data: {
         title: title.trim(),
-        content: content.trim()
+        content: content.trim(),
+        imageUrl: finalImageUrl // 新增：提交图片URL
       },
       success: (res) => {
         wx.hideLoading();
@@ -235,7 +365,8 @@ Page({
           this.setData({
             postingForm: {
               title: '',
-              content: ''
+              content: '',
+              imageUrl: '' // 新增：清空图片
             },
             titleLength: 0,
             contentLength: 0

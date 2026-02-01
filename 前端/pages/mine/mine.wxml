@@ -34,7 +34,7 @@
       </view>
       
       <view class="action-buttons">
-        <view class="follow-btn" bindtap="onFollowingList">
+        <view class="follow-btn" bindtap="onStatsClick" data-type="关注">
           <text class="follow-text">关注</text>
           <text class="follow-count">{{userInfo.followingCount}}</text>
         </view>

@@ -63,7 +63,7 @@ Page({
     });
 
     // 发起登录请求
-    const requestUrl = config.apiURL + '/auth/login';
+    const requestUrl = 'https://silva-nonpyogenic-vincenza.ngrok-free.dev/api/auth/login';
     console.log('=== 登录调试信息 ===');
     console.log('完整URL:', requestUrl);
     console.log('config.apiURL:', config.apiURL);
@@ -86,7 +86,7 @@ Page({
           // 保存登录信息
           wx.setStorageSync('token', res.data.data.token);
           wx.setStorageSync('user_id', res.data.data.user_id);
-          
+          console.log(res.data.data.token)
           wx.showToast({
             title: '登录成功',
             icon: 'success',

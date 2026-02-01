@@ -206,3 +206,61 @@ page {
       width: 100%;
     }
   }
+
+/* 图片上传区域样式 */
+.image-upload-area {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1px solid #f0f0f0;
+}
+
+.upload-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px dashed #ccc;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.upload-btn[disabled] {
+  background-color: #f8f8f8;
+  color: #999;
+}
+
+.image-preview {
+  position: relative;
+  width: 100%;
+  height: 300rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-bottom: 10rpx;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+}
+
+.remove-img-btn {
+  position: absolute;
+  top: 10rpx;
+  right: 10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+  border-radius: 50%;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}

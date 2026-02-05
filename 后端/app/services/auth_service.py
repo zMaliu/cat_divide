@@ -179,7 +179,7 @@ class AuthService:
         if token in token_map:
             del token_map[token]
         
-        return BaseResponse.success(message="退出成功")
+        return BaseResponse.success({"message": "退出成功"})
 
     @staticmethod
     def update_user_profile(token, user_avatar=None, user_bio=None, user_location=None, user_birthday=None):

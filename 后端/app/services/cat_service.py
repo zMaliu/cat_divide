@@ -79,6 +79,28 @@ class CatService:
             db.close()
 
     @staticmethod
+    def batch_get_cats_by_ids(cat_ids):
+        """根据 cat_id 列表批量查询猫咪信息，返回 dict：cat_id -> 猫咪信息（含 name, breed, age, gender, description, image_url 等）。"""
+        if not cat_ids:
+            return {}
+        db = get_db()
+        cursor = db.cursor(pymysql.cursors.DictCursor)
+        try:
+            placeholders = ",".join(["%s"] * len(cat_ids))
+            cursor.execute(
+                f"SELECT c.cat_id, c.name, c.breed, c.age, c.gender, c.description, c.image_url, c.owner_id "
+                f"FROM cats c WHERE c.cat_id IN ({placeholders})",
+                tuple(cat_ids),
+            )
+            rows = cursor.fetchall()
+            return {str(row["cat_id"]): row for row in rows}
+        except Exception as e:
+            return {}
+        finally:
+            cursor.close()
+            db.close()
+
+    @staticmethod
     def update_cat(cat_id, name=None, breed=None, age=None, gender=None, description=None, image_url=None, owner_id=None):
         db = get_db()
         cursor = db.cursor()

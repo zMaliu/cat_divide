@@ -15,7 +15,7 @@ from utils.utils_bbox import DecodeBox
 
 class YOLO(object):
     _defaults = {
-        "model_path"        : 'model_data/best_epoch_weights.pt',
+        "model_path"        : 'model_data/yolo.pt',
         "classes_path"      : 'model_data/coco_classes.txt',
         "input_shape"       : [640, 640],  # 输入图片大小，必须为32的倍数
         "phi"               : 's',         # yolov8版本: n/s/m/l/x
@@ -464,15 +464,3 @@ class YOLO(object):
 
         f.close()
         return
-
-
-
-
-
-
-
-
-
-
-
-

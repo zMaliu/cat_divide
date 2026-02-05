@@ -1,0 +1,27 @@
+# 一键启动 Milvus（向量数据库），供本机 Flask 应用连接 localhost:19530
+# 使用方式：docker compose up -d  或 在 PyCharm 运行「一键启动」配置
+name: catdivide-milvus
+
+services:
+  milvus:
+    image: milvusdb/milvus:v2.4.0
+    container_name: milvus-standalone
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_USE_EMBED: "true"
+      ETCD_DATA_DIR: /var/lib/milvus/etcd
+      COMMON_STORAGETYPE: local
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - milvus_data:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 90s
+
+volumes:
+  milvus_data:

@@ -3,7 +3,7 @@ from typing import Dict,Any
 
 "milvus config"
 class  VectorConfig:
-    def _init_(self):
+    def __init__(self):
         self._load_environment()
     
     def _load_environment(self):
@@ -13,8 +13,8 @@ class  VectorConfig:
         self.MILVUS_PASSWORD = os.getenv('MILVUS_PASSWORD', '')
         self.MILVUS_SECURE = os.getenv('MILVUS_SECURE', 'false').lower() == 'true'
         
-        self.VECTOR_COLLECTION_NAME = os.getenv('VECTOR_COLLECTION_NAME', '')
-        self.VECTOR_DIMENSION = int(os.getenv('VECTOR_DIMENSION', '512'))
+        self.VECTOR_COLLECTION_NAME = os.getenv('VECTOR_COLLECTION_NAME', 'cat_vectors')
+        self.VECTOR_DIMENSION = int(os.getenv('VECTOR_DIMENSION', '256'))
         
         self.CACHE_TTL = int(os.getenv('CACHE_TTL', '3600'))
         self.CACHE_MAX_SIZE = int(os.getenv('CACHE_MAX_SIZE', '1000'))

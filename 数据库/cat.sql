@@ -33,6 +33,8 @@ create table cats
     description text                                                          null comment '描述',
     image_url   varchar(255)                       default '/default_cat.jpg' null comment '图片路径',
     owner_id    int                                                           not null comment '主人ID',
+    status      int                                default 0                  not null comment '0:未审核 1:已通过 2:未通过',
+    milvus_id   int                                                           null comment 'Milvus向量唯一ID（NULL表示未生成向量）',
     create_time datetime                           default CURRENT_TIMESTAMP  null,
     update_time datetime                           default CURRENT_TIMESTAMP  null on update CURRENT_TIMESTAMP,
     constraint cats_ibfk_1

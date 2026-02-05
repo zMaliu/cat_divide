@@ -1,4 +1,3 @@
-
 <view class="posting-container">
   <!-- 主要内容区域 -->
   <scroll-view scroll-y="true" class="content-area">
@@ -33,6 +32,28 @@
         auto-height="true"
         maxlength="550"
       />
+      
+      <!-- 新增：图片上传区域 -->
+      <view class="image-upload-area">
+        <button 
+          class="upload-btn" 
+          bindtap="chooseAndUploadImage"
+          disabled="{{isUploadingImage}}"
+        >
+          📷 {{isUploadingImage ? '上传中...' : '上传图片'}}
+        </button>
+        
+        <!-- 图片预览区域 -->
+        <view class="image-preview" wx:if="{{postingForm.imageUrl || (postingForm.imageUrl === '' && false)}}">
+          <image 
+            class="preview-img" 
+            src="{{postingForm.imageUrl || defaultImage}}" 
+            mode="aspectFill"
+            bindtap="previewImage"
+          />
+          <button class="remove-img-btn" bindtap="removeImage">✕</button>
+        </view>
+      </view>
     </view>
 
   </scroll-view>

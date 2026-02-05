@@ -20,8 +20,9 @@ app.config['REDIS_HOST'] = os.environ.get('REDIS_HOST', 'localhost')
 app.config['REDIS_PORT'] = int(os.environ.get('REDIS_PORT', 6379))
 app.config['REDIS_DB'] = int(os.environ.get('REDIS_DB', 1))
 
-# 创建上传目录
+# 创建上传目录（并注入 app.config，供其他模块统一使用）
 uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+app.config['UPLOADS_DIR'] = os.path.normpath(os.path.abspath(uploads_dir))
 if not os.path.exists(uploads_dir):
     os.makedirs(uploads_dir)
     print(f"创建上传目录: {uploads_dir}")
@@ -59,14 +60,14 @@ def serve_default_image():
         print(f"收到默认图片请求: {request.method} {request.url}")
         # 使用assets目录中的默认图片
         default_img = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "default.jpg")
-        
+
         if not os.path.exists(default_img):
             return send_from_directory(uploads_dir, "default.jpg")
-        
+
         return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets"), "default.jpg")
     except Exception as e:
         return "", 404
-      
+
 def db_check():
     try:
         db = get_db()
@@ -98,7 +99,7 @@ if __name__ == '__main__':
         print(f"异常类型: {type(e)}")
         print(f"异常详情: {traceback.format_exc()}")
         return BaseResponse.error(500, f"服务器错误：{error_msg}").dict(), 500
-    
+
     print("启动服务器，监听端口5001...")
     # 生产环境中设置debug=False
     app.run(host="0.0.0.0", port=5001, debug=False)

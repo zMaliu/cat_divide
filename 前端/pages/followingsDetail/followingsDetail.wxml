@@ -1,0 +1,80 @@
+<view class="followings-container">
+  <!-- 页面头部：标题+关注总数 -->
+  <view class="page-header">
+    <text class="page-title">我的关注</text>
+    <text class="total-count">共 {{totalFollowings}} 位用户</text>
+  </view>
+
+  <!-- 关注列表（有数据时显示） -->
+  <view class="followings-list" wx:if="{{followingsList.length > 0}}">
+    <view class="following-item" wx:for="{{followingsList}}" wx:key="user_id">
+      <!-- 用户头像+基础信息（点击跳转主页） -->
+      <view class="user-info" bindtap="goToUserHome" data-user="{{item}}" style="width: 370rpx; display: flex; box-sizing: border-box">
+        <image class="user-avatar" src="{{item.user_avatar}}" mode="aspectFill"></image>
+        <view class="user-detail">
+          <text class="user-name">{{item.user_name}}</text>
+          <text class="user-bio">{{item.user_bio || '暂无简介'}}</text>
+          <view class="time-group">
+
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作区：三点按钮 + 取消关注 -->
+      <view class="action-group">
+
+        <!-- 取消关注按钮 -->
+        <button 
+          class="unfollow-btn"
+          bindtap="toggleUnfollow"
+          data-userid="{{item.user_id}}"
+         style="width: 212rpx; display: block; box-sizing: border-box; left: 0rpx; top: 0rpx">
+          取消关注
+        </button>
+                <!-- 三点按钮：点击弹出详细信息 -->
+                <view class="more-btn" bindtap="showUserDetail" data-user="{{item}}">
+          <text>⋯</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态（无关注数据时显示） -->
+  <view class="empty-state" wx:else>
+    <image class="empty-icon" src="../../assets/empty-followings.png" mode="widthFix"></image>
+    <text class="empty-text">暂无关注用户，去发现有趣的人吧～</text>
+    <button class="discover-btn" bindtap="goToDiscover">去发现</button>
+  </view>
+
+  <!-- 加载中提示 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text>加载关注列表中...</text>
+  </view>
+
+  <!-- 底部弹出的用户详细信息窗 -->
+  <view class="detail-modal-mask" wx:if="{{showDetailModal}}" bindtap="hideUserDetail"></view>
+  <view class="detail-modal" wx:if="{{showDetailModal}}" catchtap="stopPropagation">
+    <view class="modal-header">
+      <text class="modal-title">用户详情</text>
+      <view class="close-btn" bindtap="hideUserDetail">×</view>
+    </view>
+    <view class="modal-content">
+      <view class="detail-item">
+        <text class="label">用户ID</text>
+        <text class="value">{{currentUser.user_id}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">关注时间</text>
+        <text class="value">{{currentUser.follow_time}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">注册时间</text>
+        <text class="value">{{currentUser.user_create_time}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">个性签名</text>
+        <text class="value">{{currentUser.user_bio || '暂无'}}</text>
+      </view>
+    </view>
+  </view>
+</view>

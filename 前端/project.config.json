@@ -1,6 +1,6 @@
 {
   "compileType": "miniprogram",
-  "libVersion": "trial",
+  "libVersion": "3.11.1",
   "packOptions": {
     "ignore": [],
     "include": []
@@ -36,6 +36,6 @@
     "tabIndent": "auto",
     "tabSize": 2
   },
-  "appid": "wxb36c6ec047bdbd4e",
+  "appid": "wx1c3ec2fb00ed5ae3",
   "simulatorPluginLibVersion": {}
 }

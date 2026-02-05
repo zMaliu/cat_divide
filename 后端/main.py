@@ -82,9 +82,17 @@ def db_check():
 if __name__ == '__main__':
     db_check()
 
+    @app.errorhandler(404)
+    def handle_404(e):
+        """404 返回接口不存在，避免被当成 500"""
+        return BaseResponse.error(404, "接口不存在，请检查请求路径").dict(), 404
+
     @app.errorhandler(Exception)
     def handle_exception(e):
         import traceback
+        from werkzeug.exceptions import HTTPException
+        if isinstance(e, HTTPException):
+            return BaseResponse.error(e.code, str(e.description)).dict(), e.code
         error_msg = str(e)
         print(f"全局异常: {error_msg}")
         print(f"异常类型: {type(e)}")

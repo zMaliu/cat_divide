@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, request, g, jsonify
+from flask import Blueprint, request, g
 from app.services.chat_service import ChatService
 from app.schemas.request import MessageRequest, SessionRequest
 from app.schemas.response import BaseResponse
@@ -30,7 +30,7 @@ def send_message():
             return BaseResponse.error(400, "无效的JSON数据").dict()
         req = MessageRequest(**data)
         # 创建或获取会话
-        session_result = ChatService.create_or_get_session(g.user_id, req.to_user_id)
+        session_result = ChatService.create_or_get_session(g.user_id, req.touser_id)
         if session_result.code != 200:
             return session_result.dict()
 

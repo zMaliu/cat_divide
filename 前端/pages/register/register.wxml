@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <view class="register-container">
   <!-- 顶部导航区域 -->
   <view class="nav-area">
@@ -43,3 +44,50 @@
     </view>
   </view>
 </view>
+=======
+<view class="register-container">
+  <!-- 顶部导航区域 -->
+  <view class="nav-area">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+    </view>
+    <view class="page-title">注册</view>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 主要内容区域 -->
+  <view class="content-area">
+    <!-- 猫爪图标 -->
+    <view class="logo-container">
+      <image class="logo-icon" src="../../assets/login_icon_2.png" mode="aspectFit"></image>
+    </view>
+    
+    <!-- 注册表单 -->
+    <view class="form-container">
+      <view class="input-group">
+        <input 
+          class="form-input" 
+          type="text" 
+          placeholder="请输入用户名" 
+          value="{{registerForm.user_name}}" 
+          bindinput="onUsernameInput"
+          placeholder-class="input-placeholder"
+        />
+      </view>
+      
+      <view class="input-group">
+        <input 
+          class="form-input" 
+          type="password" 
+          placeholder="请设置密码" 
+          value="{{registerForm.password}}" 
+          bindinput="onPasswordInput"
+          placeholder-class="input-placeholder"
+        />
+      </view>
+      
+      <button class="submit-btn" bindtap="handleRegister">注册</button>
+    </view>
+  </view>
+</view>
+>>>>>>> d0fa90f2a95da012597ce7f762a23c5ddc39bf71

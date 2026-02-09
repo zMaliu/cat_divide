@@ -56,7 +56,10 @@ Page({
   loadUserInfo: function() {
     // 优先缓存token，无则用固定token兜底（关键：固定token也能加载统计/点赞/收藏）
     const token = wx.getStorageSync('token') || 'b03c6d6d-7179-484e-a707-db29e1de5f31';
+<<<<<<< HEAD
     console.log(token)
+=======
+>>>>>>> d0fa90f2a95da012597ce7f762a23c5ddc39bf71
     const userId = wx.getStorageSync('user_id');
     
     // 修复：|| 或的关系，无token/无userId都算未登录（原先是&&，逻辑错误）
@@ -90,7 +93,10 @@ Page({
         'ngrok-skip-browser-warning': 'true' // 新增：跳过ngrok警告
       },
       success: (res) => {
+<<<<<<< HEAD
         console.log(token)
+=======
+>>>>>>> d0fa90f2a95da012597ce7f762a23c5ddc39bf71
         console.log('用户基本信息接口返回:', res.data);
         if (res.data.code === 200) {
           const userData = res.data.data;

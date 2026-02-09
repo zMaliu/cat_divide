@@ -1,0 +1,237 @@
+/* 页面容器基础样式 */
+.followings-container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 页面头部：标题+总数 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.total-count {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 关注列表容器 */
+.followings-list {
+  background-color: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 单个关注用户项 */
+.following-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.following-item:last-child {
+  border-bottom: none;
+}
+
+/* 用户信息区域（头像+详情） */
+.user-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.user-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+  border: 1px solid #f0f0f0;
+}
+
+.user-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.user-name {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+.user-bio {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.time-group {
+  display: flex;
+  gap: 20rpx;
+}
+
+.follow-time, .create-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 取消关注按钮 */
+.unfollow-btn {
+  width: 80rpx;
+  height: 64rpx;
+  line-height: 34rpx;
+  font-size: 28rpx;
+  border-radius: 32rpx;
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1px solid #e5e5e5;
+}
+
+.unfollow-btn:active {
+  background-color: #eee;
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  width: 220rpx;
+  height: 220rpx;
+  margin-bottom: 40rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+.discover-btn {
+  width: 240rpx;
+  height: 80rpx;
+  line-height: 48rpx;
+  font-size: 30rpx;
+  border-radius: 40rpx;
+  background-color: #07c160;
+  color: #fff;
+}
+
+/* 加载状态 */
+.loading-state {
+  text-align: center;
+  padding: 80rpx 0;
+  font-size: 28rpx;
+  color: #666;
+}
+.action-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+}
+
+/* 三点按钮 */
+.more-btn {
+  font-size: 40rpx;
+  color: #666;
+  padding: 8rpx 16rpx;
+  border-radius: 50%;
+}
+.more-btn:active {
+  background-color: #f5f5f5;
+}
+
+/* 底部弹窗遮罩 */
+.detail-modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+/* 底部弹窗 */
+.detail-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
+  z-index: 999;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+.close-btn {
+  font-size: 40rpx;
+  color: #666;
+  padding: 8rpx;
+}
+
+/* 弹窗内容项 */
+.modal-content {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 24rpx;
+}
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.detail-item:last-child {
+  border-bottom: none;
+}
+.label {
+  font-size: 30rpx;
+  color: #666;
+}
+.value {
+  font-size: 30rpx;
+  color: #333;
+  text-align: right;
+}

@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+import pymysql
+import os
+from dbutils.pooled_db import PooledDB
+
+# 延迟初始化连接池
+pool = None
+
+DB_CONFIG = {
+    'host': os.environ.get('DB_HOST', 'localhost'),
+    'port': int(os.environ.get('DB_PORT', 3306)),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', 'root'),  # 修改默认密码为'root'，与.env一致
+    'database': os.environ.get('DB_NAME', 'cat'),
+    'charset': "utf8mb4",
+    'autocommit': False,
+    'cursorclass': pymysql.cursors.DictCursor
+}
+
+print(f"数据库配置: {DB_CONFIG}")
+
+def init_pool():
+    """初始化数据库连接池"""
+    global pool
+    if pool is None:
+        pool = PooledDB(
+            creator=pymysql,
+            maxconnections=5,
+            **DB_CONFIG
+        )
+        print("数据库连接池初始化成功")
+
+def get_db():
+    """获取数据库连接"""
+    if pool is None:
+        init_pool()
+    return pool.connection()
+
+
+
+
+
+
+
+

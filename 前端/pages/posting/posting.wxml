@@ -1,0 +1,74 @@
+<view class="posting-container">
+  <!-- 主要内容区域 -->
+  <scroll-view scroll-y="true" class="content-area">
+    
+    <!-- 标题输入卡片 -->
+    <view class="input-card">
+      <view class="card-header">
+        <text class="card-title">📝 笔记标题</text>
+        <text class="char-count {{titleLength > 50 ? 'over-limit' : ''}}">{{titleLength}}/50</text>
+      </view>
+      <input 
+        class="title-input {{titleLength > 50 ? 'error' : ''}}" 
+        type="text" 
+        placeholder="请输入笔记标题..." 
+        value="{{postingForm.title}}" 
+        bindinput="onPostingTitleInput"
+        maxlength="60"
+      />
+    </view>
+
+    <!-- 内容输入卡片 -->
+    <view class="input-card content-card">
+      <view class="card-header">
+        <text class="card-title">📄 笔记内容</text>
+        <text class="char-count {{contentLength > 500 ? 'over-limit' : ''}}">{{contentLength}}/500</text>
+      </view>
+      <textarea 
+        class="content-input {{contentLength > 500 ? 'error' : ''}}" 
+        placeholder="分享你的想法和经验..." 
+        value="{{postingForm.content}}" 
+        bindinput="onPostingContentInput"
+        auto-height="true"
+        maxlength="550"
+      />
+      
+      <!-- 新增：图片上传区域 -->
+      <view class="image-upload-area">
+        <button 
+          class="upload-btn" 
+          bindtap="chooseAndUploadImage"
+          disabled="{{isUploadingImage}}"
+        >
+          📷 {{isUploadingImage ? '上传中...' : '上传图片'}}
+        </button>
+        
+        <!-- 图片预览区域 -->
+        <view class="image-preview" wx:if="{{postingForm.imageUrl || (postingForm.imageUrl === '' && false)}}">
+          <image 
+            class="preview-img" 
+            src="{{postingForm.imageUrl || defaultImage}}" 
+            mode="aspectFill"
+            bindtap="previewImage"
+          />
+          <button class="remove-img-btn" bindtap="removeImage">✕</button>
+        </view>
+      </view>
+    </view>
+
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="status-info">
+      <text class="status-text">{{getStatusText()}}</text>
+    </view>
+    <button 
+      class="publish-btn {{canPublish ? 'active' : 'disabled'}}" 
+      bindtap="handlePosting"
+      disabled="{{!canPublish}}"
+    >
+      发布
+    </button>
+  </view>
+</view>

@@ -1,0 +1,22 @@
+<view class="login-selection-container">
+  <!-- 主要内容区域 -->
+  <view class="content-area">
+    <!-- 猫爪图标 -->
+    <view class="logo-container">
+      <image class="logo-icon" src="../../assets/login_icon_1.png" mode="aspectFit"></image>
+    </view>
+    
+    <!-- 欢迎文字 -->
+    <view class="welcome-text">欢迎来到云护萌</view>
+    
+    <!-- 选择按钮组 -->
+    <view class="button-group">
+      <button class="selection-btn register-btn" bindtap="goToRegister">注册</button>
+      <button class="selection-btn login-btn" bindtap="goToLogin">登录</button>
+    </view>
+  </view>
+</view>
+
+
+
+

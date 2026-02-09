@@ -1,0 +1,92 @@
+<view class="settings-container">
+  <!-- 用户头像区域 -->
+  <view class="avatar-section">
+    <image class="user-avatar" src="{{userInfo.user_avatar || '/default.jpg'}}" mode="aspectFill"></image>
+    <text class="edit-btn" bindtap="onEditProfile">编辑资料</text>
+  </view>
+
+  <!-- 用户信息列表 -->
+  <view class="info-list">
+    <!-- 用户名 -->
+    <view class="info-item">
+      <text class="info-label">用户名</text>
+      <text class="info-value">{{userInfo.user_name || '未设置'}}</text>
+    </view>
+    <!-- 个人简介 -->
+    <view class="info-item">
+      <text class="info-label">个人简介</text>
+      <text class="info-value">{{userInfo.user_bio || '未填写'}}</text>
+    </view>
+    <!-- 所在地区 -->
+    <view class="info-item">
+      <text class="info-label">所在地区</text>
+      <text class="info-value">{{userInfo.user_location || '未填写'}}</text>
+    </view>
+    <!-- 生日 -->
+    <view class="info-item">
+      <text class="info-label">生日</text>
+      <text class="info-value">{{userInfo.user_birthday || '未填写'}}</text>
+    </view>
+    <!-- 关注/粉丝数 -->
+    <view class="info-item">
+      <text class="info-label">关注/粉丝</text>
+      <text class="info-value">{{userInfo.following_count}} / {{userInfo.follower_count}}</text>
+    </view>
+    <!-- 注册时间 -->
+    <view class="info-item">
+      <text class="info-label">注册时间</text>
+      <text class="info-value">{{userInfo.user_create_time || '未知'}}</text>
+    </view>
+  </view>
+
+  <!-- 加载提示/错误提示 -->
+  <view class="empty-tip" wx:if="{{loading}}">加载中...</view>
+  <view class="empty-tip" wx:if="{{error}}">加载失败，请重试</view>
+</view>
+
+<!-- 编辑资料弹窗 -->
+<view class="modal-mask" wx:if="{{showEditModal}}" bindtap="hideEditModal">
+  <view class="modal-content" catchtap="stopPropagation">
+    <view class="modal-title">编辑个人资料</view>
+    
+    <!-- 简介输入框 -->
+    <view class="form-item">
+      <text class="form-label">个人简介</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入个人简介" 
+        value="{{editForm.user_bio}}"
+        bindinput="onInputChange"
+        data-key="user_bio"
+      />
+    </view>
+
+    <!-- 所在地区 -->
+    <view class="form-item">
+      <text class="form-label">所在地区</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入所在地区" 
+        value="{{editForm.user_location}}"
+        bindinput="onInputChange"
+        data-key="user_location"
+      />
+    </view>
+
+    <!-- 生日 -->
+    <view class="form-item">
+      <text class="form-label">生日</text>
+      <picker mode="date" value="{{editForm.user_birthday}}" bindchange="onBirthdayChange">
+        <view class="picker-input">
+          {{editForm.user_birthday || '请选择生日'}}
+        </view>
+      </picker>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="modal-btns">
+      <button class="cancel-btn" bindtap="hideEditModal">取消</button>
+      <button class="confirm-btn" bindtap="submitEditForm">保存</button>
+    </view>
+  </view>
+</view>

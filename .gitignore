@@ -1,0 +1,41 @@
+# 忽略所有 .pyc 文件
+*.pyc
+
+# 忽略 node_modules 文件夹
+node_modules/
+
+# 忽略环境变量文件
+.env
+.env.local
+.env.production
+
+# 忽略 log 文件夹下的所有文件
+log/
+
+logs/
+
+# Python缓存文件
+__pycache__/
+*.pyo
+*.pyd
+
+# 上传文件目录
+uploads/
+*.jpg
+*.png
+*.gif
+*.jpeg
+
+# IDE配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 模型文件
+*.pth
+*.onnx

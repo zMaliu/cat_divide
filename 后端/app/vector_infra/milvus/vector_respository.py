@@ -1,6 +1,5 @@
 import logging
-import numpy as np
-from pymilvus import Collection,utility,FieldSchema,CollectionSchema,DataType
+from pymilvus import Collection
 from config.vector_config import VectorConfig
 from .collection_manager import MilvusCollectionManager
 from .connection_manager import MilvusConnectionManager
@@ -37,52 +36,9 @@ class MilvusVectorRepository(VectorRepository):
         return self.collection is not None
 
     def _get_or_create_collection(self):
-        # 强制删除旧集合，确保重新创建正确的schema
-        if utility.has_collection(self.config.VECTOR_COLLECTION_NAME):
-            logger.info(f"删除现有集合: {self.config.VECTOR_COLLECTION_NAME}")
-            try:
-                utility.drop_collection(self.config.VECTOR_COLLECTION_NAME)
-                logger.info("集合删除成功")
-            except Exception as e:
-                logger.error(f"删除集合失败: {str(e)}")
-        
-        # 打印DataType枚举值，用于调试
-        logger.info(f"DataType枚举值: INT64={DataType.INT64}, VARCHAR={DataType.VARCHAR}, FLOAT_VECTOR={DataType.FLOAT_VECTOR}")
-        
-        "定义集合模式（cat_id / user_id 与 MySQL 一致为 INT64）"
-        fields=[
-            FieldSchema(name="id", dtype=DataType.VARCHAR, is_primary=True, max_length=100),
-            FieldSchema(name="cat_id", dtype=DataType.INT64),
-            FieldSchema(name="user_id", dtype=DataType.INT64),
-            FieldSchema(name="vector", dtype=DataType.FLOAT_VECTOR, dim=self.config.VECTOR_DIMENSION),
-            FieldSchema(name="image_path", dtype=DataType.VARCHAR, max_length=255),
-            FieldSchema(name="created_at", dtype=DataType.INT64)
-        ]
-        
-        logger.info(f"创建新集合，字段定义: {[f'{f.name}:{f.dtype}' for f in fields]}")
-
-        schema=CollectionSchema(
-            fields=fields, 
-            description="Vector collection"
-            )
-        
-        collection=Collection(
-            name=self.config.VECTOR_COLLECTION_NAME,
-            schema=schema
-            )
-        
-        "创建索引"
-        index_params={
-            "index_type": "IVF_FLAT",
-            "metric_type": "L2",
-            "params": {"nlist": 128}
-        }
-        collection.create_index(
-            field_name="vector",
-            index_params=index_params
-            )
-        
-        logger.info(f"成功创建新集合: {self.config.VECTOR_COLLECTION_NAME}")
+        manager = MilvusCollectionManager(self.config)
+        collection = manager.get_or_create_collection()
+        logger.info(f"Milvus collection ready: {collection.name}")
         return collection
     
     "插入向量与元数据"

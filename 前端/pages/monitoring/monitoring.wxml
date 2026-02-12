@@ -1,0 +1,74 @@
+<view class="container"  >
+  <!-- 调试区域 -->
+
+  
+  <!-- 标题 -->
+  <view class="title">猫咪图片上传</view>
+  
+  <!-- 上传区域 -->
+  <view class="upload-area" bindtap="chooseImage" >
+    <view class="upload-icon">📷</view>
+    <view class="upload-text">点击选择猫咪图片</view>
+    <view class="upload-tip">支持JPG、PNG格式</view>
+  </view>
+  
+  <!-- 图片预览 -->
+  <view class="preview-section" wx:if="{{tempImagePath}}">
+    <image src="{{tempImagePath}}" mode="aspectFit" class="preview-image"></image>
+    <button class="upload-btn" bindtap="uploadImage" loading="{{isUploading}}">
+      {{isUploading ? '上传中...' : '开始上传'}}
+    </button>
+  </view>
+  
+  <!-- 结果显示 -->
+  <view class="result-section" wx:if="{{result}}">
+    <view class="result-card {{result.success ? 'success' : 'error'}}">
+      <view class="result-header">
+        <text class="result-icon">{{result.success ? '✅' : '❌'}}</text>
+        <text class="result-title">{{result.success ? '上传成功' : '上传失败'}}</text>
+      </view>
+      
+      <view class="result-content">
+        <view class="result-row">
+          <text class="label">状态：</text>
+          <text class="value">{{result.message}}</text>
+        </view>
+        
+        <view class="result-row" wx:if="{{result.filename}}">
+          <text class="label">文件名：</text>
+          <text class="value">{{result.filename}}</text>
+        </view>
+        
+        <view class="result-row" wx:if="{{result.cat_id}}">
+          <text class="label">猫咪ID：</text>
+          <text class="value">{{result.cat_id}}</text>
+        </view>
+        
+        <view class="result-row" wx:if="{{result.similarityText}}">
+          <text class="label">相似度：</text>
+          <text class="value">{{result.similarityText}}</text>
+        </view>
+      </view>
+      
+      <view class="result-footer">
+        <text class="timestamp">{{result.timestamp}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 历史记录 -->
+  <view class="history-section" wx:if="{{history.length > 0}}" style="height: 543rpx; display: block; box-sizing: border-box">
+    <view class="section-title">上传历史</view>
+    <scroll-view class="history-list" scroll-y style="height: 410rpx; display: block; box-sizing: border-box">
+      <view class="history-item" wx:for="{{history}}" wx:key="timestamp" style="height: 160rpx; display: block; box-sizing: border-box">
+        <view class="history-header">
+          <text class="history-time">{{item.timestamp}}</text>
+          <text class="history-status {{item.success ? 'success' : 'error'}}" style="height: 60rpx; display: block; box-sizing: border-box">
+            {{item.success ? '成功' : '失败'}}
+          </text>
+        </view>
+        <text class="history-message">{{item.message}}</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

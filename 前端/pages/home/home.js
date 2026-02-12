@@ -321,10 +321,17 @@ Page({
     },
 
     goToMonitor: function() {
+<<<<<<< HEAD
+      wx.navigateTo({
+        url: '/pages/monitoring/monitoring'
+    });
+        
+=======
         wx.showToast({
             title: '实时监测功能开发中',
             icon: 'none'
         });
+>>>>>>> d0fa90f2a95da012597ce7f762a23c5ddc39bf71
     },
 
     // 点赞/取消点赞

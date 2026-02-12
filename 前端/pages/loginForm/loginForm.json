@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 {
     "navigationStyle": "custom",
     "navigationBarTextStyle": "white"
+=======
+{
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "white"
+>>>>>>> d0fa90f2a95da012597ce7f762a23c5ddc39bf71
   }

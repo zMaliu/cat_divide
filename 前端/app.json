@@ -16,7 +16,12 @@
     "pages/postDetail/postDetail",
     "pages/chat/chat",
     "pages/followingsDetail/followingsDetail",
+<<<<<<< HEAD
+    "pages/fansDetail/fansDetail",
+    "pages/monitoring/monitoring"
+=======
     "pages/fansDetail/fansDetail"
+>>>>>>> d0fa90f2a95da012597ce7f762a23c5ddc39bf71
   ],
   "window": {
     "navigationBarTextStyle": "black",
